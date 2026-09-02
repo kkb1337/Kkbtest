@@ -10030,7 +10030,7 @@ function addSet() {
             workoutScreen.scrollTop = savedScroll;
         }
         if (activeElement && activeElement.tagName === 'INPUT') {
-            try { activeElement.focus({preventScroll:true}); } catch(e) {}
+            try { activeElement.focus({preventScroll:true}); } catch(e) { console.warn('[FIX] Не удалось вернуть фокус после обновления подхода', e); }
         }
     });
 }
@@ -10197,7 +10197,7 @@ function startRestTimer(seconds) {
     const container=document.getElementById('restTimerContainer'); if(container) container.classList.remove('hidden');
     restTimerInterval=setInterval(updateRestTimerDisplay,200);
 }
-function setRestDuration(seconds){ lastRestDuration = seconds; try { localStorage.setItem('ftracker_rest_duration', String(seconds)); } catch(e) {} startRestTimer(seconds); }
+function setRestDuration(seconds){ lastRestDuration = seconds; try { localStorage.setItem('ftracker_rest_duration', String(seconds)); } catch(e) { console.warn('[FIX] Не удалось сохранить длительность отдыха', e); } startRestTimer(seconds); }
 function updateRestTimerDisplay(){
     if(!restEndTime) return;
     const remaining=Math.max(0,Math.ceil((restEndTime-Date.now())/1000));
@@ -12066,7 +12066,7 @@ function showToast(msg) { const toast = document.createElement('div'); toast.cla
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=1.3.11', {updateViaCache:'none'}) // [FIX] единая версия сборки PWA/SW
+        navigator.serviceWorker.register('./sw.js?v=1.3.12', {updateViaCache:'none'}) // [FIX] единая версия сборки PWA/SW
             .then(reg => console.log('SW registered', reg.scope))
             .catch(err => console.log('SW failed', err));
     });
@@ -14034,7 +14034,7 @@ function adjustRestTime(delta){
   addSearchClear('progressExercisePickerSearch','v65ProgressSearchClear',clearProgressSearch);
 
   /* 3) Progress picker: count is next to the exercise name; selected card only gets a list affordance. */
-  function progressNames(){
+  function progressNamesV65(){
     if(typeof window.getProgressExerciseNames==='function')return window.getProgressExerciseNames();
     return [];
   }
@@ -14043,7 +14043,7 @@ function adjustRestTime(delta){
     if(!list)return;
     const q=String(input?.value||'').trim().toLocaleLowerCase('ru');
     const current=window.progressSelectedExercise||'';
-    const names=progressNames().filter(n=>!q||String(n).toLocaleLowerCase('ru').includes(q));
+    const names=progressNamesV65().filter(n=>!q||String(n).toLocaleLowerCase('ru').includes(q));
     if(!names.length){list.innerHTML='<div style="padding:22px;text-align:center;color:var(--subtext);">Упражнений с сохранёнными данными не найдено</div>';return;}
     list.innerHTML=names.map((name,i)=>{
       const rows=typeof window.getExerciseSeries==='function' ? (window.getExerciseSeries(name,window.getHistoryInPeriod?window.getHistoryInPeriod('all'):[])||[]) : [];
@@ -14057,7 +14057,7 @@ function adjustRestTime(delta){
     }).join('');
     $$('.progress-picker-row[data-v65-progress-index]',list).forEach((btn,index)=>btn.addEventListener('click',e=>{
       e.preventDefault();e.stopPropagation();
-      const now=progressNames().filter(n=>!q||String(n).toLocaleLowerCase('ru').includes(q));
+      const now=progressNamesV65().filter(n=>!q||String(n).toLocaleLowerCase('ru').includes(q));
       if(now[index] && typeof window.chooseProgressExercise==='function')window.chooseProgressExercise(now[index]);
     },{passive:false}));
   }
