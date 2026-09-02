@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <!-- FTracker duplicate system rewritten as one canonical creation-time flow. -->
+<!-- [FIX] v1.3.15: product category is stored explicitly for new/edited catalog entries; legacy entries safely fall back without data migration. -->
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
@@ -12041,7 +12042,7 @@ function showToast(msg) { const toast = document.createElement('div'); toast.cla
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=1.3.14', {updateViaCache:'none'}) // [FIX] единая версия сборки PWA/SW
+        navigator.serviceWorker.register('./sw.js?v=1.3.15', {updateViaCache:'none'}) // [FIX] единая версия сборки PWA/SW
             .then(reg => console.log('SW registered', reg.scope))
             .catch(err => console.log('SW failed', err));
     });
@@ -15107,6 +15108,21 @@ new MutationObserver(()=>bindAutosize(document)).observe(document.body,{childLis
 const $=(id)=>document.getElementById(id);
 const esc=(v)=>typeof escapeHtml==='function'?escapeHtml(String(v??'')):String(v??'');
 const norm=(v)=>typeof normalizeExerciseKey==='function'?normalizeExerciseKey(v):String(v||'').toLocaleLowerCase('ru').replace(/[\s\p{P}\p{S}]+/gu,'');
+const foodCategoryFor=function(name,builtin=false){
+  const n=String(name||'').toLocaleLowerCase('ru').replace(/ё/g,'е');
+  if(/кур|индей|говя|свинин|фарш|тефтел|кордон|мяс/.test(n))return '🥩 Мясо и птица';
+  if(/лосос|тун|треск|рыб|кревет/.test(n))return '🐟 Рыба и морепродукты';
+  if(/яйц/.test(n))return '🥚 Яйца';
+  if(/творог|йогурт|молок|кефир|сыр|skyr/.test(n))return '🥛 Молочные продукты';
+  if(/рис|греч|макарон|картоф|овся|булгур|паст/.test(n))return '🍚 Крупы и гарниры';
+  if(/хлеб|лаваш|блин/.test(n))return '🍞 Хлеб и выпечка';
+  if(/огур|помидор|броккол|морков|перец|овощ/.test(n))return '🥦 Овощи';
+  if(/банан|яблок|апельсин|ягод|фрукт/.test(n))return '🍌 Фрукты';
+  if(/арахис|миндал|масло|орех/.test(n))return '🥜 Орехи и жиры';
+  if(/шоколад|мед|сахар|пикник|батон/.test(n))return '🍫 Перекусы и сладкое';
+  return builtin?'🍲 Блюда и другое':'⭐ Мои продукты';
+};
+window.foodCategoryFor=foodCategoryFor;
 
 /* ---------- Canonical food duplicate protection: exact = block, similar = user choice ---------- */
 function foodNorm(v){
@@ -15278,7 +15294,7 @@ function foodNumber(value, max=100000){
 window.saveCatalogProduct=function(){
   const name=String($('catalogName')?.value||'').trim().replace(/\s+/g,' ');
   if(!name){showToast('Введите название');return;}
-  const type=$('catalogType')?.value||'per100';let product={name,type};
+  const type=$('catalogType')?.value||'per100';let product={name,type,category:foodCategoryFor(name,false)};
   if(type==='dish'){
     product.calories=foodNumber($('catalogDishCalories')?.value);product.protein=foodNumber($('catalogDishProtein')?.value);product.fat=foodNumber($('catalogDishFat')?.value);product.carbs=foodNumber($('catalogDishCarbs')?.value);
     if(product.calories===null||product.protein===null||product.fat===null||product.carbs===null||product.calories<=0){showToast('Введите корректные неотрицательные КБЖУ блюда');return;}
@@ -15315,8 +15331,8 @@ window.addFoodEntry=function(){
     else{
       if(!catalogProduct){
         const product=currentFoodMode==='100'
-          ? {name,type:'per100',cal100,protein100,fat100,carbs100}
-          : {name,type:'dish',calories,protein,fat,carbs};
+          ? {name,type:'per100',category:foodCategoryFor(name,false),cal100,protein100,fat100,carbs100}
+          : {name,type:'dish',category:foodCategoryFor(name,false),calories,protein,fat,carbs};
         data.productCatalog.push(product);
       }
       data.foodDiary.entries.push(entryData);showToast('Продукт добавлен и сохранён в каталог');
@@ -16788,28 +16804,16 @@ window.closeImportConfirm=function(){
 /* ===== CANONICAL FOOD CATALOG + WORKOUT PROGRESS ===== */
 (function(){
   'use strict';
-  const categoryFor=function(name,builtin){
-    const n=String(name||'').toLowerCase();
-    if(/кур|индей|говя|свинин|фарш|тефтел|кордон|мяс/.test(n))return '🥩 Мясо и птица';
-    if(/лосос|тун|треск|рыб|кревет/.test(n))return '🐟 Рыба и морепродукты';
-    if(/яйц/.test(n))return '🥚 Яйца';
-    if(/творог|йогурт|молок|кефир|сыр|skyr/.test(n))return '🥛 Молочные продукты';
-    if(/рис|греч|макарон|картоф|овся|булгур|паст/.test(n))return '🍚 Крупы и гарниры';
-    if(/хлеб|лаваш|блин/.test(n))return '🍞 Хлеб и выпечка';
-    if(/огур|помидор|броккол|морков|перец|овощ/.test(n))return '🥦 Овощи';
-    if(/банан|яблок|апельсин|ягод|фрукт/.test(n))return '🍌 Фрукты';
-    if(/арахис|миндал|масло|орех/.test(n))return '🥜 Орехи и жиры';
-    if(/шоколад|мёд|сахар|пикник|батон/.test(n))return '🍫 Перекусы и сладкое';
-    if(builtin)return '🍲 Блюда и другое';
-    return '⭐ Мои продукты';
-  };
-  renderCatalogList=function(){
+  const categoryFor=function(product){
+    if(product?.category)return product.category;
+    return window.foodCategoryFor?window.foodCategoryFor(product?.name,!!product?.builtin):(product?.builtin?'🍲 Блюда и другое':'⭐ Мои продукты');
+  };  renderCatalogList=function(){
     const c=document.getElementById('catalogContainer');if(!c)return;
     const q=String(document.getElementById('catalogSearch')?.value||'').trim().toLowerCase();
     const items=(data.productCatalog||[]).map((p,i)=>({...p,_idx:i})).filter(p=>!q||String(p.name||'').toLowerCase().includes(q));
     if(!items.length){c.innerHTML='<div class="catalog-empty">Ничего не найдено</div>';return;}
     const groups={};
-    items.forEach(p=>{const g=categoryFor(p.name,!!p.builtin);(groups[g]||(groups[g]=[])).push(p);});
+    items.forEach(p=>{const g=categoryFor(p);(groups[g]||(groups[g]=[])).push(p);});
     const order=['⭐ Мои продукты','🥩 Мясо и птица','🐟 Рыба и морепродукты','🥚 Яйца','🥛 Молочные продукты','🍚 Крупы и гарниры','🍞 Хлеб и выпечка','🥦 Овощи','🍌 Фрукты','🥜 Орехи и жиры','🍫 Перекусы и сладкое','🍲 Блюда и другое'];
     c.innerHTML=order.filter(g=>groups[g]?.length).map(g=>`<div class="catalog-section"><div class="catalog-section-title"><span>${g} <small style="color:var(--subtext)">(${groups[g].length})</small></span></div><div class="catalog-section-items">${groups[g].sort((a,b)=>String(a.name).localeCompare(String(b.name),'ru')).map(p=>`<div class="food-item"><div style="flex:1"><div style="font-weight:600">${escapeHtml(p.name)}</div><div style="font-size:12px;color:var(--subtext)">${p.type==='dish'?`Блюдо: ${p.calories} ккал, Б ${p.protein}, Ж ${p.fat}, У ${p.carbs}`:`на 100 г: ${p.cal100} ккал, Б ${p.protein100}, Ж ${p.fat100}, У ${p.carbs100}`}</div></div><button class="small-btn gray" onclick="editCatalogProduct(${p._idx})">✏️</button><button class="small-btn gray" onclick="deleteCatalogProduct(${p._idx})">🗑️</button></div>`).join('')}</div></div>`).join('');
   };
