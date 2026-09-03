@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'ftracker-v1.4.6-nutrition-index-workout-results';
+const CACHE_VERSION = 'ftracker-v1.4.7-index-ux-measurements';
 const CACHE_NAME = CACHE_VERSION;
 const APP_SHELL = [
   './',

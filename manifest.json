@@ -26,6 +26,6 @@
       "purpose": "any maskable"
     }
   ],
-  "_build": "ftracker-v1.4.6-nutrition-index-workout-results",
-  "version": "1.4.6"
+  "_build": "ftracker-v1.4.7-index-ux-measurements",
+  "version": "1.4.7"
 }
