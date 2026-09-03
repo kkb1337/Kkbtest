@@ -5930,7 +5930,7 @@ body{
 .fscore-analytics-status.good{color:var(--positive);background:rgba(52,199,89,.12);border:1px solid rgba(52,199,89,.22)}
 .fscore-analytics-status.attention{color:#f2c94c;background:rgba(242,201,76,.10);border:1px solid rgba(242,201,76,.20)}
 .fscore-analytics-status.bad{color:var(--negative);background:rgba(255,59,48,.10);border:1px solid rgba(255,59,48,.20)}
-.analytics-card{border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.045);border-radius:20px;margin:10px 0;overflow:hidden}.analytics-card>summary{list-style:none;cursor:pointer;padding:16px 18px;font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:12px}.analytics-card>summary::-webkit-details-marker{display:none}.analytics-card>summary:after{content:'›';font-size:22px;color:var(--subtext);transition:transform .18s}.analytics-card[open]>summary:after{transform:rotate(90deg)}.analytics-inner{padding:0 18px 18px;color:var(--subtext);line-height:1.5}.analytics-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.analytics-stat{padding:13px;border-radius:16px;background:rgba(255,255,255,.045)}.analytics-stat strong{display:block;font-size:21px;color:var(--text);letter-spacing:-.5px}.analytics-stat span{font-size:12px}.analytics-note{padding:14px;border-radius:16px;background:rgba(212,255,79,.07);border:1px solid rgba(212,255,79,.12);color:var(--text)}.analytics-hero{padding:20px;border-radius:22px;background:linear-gradient(135deg,rgba(212,255,79,.10),rgba(120,90,255,.09));border:1px solid rgba(255,255,255,.10);margin-bottom:12px}.analytics-hero-row{display:flex;align-items:center;justify-content:space-between}.analytics-score{font-size:52px;font-weight:850;letter-spacing:-2px}.analytics-period{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}.analytics-period button{min-height:36px;padding:0 12px;border-radius:999px}.analytics-period button.active{background:var(--accent);color:#111;border-color:var(--accent);box-shadow:0 0 0 3px rgba(212,255,79,.22);font-weight:900;transform:translateY(-1px)}
+.analytics-card{border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.045);border-radius:20px;margin:10px 0;overflow:hidden}.analytics-card>summary{list-style:none;cursor:pointer;padding:16px 18px;font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:12px}.analytics-card>summary::-webkit-details-marker{display:none}.analytics-card>summary:after{content:'›';font-size:22px;color:var(--subtext);transition:transform .18s}.analytics-card[open]>summary:after{transform:rotate(90deg)}.analytics-inner{padding:0 18px 18px;color:var(--subtext);line-height:1.5}.analytics-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.analytics-stat{padding:13px;border-radius:16px;background:rgba(255,255,255,.045)}.analytics-stat strong{display:block;font-size:21px;color:var(--text);letter-spacing:-.5px}.analytics-stat span{font-size:12px}.analytics-note{padding:14px;border-radius:16px;background:rgba(212,255,79,.07);border:1px solid rgba(212,255,79,.12);color:var(--text)}.analytics-hero{padding:20px;border-radius:22px;background:linear-gradient(135deg,rgba(212,255,79,.10),rgba(120,90,255,.09));border:1px solid rgba(255,255,255,.10);margin-bottom:12px}.analytics-hero-row{display:flex;align-items:center;justify-content:space-between}.analytics-score{font-size:52px;font-weight:850;letter-spacing:-2px}.analytics-period{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.analytics-period button{min-height:42px;padding:0 14px;border-radius:14px!important;background:rgba(255,255,255,.055)!important;color:var(--subtext)!important;border:1px solid rgba(255,255,255,.14)!important;box-shadow:none!important;font-weight:750!important}.analytics-period button.active{background:var(--accent)!important;color:#111!important;border-color:var(--accent)!important;box-shadow:0 0 0 3px rgba(212,255,79,.22)!important;font-weight:900!important;transform:translateY(-1px)}
 
 /* ===== F-Score v2: compact widget + clean breakdown ===== */
 #fscoreHomeWidget.fscore-widget{
@@ -6466,7 +6466,7 @@ body{
         <div class="card centered-card">
             <div style="font-size:22px; font-weight:600; margin-bottom:12px;" id="confirmTitle"></div>
             <div style="color:#8e8e93; margin-bottom:20px;">Начать тренировку?</div>
-            <div class="row"><button onclick="startConfirmed()">Да</button><button class="gray" onclick="goHome()">Нет</button></div>
+            <div class="row"><button id="confirmStartYes" type="button" onclick="startConfirmed(event)">Да</button><button type="button" class="gray" onclick="goHome()">Нет</button></div>
         </div>
     </div>
     <div id="workoutScreen" class="hidden">
@@ -6556,7 +6556,7 @@ body{
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.1 от 03.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.2 от 03.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -8038,9 +8038,9 @@ function fScoreBody(goal){
         parts.push({score,weight:goal==='cut'?35:goal==='gain'?10:25,name:'Талия'});
     }
     if(other!=null)parts.push({score:other,weight:goal==='gain'?40:25,name:'Остальные замеры'});
-    if(!parts.length)return {score:null,weight,waist,other};
+    if(!parts.length)return {score:null,available:false,weight,waist,other};
     const total=parts.reduce((a,p)=>a+p.weight,0);
-    return {score:parts.reduce((a,p)=>a+p.score*p.weight,0)/total,weight,waist,other};
+    return {score:parts.reduce((a,p)=>a+p.score*p.weight,0)/total,available:true,weight,waist,other};
 }
 function fScoreWorkingWeightTrend(history){
     const by={};
@@ -8062,18 +8062,18 @@ function fScoreRepTrend(history){
 function fScoreTraining(recent,prev,history){
     const consistency=fScoreTrainingConsistency(recent,prev),working=fScoreWorkingWeightTrend(history),reps=fScoreRepTrend(history);
     const parts=[{score:consistency.score,weight:40,name:'Системность'},{score:working.score,weight:30,name:'Прогресс нагрузки'},{score:reps,weight:20,name:'Повторения'}].filter(p=>Number.isFinite(p.score));
-    if(!parts.length)return {score:null,consistency,working,reps};const tw=parts.reduce((a,p)=>a+p.weight,0);
-    return {score:parts.reduce((a,p)=>a+p.score*p.weight,0)/tw,consistency,working,reps};
+    if(!parts.length)return {score:null,available:false,consistency,working,reps};const tw=parts.reduce((a,p)=>a+p.weight,0);
+    return {score:parts.reduce((a,p)=>a+p.score*p.weight,0)/tw,available:true,consistency,working,reps};
 }
 function fScoreNutrition(){
-    const entries=(data.foodDiary?.entries||[]).filter(e=>e&&e.date);if(!entries.length)return {score:null,days:0};
+    const entries=(data.foodDiary?.entries||[]).filter(e=>e&&e.date);if(!entries.length)return {score:null,available:false,days:0};
     const now=Date.now(),by={};entries.forEach(e=>{const t=new Date(e.date).getTime();if(!Number.isFinite(t)||now-t>7*86400000)return;const k=localDateString(new Date(t));const x=by[k]||(by[k]={cal:0,protein:0});x.cal+=Number(e.calories)||0;x.protein+=Number(e.protein)||0;});
-    const days=Object.values(by);if(!days.length)return {score:null,days:0};
+    const days=Object.values(by);if(!days.length)return {score:null,available:false,days:0};
     const limit=data.foodDiary?.limits||{};const target=Number(limit.calories)||0,proteinTarget=Number(limit.protein)||0;
     const cal=target?days.reduce((a,d)=>a+fScoreClamp(100-Math.abs(d.cal-target)/target*100),0)/days.length:100;
     const protein=proteinTarget?days.reduce((a,d)=>a+fScoreClamp(d.protein/proteinTarget*100),0)/days.length:100;
     const confidence=days.length>=5?100:days.length/5*100;
-    return {score:.4*cal+.3*protein+.15*confidence+.15*100,days:days.length,cal,protein,confidence};
+    return {score:.4*cal+.3*protein+.15*confidence+.15*100,available:true,days:days.length,cal,protein,confidence};
 }
 function fScoreData(){
     const h=(data.history||[]).filter(e=>e&&e.date).slice().sort((a,b)=>new Date(a.date)-new Date(b.date));
@@ -9521,28 +9521,55 @@ function renderBodyGraph(){
     setTimeout(draw,80);
 }
 
-function confirmStart(index) { pendingProgramIndex=index; document.getElementById('confirmTitle').textContent=data.programs[index].name; showScreen('confirmScreen'); }
-function startConfirmed() {
-    const index=pendingProgramIndex;
-    if (index===null) return;
-    pendingProgramIndex=null;
-    currentProgram=index;
-    currentExerciseIndex=0;
-    workoutSets={};
-    workoutExerciseSlots = data.programs[index].exercises.map((_,i)=>i).filter(i=>data.programs[index].active?.[i]);
-    workoutPlanSnapshot = workoutExerciseSlots.map(ref=>{ const meta=getWorkoutExercise(ref); return { plannedName:meta?.name||'', plannedType:meta?.type||'strength', plannedGroup:fScoreExerciseGroup(meta?.name||'',meta?.type||'strength'), status:'pending' }; });
-    // [FIX] v1.3.10: a workout starts with zero sets. Previous results are
-    // still used by addSet() as autofill suggestions, but no set is created
-    // until the user explicitly presses “Добавить подход”.
-    workoutStartTime=Date.now();
-    startTotalTimer();
-    showScreen('workoutScreen');
-    document.getElementById('workoutTitle').textContent=data.programs[index].name;
-    renderExerciseStrip();
-    renderExercise();
-    saveDraft();
-    currentAchievements = {};
+function confirmStart(index) {
+    const i=Number(index);
+    if(!Number.isInteger(i) || !data?.programs?.[i]) return;
+    pendingProgramIndex=i;
+    const screen=document.getElementById('confirmScreen');
+    if(screen) screen.dataset.programIndex=String(i);
+    const title=document.getElementById('confirmTitle');
+    if(title) title.textContent=data.programs[i].name || 'Тренировка';
+    showScreen('confirmScreen');
 }
+function startConfirmed(event) {
+    if(event) event.preventDefault();
+    try{
+        const screen=document.getElementById('confirmScreen');
+        let index=Number.isInteger(pendingProgramIndex)?pendingProgramIndex:NaN;
+        if(!Number.isInteger(index) && screen?.dataset?.programIndex!=='') index=Number(screen.dataset.programIndex);
+        const program=data?.programs?.[index];
+        if(!Number.isInteger(index) || !program){
+            showToast('Не удалось определить тренировку. Вернитесь и выберите сплит ещё раз.');
+            return;
+        }
+        pendingProgramIndex=null;
+        currentProgram=index;
+        currentExerciseIndex=0;
+        workoutSets={};
+        const exercises=Array.isArray(program.exercises)?program.exercises:[];
+        const active=Array.isArray(program.active)?program.active:[];
+        workoutExerciseSlots=exercises.map((_,i)=>i).filter(i=>active[i]!==false);
+        workoutPlanSnapshot=workoutExerciseSlots.map(ref=>{
+            const name=exercises[ref]||'';
+            const type=Array.isArray(program.types)?(program.types[ref]||'strength'):'strength';
+            return {plannedName:name,plannedType:type,plannedGroup:fScoreExerciseGroup(name,type),status:'pending'};
+        });
+        workoutStartTime=Date.now();
+        currentAchievements={};
+        showScreen('workoutScreen');
+        const title=document.getElementById('workoutTitle');
+        if(title) title.textContent=program.name || 'Тренировка';
+        startTotalTimer();
+        renderExerciseStrip();
+        renderExercise();
+        saveDraft();
+    }catch(err){
+        console.error('Workout start failed',err);
+        showToast('Не удалось запустить тренировку. Ошибка сохранена в консоли.');
+    }
+}
+window.confirmStart=confirmStart;
+window.startConfirmed=startConfirmed;
 function startTotalTimer() { clearInterval(totalTimerInterval); updateTotalTimer(); totalTimerInterval=setInterval(updateTotalTimer,1000); }
 function updateTotalTimer() { if (!workoutStartTime) return; const elapsed=Math.floor((Date.now()-workoutStartTime)/1000); document.getElementById('totalTimer').textContent=`${String(Math.floor(elapsed/60)).padStart(2,'0')}:${String(elapsed%60).padStart(2,'0')}`; }
 function stopTotalTimer() { clearInterval(totalTimerInterval); workoutStartTime=null; clearTimeout(workoutRecommendationAutoCollapseTimer); workoutRecommendationAutoCollapseTimer=null; workoutRecommendationTimerKey=''; }
