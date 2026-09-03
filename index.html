@@ -6403,7 +6403,7 @@ body{
 </style>
 <style id="ftracker-v148-index-ui">
 
-/* ===== v1.4.9 INDEX UX CONSOLIDATION ===== */
+/* ===== v1.4.10 GOAL-SENSITIVE INDEX FIX ===== */
 .fscore-goal-picker{margin:0 0 12px;padding:14px 14px 13px;border:1px solid var(--border);border-radius:18px;background:var(--card-bg);}
 .fscore-goal-picker-label{font-size:17px;font-weight:850;margin:0 0 3px;}
 .fscore-goal-picker-hint{font-size:13px;line-height:1.35;color:var(--subtext);margin:0 0 10px;}
@@ -6442,7 +6442,7 @@ body{
 </style>
 
 <style id="fscore-v149-index-ux">
-/* v1.4.9 — единая логика экрана Индекса */
+/* v1.4.10 — цель реально влияет на расчёт Индекса */
 #fscoreAnalyticsContent{padding-bottom:24px}
 .fscore-v149-goals{margin-top:0!important}
 .fscore-v149-summary{padding:18px!important;margin:0 0 12px!important}
@@ -6639,7 +6639,7 @@ body{
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.9 от 03.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.10 от 03.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -8017,8 +8017,23 @@ function setFScoreGoal(goal){
     if(!['cut','gain','maintain'].includes(goal)) return;
     data.fscoreGoal=goal;
     try{localStorage.setItem('ftracker_fscore_goal',goal);}catch(e){}
+
+    // Цель должна менять не только подпись, но и реальные ориентиры КБЖУ,
+    // которые использует Nutrition Score. Обновляем текущий и недавние
+    // автоматически рассчитанные дни, не трогая вручную заданные лимиты.
     const foodDate=document.getElementById('foodDate')?.value;
-    if(foodDate) syncGoalFoodLimit(foodDate);
+    const recentDates=new Set();
+    if(foodDate) recentDates.add(foodDate);
+    (data.foodDiary?.entries||[]).forEach(e=>{
+        const date=String(e?.date||'');
+        const t=new Date(date+'T12:00:00').getTime();
+        if(date && Number.isFinite(t) && Date.now()-t<=7*86400000) recentDates.add(date);
+    });
+    recentDates.forEach(date=>{
+        const saved=data.foodDiary?.limits?.[date];
+        if(!saved || saved.autoGoal) syncGoalFoodLimit(date);
+    });
+
     saveData(false,'Изменение цели индекса системности и КБЖУ');
     renderFScoreAnalytics(); renderFScoreHomeWidget();
     if(typeof renderFoodDiary==='function' && foodDate) renderFoodDiary();
@@ -8174,32 +8189,71 @@ function fScoreTraining(recent,prev,history,goal){
     return {score:parts.reduce((a,p)=>a+p.score*p.weight,0)/tw,available:true,consistency,working,reps};
 }
 function fScoreNutrition(goal){
-    const entries=(data.foodDiary?.entries||[]).filter(e=>e&&e.date);if(!entries.length)return {score:null,available:false,days:0};
+    const entries=(data.foodDiary?.entries||[]).filter(e=>e&&e.date);
+    if(!entries.length)return {score:null,available:false,days:0};
+
     const now=Date.now(),by={};
     entries.forEach(e=>{
-        const t=new Date(e.date).getTime();if(!Number.isFinite(t)||now-t>7*86400000)return;
-        const k=localDateString(new Date(t));const x=by[k]||(by[k]={cal:0,protein:0});x.cal+=Number(e.calories)||0;x.protein+=Number(e.protein)||0;
+        const date=String(e.date||'');
+        const t=new Date(date+'T12:00:00').getTime();
+        if(!date||!Number.isFinite(t)||now-t>7*86400000||t-now>86400000)return;
+        const x=by[date]||(by[date]={cal:0,protein:0,fat:0,carbs:0});
+        x.cal+=Number(e.calories)||0;
+        x.protein+=Number(e.protein)||0;
+        x.fat+=Number(e.fat)||0;
+        x.carbs+=Number(e.carbs)||0;
     });
-    const days=Object.entries(by).map(([date,v])=>({date,...v}));if(!days.length)return {score:null,available:false,days:0};
-    const limits=data.foodDiary?.limits||{};
-    const calScores=[],proteinScores=[];
+
+    const days=Object.entries(by).map(([date,v])=>({date,...v}));
+    if(!days.length)return {score:null,available:false,days:0};
+
+    const calScores=[],proteinScores=[],macroScores=[];
     days.forEach(d=>{
-        const lim=limits[d.date]||{};
-        const target=Number(lim.calories)||0, proteinTarget=Number(lim.protein)||0;
-        if(target>0)calScores.push(fScoreClamp(100-Math.abs(d.cal-target)/target*100));
-        if(proteinTarget>0)proteinScores.push(fScoreClamp(d.protein/proteinTarget*100));
+        // ВАЖНО: ориентиры берутся относительно ТЕКУЩЕЙ выбранной цели.
+        // Поэтому один и тот же рацион может быть хорошим для набора
+        // и плохим для сушки — именно этого требует логика Index Engine.
+        const lim=getEffectiveFoodLimit(d.date)||{};
+        const targetCal=Number(lim.calories)||0;
+        const targetProtein=Number(lim.protein)||0;
+        const targetFat=Number(lim.fat)||0;
+        const targetCarbs=Number(lim.carbs)||0;
+
+        if(targetCal>0){
+            const ratio=d.cal/targetCal;
+            // Небольшой коридор вокруг цели не наказывается, дальше — плавное снижение.
+            const deviation=Math.max(0,Math.abs(ratio-1)-0.05);
+            calScores.push(fScoreClamp(100-deviation*220));
+        }
+        if(targetProtein>0){
+            // Белок: достижение цели даёт полный балл, недобор снижает сильнее,
+            // избыток не является бонусом.
+            proteinScores.push(fScoreClamp(Math.min(1,d.protein/targetProtein)*100));
+        }
+
+        const macro=[];
+        if(targetFat>0) macro.push(fScoreClamp(100-Math.max(0,Math.abs(d.fat/targetFat-1)-0.15)*120));
+        if(targetCarbs>0) macro.push(fScoreClamp(100-Math.max(0,Math.abs(d.carbs/targetCarbs-1)-0.20)*90));
+        if(macro.length) macroScores.push(macro.reduce((a,b)=>a+b,0)/macro.length);
     });
+
     const cal=calScores.length?calScores.reduce((a,b)=>a+b,0)/calScores.length:null;
     const protein=proteinScores.length?proteinScores.reduce((a,b)=>a+b,0)/proteinScores.length:null;
+    const macros=macroScores.length?macroScores.reduce((a,b)=>a+b,0)/macroScores.length:null;
     const confidence=Math.min(100,days.length/5*100);
-    const parts=[{score:cal,weight:55},{score:protein,weight:35},{score:confidence,weight:10}].filter(x=>Number.isFinite(x.score));
+
+    // Финальная структура блока питания: калории и белок — главные факторы,
+    // жиры/углеводы уточняют качество, подтверждённость данных повышает доверие.
+    const parts=[
+        {score:cal,weight:40},
+        {score:protein,weight:30},
+        {score:macros,weight:15},
+        {score:confidence,weight:15}
+    ].filter(x=>Number.isFinite(x.score));
+
     if(!parts.length)return {score:null,available:false,days:days.length,reason:'Нет целевых КБЖУ для последних дней'};
     const total=parts.reduce((a,p)=>a+p.weight,0);
     const score=parts.reduce((a,p)=>a+p.score*p.weight,0)/total;
-    // Цель не угадывается по калориям: пользователь задаёт лимиты сам. Поэтому
-    // питание оценивает соблюдение своего плана, а направление цели подтверждают
-    // тренд тела и тренировочный блок. Это исключает ложные "штрафы".
-    return {score,available:true,days:days.length,cal,protein,confidence,goal};
+    return {score,available:true,days:days.length,cal,protein,macros,confidence,goal};
 }
 function fScoreData(){
     const h=(data.history||[]).filter(e=>e&&e.date).slice().sort((a,b)=>new Date(a.date)-new Date(b.date));
