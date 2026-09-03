@@ -6542,7 +6542,7 @@ body{
         <div id="progressContent"></div>
     </div>
     <div id="fscoreAnalyticsScreen" class="hidden">
-        <div class="screen-header"><button onclick="goHome()" class="gray">← Назад</button><div class="title section-title"><span class="section-title-icon">◎</span><span>Индекс системности</span></div><span class="screen-header-spacer" aria-hidden="true"></span></div>
+        <div class="screen-header fscore-screen-header"><button onclick="goHome()" class="gray fscore-back-btn" aria-label="Назад">←</button><div class="title section-title fscore-title"><span class="section-title-icon">◎</span><span>Индекс системности</span></div><span class="screen-header-spacer" aria-hidden="true"></span></div>
         <div id="fscoreAnalyticsContent"></div>
     </div>
     <div id="bodyScreen" class="hidden">
@@ -6643,7 +6643,7 @@ body{
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.13 от 03.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.14 от 03.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -6784,7 +6784,7 @@ body{
 <div id="importConfirmModal" class="confirm-modal hidden" onclick="if(event.target === this) closeImportConfirm()">
     <div class="confirm-modal-content">
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Импортировать данные?</div>
-        <div style="color:var(--subtext); margin-bottom:16px;">Текущие данные не удаляются. История, замеры и питание добавляются без дублей; сохранённые сплиты и продукты при совпадении восстанавливаются из бэкапа, а прежние варианты сохраняются в журнале конфликтов.</div>
+        <div class="import-confirm-copy">Данные из бэкапа будут объединены с текущими. Ничего не удаляется.</div>
         <button onclick="confirmImport()">✅ Импортировать</button>
         <button class="gray" onclick="closeImportConfirm()">Отмена</button>
     </div>
@@ -16360,19 +16360,10 @@ const foodList=$('foodPresetList');if(foodList&&!foodList.dataset.v66Bound){food
     const el=document.querySelector('#importConfirmModal .confirm-modal-content > div[style*="color:var(--subtext)"]');
     if(!el) return;
     el.innerHTML =
-      '<b>Импорт безопасный: ничего не удаляется. Ваши сохранённые сплиты и продукты при совпадении восстанавливаются из бэкапа, а прежние варианты сохраняются в журнале конфликтов.</b><br><br>' +
-      `Сплиты: +${summary.programs} / обновлено ${summary.programsUpdated}<br>` +
-      `Тренировки: +${summary.history}<br>` +
-      `Замеры тела: +${summary.measurements}<br>` +
-      `Записи питания: +${summary.foodEntries}<br>` +
-      `Продукты: +${summary.products} / обновлено ${summary.productsUpdated}<br>` +
-      `Упражнения в справочнике: +${summary.exercises}` +
-      (summary.exerciseMerged ? ` (объединено: ${summary.exerciseMerged})` : '') +
-      `<br>Поля замеров: +${summary.fields}` +
-      (summary.fieldsMerged ? ` (сопоставлено: ${summary.fieldsMerged})` : '') +
-      `<br>Лимиты КБЖУ: +${summary.limits}` +
-      (summary.limitConflicts ? `, конфликтов сохранено: ${summary.limitConflicts}` : '') +
-      (summary.conflicts ? `<br>Защищённых конфликтов: ${summary.conflicts}` : '');
+      `<b>Готово к импорту</b><br>` +
+      `Тренировки: ${summary.history} · Замеры: ${summary.measurements} · Питание: ${summary.foodEntries}<br>` +
+      `Сплиты: ${summary.programs} · Продукты: ${summary.products} · Упражнения: ${summary.exercises}` +
+      (summary.conflicts ? `<br><span style="color:var(--subtext)">Конфликты будут сохранены отдельно.</span>` : '');
   }
 
   window.importData=function(event){
@@ -17229,5 +17220,20 @@ window.closeImportConfirm=function(){
 })();
 </script>
 
+
+<style id="v1414-ui-cleanup">
+/* v1.4.14 — cleaner index header, notifications and import UX */
+#fscoreAnalyticsScreen .fscore-screen-header{display:grid!important;grid-template-columns:44px minmax(0,1fr) 44px!important;align-items:center!important;gap:8px!important;}
+#fscoreAnalyticsScreen .fscore-back-btn{width:42px!important;min-width:42px!important;height:42px!important;margin:0!important;padding:0!important;border-radius:13px!important;font-size:26px!important;line-height:1!important;display:flex!important;align-items:center!important;justify-content:center!important;}
+#fscoreAnalyticsScreen .fscore-title{min-width:0!important;justify-content:center!important;text-align:center!important;font-size:18px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;}
+#fscoreAnalyticsScreen .section-title-icon{flex:0 0 auto!important;}
+#fscoreAnalyticsScreen .screen-header-spacer{width:42px!important;}
+.toast{top:auto!important;bottom:calc(env(safe-area-inset-bottom, 0px) + 18px)!important;left:50%!important;transform:translateX(-50%)!important;max-width:min(88vw,420px)!important;box-sizing:border-box!important;padding:11px 16px!important;border-radius:14px!important;text-align:center!important;line-height:1.35!important;box-shadow:0 10px 30px rgba(0,0,0,.28)!important;z-index:5000!important;animation:toastIn .22s ease-out!important;}
+@keyframes toastIn{from{opacity:0;transform:translate(-50%,12px)}to{opacity:1;transform:translate(-50%,0)}}
+#importConfirmModal .confirm-modal-content{max-width:min(92vw,430px)!important;padding:22px 18px!important;border-radius:22px!important;}
+#importConfirmModal .import-confirm-copy{color:var(--subtext)!important;margin:0 0 18px!important;line-height:1.45!important;text-align:left!important;}
+#importConfirmModal .confirm-modal-content>div[style*="color:var(--subtext)"]{font-size:14px!important;line-height:1.5!important;margin-bottom:16px!important;}
+#importConfirmModal button{min-height:48px!important;margin:8px 0 0!important;width:100%!important;}
+</style>
 </body>
 </html>
