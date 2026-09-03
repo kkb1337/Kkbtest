@@ -5773,6 +5773,10 @@ body{
 .progress-group-option{width:100%;min-height:46px;text-align:left;padding:10px 12px;border:0;border-radius:10px;background:transparent;color:var(--text);font-size:16px;font-weight:600;display:flex;justify-content:space-between;align-items:center;}
 .progress-group-option.active{background:rgba(52,199,89,.16);}
 .progress-group-option small{color:var(--subtext);font-weight:600;}
+
+/* v1.4.6 Index UX */
+.fscore-goal-picker{margin:0 0 12px;padding:14px;border:1px solid var(--border);border-radius:18px;background:var(--card-bg)}
+.fscore-goal-picker-label{font-weight:850;margin-bottom:2px}.fscore-goal-picker-hint{font-size:12px;color:var(--subtext);margin-top:8px}.fscore-goal-picker .analytics-period{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:10px 0 0}.fscore-goal-picker .analytics-period button{padding:10px 6px!important;min-height:48px!important;font-size:12px!important}.fscore-goal-picker .analytics-period button.active{background:var(--accent)!important;color:#111!important;border-color:var(--accent)!important;box-shadow:0 0 0 3px rgba(212,255,79,.25)!important;transform:none!important}
 </style>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -6556,7 +6560,7 @@ body{
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.5 от 03.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.6 от 03.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -8170,17 +8174,13 @@ function renderFScoreAnalytics(){
     const waist=x.body.waist?fScoreFmt(x.body.waist.change,'%'):'—';
     const tc=x.training.consistency;
     root.innerHTML=`
-      <div class="fscore-detail-card"><div class="fscore-detail-top"><div><div class="fscore-detail-score">${x.availableCount?x.score:'—'}</div><div class="fscore-detail-status ${x.statusLevel}"><span class="fscore-home-dot"></span>${escapeHtml(x.phase==='calibration'?'Собираем данные':x.status)}</div></div><div class="fscore-detail-goal">Цель<br><strong>${gn}</strong></div></div><div class="fscore-detail-note"><strong>${x.confidence}.</strong> ${escapeHtml(buildFScoreConclusion(x))}</div></div>
-      <div class="fscore-components">
-        ${comp('Замеры тела','Вес, талия и остальные доступные параметры оцениваются относительно выбранной цели.',x.body.score,`Вес: ${weight} · Талия: ${waist}. Отсутствующие параметры не штрафуют — веса доступных данных нормализуются.`)}
-        ${comp('Тренировки','Системность, прогресс рабочих весов и повторений.',x.training.score,tc.count?`${tc.count} тренировок за 30 дней. Оптимальная зона: 13–17. Частота: ${Math.round(tc.frequency)} / 100${tc.distribution?` · самая длинная пауза: ${Math.round(tc.distribution.maxGap)} дн.`:''}`:'Нет тренировок для оценки.')}
-        ${comp('Питание','Опциональный уточняющий блок: калории, белок и подтверждённость данных.',x.nutrition.score,x.nutrition.days?`${x.nutrition.days} заполненных дней за последние 7 дней. При отсутствии свежих данных блок автоматически исключается из формулы.`:'Нет свежих данных — блок не участвует в расчёте.')}
-      </div>
-      <details class="analytics-card" open><summary>Формула и данные текущего расчёта</summary><div class="analytics-inner"><div class="analytics-note"><strong>Итоговый индекс = взвешенное среднее только активных блоков.</strong><br><br><strong>Сейчас учитываются:</strong><br>• Замеры тела: ${x.body.available?'ДА':'нет данных'}${x.body.available?` (${metric(x.body.score)})`:''}<br>• Тренировки: ${x.training.available?'ДА':'нет данных'}${x.training.available?` (${metric(x.training.score)})`:''}<br>• Питание: ${x.nutrition.available?'ДА':'нет данных'}${x.nutrition.available?` (${metric(x.nutrition.score)})`:''}<br><br><strong>Базовая формула при наличии всех данных:</strong><br>INDEX = BODY × 40% + TRAINING × 30% + NUTRITION × 30%.<br><br>Если блока нет, он <strong>не получает 0 и не штрафует</strong> — его вес перераспределяется между доступными блоками до 100%.<br><br><strong>Что ещё применяется:</strong><br>1. Подтверждение выбросов.<br>2. EMA-сглаживание тренда.<br>3. Dead Zone для отсечения бытового шума.<br>4. Оценка скорости изменения относительно цели.<br>5. Разная интерпретация для Набора, Сушки и Поддержания.</div></div></details>
-      <details class="analytics-card"><summary>Из чего состоят блоки</summary><div class="analytics-inner"><div class="analytics-note"><strong>BODY_SCORE</strong><br>Набор: вес 30%, остальные замеры 40%, стабильность/качество тренда 15%, талия — контекст без штрафа.<br>Сушка: вес 25%, талия 35%, остальные замеры 25%, стабильность 15%.<br>Поддержание: вес 35%, талия 25%, остальные замеры 25%, стабильность 15%.<br><br><strong>TRAINING_SCORE</strong><br>Системность 40%, прогресс нагрузки 30%, повторения/объём 20%, стабильность 10%.<br><br><strong>NUTRITION_SCORE</strong><br>Калорийное соответствие 40%, белок 30%, подтверждённость данных 15%, стабильность 15%.</div></div></details>
-      <details class="analytics-card"><summary>Чего не хватает для более точного индекса</summary><div class="analytics-inner"><div class="analytics-note">${x.phase==='calibration'?'Сейчас идёт калибровка замеров: для предварительного тренда достаточно 2 замеров в разные даты с интервалом примерно от недели. Если вы делаете замеры 1–2 раза в месяц — это нормальный режим.':'Индекс уже рассчитывается.'}<br><br>${!x.body.available?'• Для анализа динамики тела добавьте второй замер в другую дату; ежедневные замеры не требуются.<br>':''}${!x.training.available?'• Добавьте завершённые тренировки для оценки системности и прогресса.<br>':''}${!x.nutrition.available?'• Питание необязательно, но свежие записи КБЖУ позволят точнее оценивать соответствие цели.<br>':''}${x.body.available&&x.training.available&&x.nutrition.available?'Все три блока доступны. Дальнейшая точность будет расти вместе с историей данных.':'Отсутствующие данные не снижают балл автоматически — они только уменьшают глубину анализа.'}</div></div></details>
-      <details class="analytics-card"><summary>Системность тренировок</summary><div class="analytics-inner"><div class="analytics-note"><strong>15 тренировок — ориентир, а не жёсткий минимум.</strong><br>Оптимальная зона: 13–17 тренировок за 30 дней. Оценка учитывает 60% частоты и 40% равномерности распределения. История предыдущего периода мягко сглаживает разовый плохой месяц, поэтому болезнь, плохое самочувствие или один пропуск не обрушивают индекс. Больше тренировок не даёт бесконечных бонусов.</div></div></details>
-      <details class="analytics-card"><summary>Цели и как их читать</summary><div class="analytics-inner"><div class="analytics-period"><button type="button" class="${x.goal==='cut'?'active':''}" onclick="setFScoreGoal('cut')">🔥 Сушка</button><button type="button" class="${x.goal==='gain'?'active':''}" onclick="setFScoreGoal('gain')">💪 Набор</button><button type="button" class="${x.goal==='maintain'?'active':''}" onclick="setFScoreGoal('maintain')">⚖️ Поддержание</button></div><div class="analytics-note"><strong>💪 Набор:</strong> оценивается контролируемый рост веса и положительная динамика остальных замеров.<br><strong>🔥 Сушка:</strong> оценивается контролируемое снижение веса с учётом талии и сохранения остальных параметров.<br><strong>⚖️ Поддержание:</strong> оценивается стабильность показателей.<br><br>Одни и те же данные могут дать разные оценки при разных целях — это нормальная работа движка.</div></div></details>`;
+      <section class="fscore-goal-picker"><div class="fscore-goal-picker-label">🎯 Выберите цель</div><div class="analytics-period"><button type="button" class="${x.goal==='gain'?'active':''}" onclick="setFScoreGoal('gain')">💪 Набор</button><button type="button" class="${x.goal==='cut'?'active':''}" onclick="setFScoreGoal('cut')">🔥 Сушка</button><button type="button" class="${x.goal==='maintain'?'active':''}" onclick="setFScoreGoal('maintain')">⚖️ Поддержание</button></div><div class="fscore-goal-picker-hint">Активная цель выделена. Она меняет логику оценки тела и питания.</div></section>
+      <div class="fscore-detail-card"><div class="fscore-detail-top"><div><div class="fscore-detail-score">${x.availableCount?x.score:'—'}</div><div class="fscore-detail-status ${x.statusLevel}"><span class="fscore-home-dot"></span>${escapeHtml(x.phase==='calibration'?'Собираем данные':x.status)}</div></div><div class="fscore-detail-goal">Текущая цель<br><strong>${gn}</strong></div></div><div class="fscore-detail-note"><strong>${x.confidence}.</strong> ${escapeHtml(buildFScoreConclusion(x))}</div></div>
+      <details class="analytics-card"><summary>📊 Что сейчас учитывается</summary><div class="analytics-inner"><div class="fscore-components">${comp('Замеры тела','Вес, талия и остальные доступные параметры.',x.body.score,`Вес: ${weight} · Талия: ${waist}. Отсутствующие параметры не штрафуют.`)}${comp('Тренировки','Системность и фактический прогресс.',x.training.score,tc.count?`${tc.count} тренировок за 30 дней · частота ${Math.round(tc.frequency)} / 100`:'Нет тренировок для оценки.')}${comp('Питание','Калории, белок и свежесть данных.',x.nutrition.score,x.nutrition.days?`${x.nutrition.days} дней за последние 7 дней.`:'Нет свежих данных — блок исключён.')}</div></div></details>
+      <details class="analytics-card"><summary>🧮 Формула индекса</summary><div class="analytics-inner"><div class="analytics-note"><strong>INDEX = BODY × 40% + TRAINING × 30% + NUTRITION × 30%</strong><br><br>Учитываются только активные блоки. Если данных нет, блок не получает 0 — его вес перераспределяется между доступными данными до 100%.<br><br>Дополнительно применяются: подтверждение выбросов, EMA-сглаживание, Dead Zone, скорость изменения и логика выбранной цели.</div></div></details>
+      <details class="analytics-card"><summary>🧩 Из чего состоят блоки</summary><div class="analytics-inner"><div class="analytics-note"><strong>BODY</strong>: цель-зависимая оценка веса, талии и остальных замеров.<br><strong>TRAINING</strong>: системность 40%, нагрузка 30%, повторения/объём 20%, стабильность 10%.<br><strong>NUTRITION</strong>: калории 40%, белок 30%, подтверждённость 15%, стабильность 15%.</div></div></details>
+      <details class="analytics-card"><summary>➕ Как повысить точность</summary><div class="analytics-inner"><div class="analytics-note">${x.phase==='calibration'?'Для предварительного тренда достаточно 2 замеров в разные даты. Замеры 1–2 раза в месяц — нормальный режим.':'Индекс уже работает; больше истории повышает надёжность.'}<br><br>${!x.body.available?'Добавьте второй замер для анализа динамики тела.<br>':''}${!x.training.available?'Добавьте завершённые тренировки.<br>':''}${!x.nutrition.available?'Питание необязательно, но делает оценку точнее.<br>':''}Нет данных ≠ плохой результат: отсутствующие блоки не штрафуют индекс.</div></div></details>
+      <details class="analytics-card"><summary>🏋️ Системность тренировок</summary><div class="analytics-inner"><div class="analytics-note"><strong>15 тренировок — ориентир.</strong> Оптимальная зона 13–17 за 30 дней. Один пропуск, плохое самочувствие или короткая пауза не обрушивают оценку; больше тренировок не даёт бесконечных бонусов.</div></div></details>`;
 }
 function showProgress() {
     showScreen('progressScreen');
@@ -10245,6 +10245,14 @@ function confirmExitWorkout() { lockModalScroll(); document.getElementById('conf
 function closeConfirmExit() { document.getElementById('confirmExitModal').classList.add('hidden'); }
 function exitWorkoutWithoutSaving() { closeConfirmExit(); stopRestTimer(); stopTotalTimer(); clearDraft(); workoutExerciseSlots=[]; workoutTransientExercises=[]; currentProgram = null; goHome(); }
 
+function isWorkoutSetFilledForResult(set,type='strength'){
+    if(!set || typeof set!=='object') return false;
+    if(type==='cardio') return Number(set.time)>0 || Number(set.durationSeconds)>0;
+    if(type==='bodyweight') return Number(set.reps)>0;
+    // Силовой подход считается результатом только при заполнении ОБОИХ полей.
+    return Number(set.weight)>0 && Number(set.reps)>0;
+}
+
 function finishWorkout() {
     try {
     // Validate the current draft before saving. Empty placeholder rows are not
@@ -10256,9 +10264,7 @@ function finishWorkout() {
             const type = meta?.type || 'strength';
             const sets = Array.isArray(workoutSets?.[ref]) ? workoutSets[ref].filter(set => {
                 if (!set || typeof set !== 'object') return false;
-                if (type === 'cardio') return Number(set.time) > 0 || Number(set.durationSeconds) > 0 || Number(set.intensity) > 0 || Number(set.reps) > 0;
-                if (type === 'bodyweight') return Number(set.reps) > 0;
-                return Number(set.weight) > 0 || Number(set.reps) > 0;
+                return isWorkoutSetFilledForResult(set,type);
             }) : [];
             if (sets.length) cleaned[ref] = sets;
         });
@@ -10291,18 +10297,20 @@ function finishWorkout() {
     localStorage.setItem('strong_last_results', JSON.stringify(lastResults));
     const durationSeconds = sessionDurationSeconds;
     const completedExerciseIndices=sessionIndices.filter(realIdx=>{
+        const type=getWorkoutExercise(realIdx)?.type||'strength';
         const sets=workoutSets[realIdx]||[];
-        return sets.some(s=>s && s.done);
+        return sets.some(s=>isWorkoutSetFilledForResult(s,type));
     });
     const strengthIndices=completedExerciseIndices.filter(realIdx=>getWorkoutExercise(realIdx)?.type==='strength');
     const completionTotal=strengthIndices.length*3;
-    const completionDone=strengthIndices.reduce((sum,realIdx)=>sum+Math.min(3,(workoutSets[realIdx]||[]).filter(s=>s.done).length),0);
+    const completionDone=strengthIndices.reduce((sum,realIdx)=>sum+Math.min(3,(workoutSets[realIdx]||[]).filter(s=>isWorkoutSetFilledForResult(s,'strength')).length),0);
     const completionPercent=completionTotal?Math.round(completionDone/completionTotal*100):0;
     const plannedSnapshot=Array.isArray(workoutPlanSnapshot)?workoutPlanSnapshot:[];
     const plannedExercises=plannedSnapshot.map((p,i)=>{
         const ref=workoutExerciseSlots[i];
         const meta=getWorkoutExercise(ref);
-        const doneSets=(workoutSets[ref]||[]).filter(s=>s&&s.done);
+        const actualType=meta?.type||'strength';
+        const doneSets=(workoutSets[ref]||[]).filter(s=>isWorkoutSetFilledForResult(s,actualType));
         let status=p?.status||'pending', score=0;
         if(status!=='replaced') status=doneSets.length?'completed':'skipped';
         if(status==='completed') score=100;
@@ -10320,7 +10328,8 @@ function finishWorkout() {
         exercises: completedExerciseIndices.map(realIdx => {
             const meta=getWorkoutExercise(realIdx);
             if(!meta) return null;
-            const doneSets=(workoutSets[realIdx] || []).filter(s=>s && s.done);
+            const type=meta.type||'strength';
+            const doneSets=(workoutSets[realIdx] || []).filter(s=>isWorkoutSetFilledForResult(s,type));
             return { name: meta.name, type:meta.type||'strength', group:fScoreExerciseGroup(meta.name,meta.type||'strength'), completedSets: doneSets.length, sets: doneSets.map(s => { const { done, ...clean } = s; return clean; }) };
         }).filter(x => x && x.sets.length)
     };
@@ -11263,11 +11272,16 @@ function getGoalNutritionProfile(goal=getFScoreGoal()){
     data.foodDiary.goalNutrition=data.foodDiary.goalNutrition||{auto:true,baseMaintenance:0};
     const cfg=data.foodDiary.goalNutrition;
     const weight=getLatestBodyWeight()||75;
+    // Авторасчёт — стартовая оценка, а не универсальная «магическая» цифра.
+    // Поддержание можно уточнить вручную после наблюдения за реальной динамикой.
     const maintenance=Number(cfg.baseMaintenance)>0?Number(cfg.baseMaintenance):Math.round(weight*33);
-    const factor=goal==='gain'?1.10:goal==='cut'?0.80:1.00;
-    const calories=Math.round((maintenance*factor)/10)*10;
+    let calories;
+    if(goal==='gain') calories=maintenance+Math.min(300,Math.max(150,Math.round(maintenance*0.08)));
+    else if(goal==='cut') calories=maintenance-Math.min(500,Math.max(250,Math.round(maintenance*0.15)));
+    else calories=maintenance;
+    calories=Math.round(calories/10)*10;
     const proteinPerKg=goal==='cut'?2.0:1.8;
-    const fatPerKg=goal==='cut'?0.7:goal==='gain'?0.9:0.8;
+    const fatPerKg=goal==='cut'?0.7:0.8;
     const protein=Math.round(weight*proteinPerKg);
     const fat=Math.max(40,Math.round(weight*fatPerKg));
     const carbs=Math.max(0,Math.round((calories-protein*4-fat*9)/4));
