@@ -1,5 +1,5 @@
 // [FIX] PWA cache version is unified with index.html and manifest.json.
-const CACHE_VERSION = 'ftracker-v1.3.17-food-duplicate-identity-search-flow-fix';
+const CACHE_VERSION = 'ftracker-v1.3.18-food-core-rebuild';
 const CACHE_NAME = CACHE_VERSION;
 const APP_SHELL = [
   './',
