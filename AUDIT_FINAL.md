@@ -15,3 +15,13 @@ Several historical override chains remain, including Progress Picker, Import/Bac
 - JavaScript syntax checked for every inline script block.
 - PWA version/cache identifiers synchronized.
 - Archive root contains application files directly (no nested project folders).
+
+## FTracker v1.4.0 — Index Engine v1
+- Added goal-aware Index Engine with BODY / TRAINING / optional NUTRITION blocks.
+- Missing blocks are excluded and remaining weights are normalized.
+- Added calibration / preliminary / full confidence phases.
+- Added measurement trend processing with confirmation-based anomaly filtering, EMA smoothing and dead zones.
+- Added goal-specific interpretation for gain, cut and maintenance.
+- Training consistency now treats 13–17 workouts per 30 days as the ideal zone; 15 is no longer a hard pass/fail target.
+- Consistency combines frequency, distribution and historical smoothing to tolerate isolated missed sessions.
+- Updated visible app version, manifest version/build and Service Worker cache version.
