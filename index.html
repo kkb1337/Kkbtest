@@ -15107,7 +15107,7 @@ new MutationObserver(()=>bindAutosize(document)).observe(document.body,{childLis
 'use strict';
 const $=(id)=>document.getElementById(id);
 
-/* ===== FOOD CORE v1.3.18 =====
+/* ===== FOOD CORE v1.3.19 =====
    One source of truth for product identity and catalog synchronization.
    No parallel duplicate rules for Catalog vs Today. */
 const foodCategoryFor=function(name,builtin=false){
@@ -15199,10 +15199,17 @@ function productFromHistoryEntry(entry){
   if(entry?.cal100!=null)return {name:String(entry.name).trim(),type:'per100',category:foodCategoryFor(entry.name,false),cal100:Number(entry.cal100)||0,protein100:Number(entry.protein100)||0,fat100:Number(entry.fat100)||0,carbs100:Number(entry.carbs100)||0};
   return {name:String(entry?.name||'').trim(),type:'dish',category:foodCategoryFor(entry?.name,false),calories:Number(entry?.calories)||0,protein:Number(entry?.protein)||0,fat:Number(entry?.fat)||0,carbs:Number(entry?.carbs)||0};
 }
+/* [FIX] One canonical identity owner: reordered words are the same product.
+   When an exact identity already exists in the catalog, Today must use that
+   catalog product instead of silently keeping a second spelling in the diary. */
+function findCanonicalCatalogProduct(name){
+  ensureFoodStores();
+  const identity=foodIdentityKey(name);
+  return data.productCatalog.find(p=>p?.name&&foodIdentityKey(p.name)===identity)||null;
+}
 function ensureCatalogProduct(product){
   ensureFoodStores();
-  const identity=foodIdentityKey(product.name);
-  const existing=data.productCatalog.find(p=>p?.name&&foodIdentityKey(p.name)===identity);
+  const existing=findCanonicalCatalogProduct(product.name);
   if(existing)return {product:existing,created:false};
   const clean={...product,name:String(product.name).trim().replace(/\s+/g,' ')};
   data.productCatalog.push(clean);
@@ -15264,18 +15271,27 @@ window.addFoodEntry=function(){
     if(calories===null||calories<=0||protein===null||fat===null||carbs===null){showToast('Введите корректные КБЖУ');return;}
     entry={date,name,portion,calories,protein,fat,carbs,cal100:null,protein100:null,fat100:null,carbs100:null};product={name,type:'dish',category:foodCategoryFor(name,false),calories,protein,fat,carbs};
   }
+  const exactCatalog=findCanonicalCatalogProduct(name);
+  /* [FIX] Exact identity in the catalog is not a new product. Reuse the
+     canonical catalog spelling everywhere so «Йогурт греческий» cannot become
+     a hidden second identity next to «Греческий йогурт». */
+  if(exactCatalog){
+    entry.name=String(exactCatalog.name).trim();
+    product={...exactCatalog};
+  }
   const commit=()=>{
     /* Atomic logical flow: catalog synchronization first, then today's entry. */
     const sync=ensureCatalogProduct(product);
     if(editingFoodEntryIndex!==null){data.foodDiary.entries[editingFoodEntryIndex]=entry;showToast('Запись обновлена');}
-    else {data.foodDiary.entries.push(entry);showToast(sync.created?'Продукт добавлен сегодня и в каталог':'Продукт добавлен сегодня');}
+    else {data.foodDiary.entries.push(entry);showToast(exactCatalog?'Использован существующий продукт из каталога':(sync.created?'Продукт добавлен сегодня и в каталог':'Продукт добавлен сегодня'));}
     saveData();closeAddFoodModal();editingFoodEntryIndex=null;renderFoodDiary();if(typeof renderCatalogList==='function')renderCatalogList();
   };
   if(editingFoodEntryIndex!==null){commit();return;}
   const dup=window.findFoodDuplicate(name);
   if(dup.exact.length){
-    /* Existing identity: do not create a second catalog product. If the only old
-       source was history, ensureCatalogProduct above repairs the missing catalog item. */
+    /* [FIX] Exact duplicate: never keep a second spelling. If a canonical
+       catalog item exists, it is reused; otherwise an old history-only item is
+       repaired into the catalog through ensureCatalogProduct. */
     commit();return;
   }
   if(dup.similar.length){window.showFoodDuplicateModal(name,dup.similar,false,commit);return;}
@@ -16737,7 +16753,7 @@ window.closeImportConfirm=function(){
 .catalog-section-items{padding:0 8px 8px}.catalog-section-items.hidden{display:none!important}
 .catalog-empty{color:var(--subtext);text-align:center;padding:18px 8px}
 
-/* [FIX v1.3.18] Suggestions are part of the form flow and never cover the type selector. */
+/* [FIX v1.3.19] Suggestions are part of the form flow and never cover the type selector. */
 #addFoodModal #foodPresetList{
   position:relative!important;
   top:auto!important;
