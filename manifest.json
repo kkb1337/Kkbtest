@@ -26,6 +26,6 @@
       "purpose": "any maskable"
     }
   ],
-  "_build": "ftracker-v1.4.10-goal-sensitive-index",
-  "version": "1.4.10"
+  "_build": "ftracker-v1.4.11-index-explanation",
+  "version": "1.4.11"
 }

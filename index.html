@@ -6403,7 +6403,11 @@ body{
 </style>
 <style id="ftracker-v148-index-ui">
 
-/* ===== v1.4.10 GOAL-SENSITIVE INDEX FIX ===== */
+
+/* ===== v1.4.11 INDEX EXPLANATION ===== */
+.fscore-explanation-card{padding:16px;margin-top:12px}.fscore-explanation-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}.fscore-score-change{font-size:12px;font-weight:700;padding:5px 8px;border-radius:999px;background:rgba(127,127,127,.12)}.fscore-score-change.up{color:#2f9e5f}.fscore-score-change.down{color:#d94b4b}.fscore-score-change.neutral{color:var(--text-secondary,#777)}.fscore-explanation-list{display:flex;flex-direction:column;gap:8px;margin-top:12px}.fscore-explanation-row{display:flex;gap:10px;align-items:flex-start;padding:10px;border-radius:12px;background:rgba(127,127,127,.07)}.fscore-explanation-row>span{line-height:1.25}.fscore-explanation-row div{min-width:0}.fscore-explanation-row b{display:block;font-size:14px;margin-bottom:3px}.fscore-explanation-row small{display:block;font-size:12px;line-height:1.35;color:var(--text-secondary,#777)}
+
+/* ===== v1.4.11 INDEX EXPLANATION ===== */
 .fscore-goal-picker{margin:0 0 12px;padding:14px 14px 13px;border:1px solid var(--border);border-radius:18px;background:var(--card-bg);}
 .fscore-goal-picker-label{font-size:17px;font-weight:850;margin:0 0 3px;}
 .fscore-goal-picker-hint{font-size:13px;line-height:1.35;color:var(--subtext);margin:0 0 10px;}
@@ -6442,7 +6446,7 @@ body{
 </style>
 
 <style id="fscore-v149-index-ux">
-/* v1.4.10 — цель реально влияет на расчёт Индекса */
+/* v1.4.11 — индекс объясняет причины текущей оценки и изменения */
 #fscoreAnalyticsContent{padding-bottom:24px}
 .fscore-v149-goals{margin-top:0!important}
 .fscore-v149-summary{padding:18px!important;margin:0 0 12px!important}
@@ -6639,7 +6643,7 @@ body{
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.10 от 03.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.11 от 03.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -8270,6 +8274,48 @@ function fScoreData(){
     const status=!blocks.length?'Пока нет данных':(phase==='calibration'?'Предварительный анализ':statusLevel==='good'?'Отличная динамика':statusLevel==='attention'?'Есть куда расти':'Ниже желаемого');
     return {score,status,statusLevel,goal,history:h,measures:data.measurements||[],recent,prev,body,training,nutrition,blocks,availableCount:blocks.length,phase,confidence};
 }
+
+function fScoreBuildExplanation(x){
+    const reasons=[];
+    const goalName={gain:'набора',cut:'сушки',maintain:'поддержания'}[x.goal]||'поддержания';
+    const add=(kind,title,text)=>reasons.push({kind,title,text});
+    const w=x.body?.weight, wa=x.body?.waist;
+    if(w){
+        const speed=w.speed;
+        if(x.goal==='gain') add(speed>0?'good':'bad','Вес',speed>0?`Тренд веса растёт (${fScoreFmt(speed,'%/нед')}) — направление соответствует цели.`:'Тренд веса не растёт — для набора это снижает оценку тела.');
+        else if(x.goal==='cut') add(speed<0?'good':'bad','Вес',speed<0?`Тренд веса снижается (${fScoreFmt(speed,'%/нед')}) — направление соответствует сушке.`:'Тренд веса не снижается — для сушки это ухудшает соответствие цели.');
+        else add(Math.abs(speed)<=.3?'good':'attention','Вес',Math.abs(speed)<=.3?'Вес остаётся в зоне стабильности — это соответствует поддержанию.':`Вес меняется на ${fScoreFmt(speed,'%/нед')}, что выходит за комфортную зону поддержания.`);
+    }
+    if(wa){
+        if(x.goal==='cut') add(wa.change<0?'good':wa.change===0?'attention':'bad','Талия',wa.change<0?'Талия уменьшается вместе с динамикой сушки — это подтверждает качество снижения веса.':wa.change===0?'Талия пока стабильна — снижение веса ещё не подтверждено изменением объёма.':'Талия растёт — это противоречит цели сушки.');
+        else if(x.goal==='maintain') add(Math.abs(wa.speed)<=.3?'good':'attention','Талия',Math.abs(wa.speed)<=.3?'Талия стабильна — это соответствует поддержанию.':'Есть заметная динамика талии, поэтому стабильность тела оценивается ниже.');
+        else add('neutral','Талия','На наборе талия используется как контекст и сама по себе не штрафует индекс.');
+    }
+    if(x.body?.other!=null) add(x.body.other>=80?'good':x.body.other>=60?'attention':'bad','Другие замеры',x.body.other>=80?'Остальные доступные объёмы поддерживают выбранную цель.':x.body.other>=60?'Динамика остальных замеров смешанная или умеренная.':'Остальные доступные замеры пока слабо подтверждают выбранную цель.');
+    if(x.training?.available){
+        const c=x.training.consistency;
+        add(c.score>=80?'good':c.score>=60?'attention':'bad','Тренировки',c.score>=80?'Регулярность тренировок поддерживает индекс.':c.score>=60?'Системность тренировок есть, но не максимальная — отдельные пропуски допускаются.':'Недостаточно устойчивой тренировочной системности.');
+    } else add('muted','Тренировки','Недостаточно завершённых тренировок с данными — блок пока не участвует в расчёте.');
+    if(x.nutrition?.available){
+        const n=x.nutrition;
+        const avg=Math.round(n.score);
+        add(avg>=80?'good':avg>=60?'attention':'bad','Питание',avg>=80?`КБЖУ в целом соответствует цели ${goalName} и поддерживает итоговый индекс.`:avg>=60?`Питание частично соответствует цели ${goalName}; этот блок ограничивает итоговый результат.`:`Текущие калории или КБЖУ заметно расходятся с целью ${goalName}.`);
+    } else add('muted','Питание','Питание опционально: без свежих записей оно исключено из формулы и не считается штрафом.');
+    if(x.phase==='calibration') add('attention','Точность','История тела ещё короткая, поэтому результат предварительный и будет уточняться следующими замерами.');
+    return reasons.slice(0,6);
+}
+function fScoreTrackScoreChange(x){
+    const key='ftracker_fscore_snapshot_'+x.goal;
+    let prev=null;
+    try{prev=JSON.parse(localStorage.getItem(key)||'null');}catch(e){}
+    const now=Date.now();
+    const current={score:x.score,at:now};
+    try{localStorage.setItem(key,JSON.stringify(current));}catch(e){}
+    if(!prev||!Number.isFinite(prev.score)||prev.score===x.score)return null;
+    const delta=x.score-prev.score;
+    return {delta,previous:prev.score};
+}
+
 function fScoreFmt(v,u){return v==null?'—':(v>0?'+':'')+v.toFixed(1)+u;}
 function renderFScoreHomeWidget(){
     const el=document.getElementById('fscoreHomeWidget'); if(!el)return;
@@ -8347,6 +8393,8 @@ function renderFScoreAnalytics(){
       : 'Опционально — отсутствие данных не снижает индекс';
     const bodyRows=bodyItems.map(i=>`<div class="fscore-status-row"><span class="fscore-status-dot ${i.has?'ok':'muted'}"></span><span>${escapeHtml(i.label)}</span><b>${i.has?'Учитывается':'Нет данных'}</b></div>`).join('');
     const nextStep=getFScoreNextStep(x,bodyItems);
+    const explanation=fScoreBuildExplanation(x);
+    const scoreChange=fScoreTrackScoreChange(x);
     const summaryText=x.phase==='calibration'
       ? 'Индекс уже использует доступные данные. История тела подключится к полноценной оценке по мере появления следующих замеров.'
       : buildFScoreConclusion(x);
@@ -8375,8 +8423,14 @@ function renderFScoreAnalytics(){
         <div class="fscore-v149-confidence">Точность анализа: <b>${escapeHtml(x.confidence)}</b></div>
       </section>
 
+      <section class="analytics-card fscore-v149-card fscore-explanation-card">
+        <div class="fscore-explanation-head"><b>🧠 Почему такой индекс</b>${scoreChange?`<span class="fscore-score-change ${scoreChange.delta>0?'up':'down'}">${scoreChange.delta>0?'↑':'↓'} ${Math.abs(scoreChange.delta)} с прошлого расчёта</span>`:'<span class="fscore-score-change neutral">Текущий расчёт</span>'}</div>
+        <p class="analytics-note">Это не просто список данных: ниже показано, какие факторы сейчас повышают, ограничивают или пока не участвуют в индексе.</p>
+        <div class="fscore-explanation-list">${explanation.map(r=>`<div class="fscore-explanation-row ${r.kind}"><span>${r.kind==='good'?'🟢':r.kind==='bad'?'🔴':r.kind==='attention'?'🟡':r.kind==='muted'?'⚪':'🔵'}</span><div><b>${escapeHtml(r.title)}</b><small>${escapeHtml(r.text)}</small></div></div>`).join('')}</div>
+      </section>
+
       <details class="analytics-card fscore-v149-card" open>
-        <summary>🔎 Почему такой индекс</summary>
+        <summary>🔎 Детали расчёта</summary>
         <div class="analytics-inner fscore-v149-inner">
           <button type="button" class="fscore-impact-row" onclick="this.nextElementSibling.open=!this.nextElementSibling.open">
             <span class="fscore-impact-icon">📏</span><span class="fscore-impact-copy"><b>Тело</b><small>${escapeHtml(bodyText)}</small></span><span class="fscore-impact-state ${bodyUsed.length?'attention':'muted'}">${bodyStatus}</span>

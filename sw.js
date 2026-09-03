@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'ftracker-v1.4.10-goal-sensitive-index';
+const CACHE_VERSION = 'ftracker-v1.4.11-index-explanation';
 const CACHE_NAME = CACHE_VERSION;
 const APP_SHELL = [
   './',
