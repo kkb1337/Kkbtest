@@ -6643,7 +6643,7 @@ body{
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.11 от 03.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.12 от 03.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -8019,28 +8019,45 @@ function getFScoreGoal(){
 }
 function setFScoreGoal(goal){
     if(!['cut','gain','maintain'].includes(goal)) return;
+    const previousGoal=getFScoreGoal();
     data.fscoreGoal=goal;
     try{localStorage.setItem('ftracker_fscore_goal',goal);}catch(e){}
 
-    // Цель должна менять не только подпись, но и реальные ориентиры КБЖУ,
-    // которые использует Nutrition Score. Обновляем текущий и недавние
-    // автоматически рассчитанные дни, не трогая вручную заданные лимиты.
-    const foodDate=document.getElementById('foodDate')?.value;
-    const recentDates=new Set();
-    if(foodDate) recentDates.add(foodDate);
-    (data.foodDiary?.entries||[]).forEach(e=>{
+    // КРИТИЧНО: цель и дневные лимиты КБЖУ — одна система.
+    // При смене цели все автоматически созданные лимиты должны сразу
+    // пересчитаться. Старые значения 2500/БЖУ не могут оставаться от
+    // предыдущей цели. Ручные лимиты (autoGoal:false) сохраняем как осознанный override.
+    data.foodDiary=data.foodDiary||{limits:{},entries:[]};
+    data.foodDiary.limits=data.foodDiary.limits||{};
+    const foodDate=document.getElementById('foodDate')?.value || localDateString(new Date());
+    const dates=new Set([foodDate,localDateString(new Date())]);
+    Object.entries(data.foodDiary.limits).forEach(([date,limit])=>{
+        if(!limit || limit.autoGoal || limit.goal===previousGoal || limit.goal!==goal && limit.autoGoal!==false) dates.add(date);
+    });
+    // Также создаём новый автолимит для дней с записями за последние 30 дней,
+    // если пользователь не задавал их вручную.
+    (data.foodDiary.entries||[]).forEach(e=>{
         const date=String(e?.date||'');
         const t=new Date(date+'T12:00:00').getTime();
-        if(date && Number.isFinite(t) && Date.now()-t<=7*86400000) recentDates.add(date);
+        if(date && Number.isFinite(t) && Date.now()-t<=30*86400000){
+            const saved=data.foodDiary.limits[date];
+            if(!saved || saved.autoGoal) dates.add(date);
+        }
     });
-    recentDates.forEach(date=>{
-        const saved=data.foodDiary?.limits?.[date];
-        if(!saved || saved.autoGoal) syncGoalFoodLimit(date);
+    dates.forEach(date=>{
+        const saved=data.foodDiary.limits[date];
+        if(!saved || saved.autoGoal){ syncGoalFoodLimit(date); }
     });
 
-    saveData(false,'Изменение цели индекса системности и КБЖУ');
+    saveData(false,'Смена цели: автоматически пересчитаны лимиты КБЖУ');
     renderFScoreAnalytics(); renderFScoreHomeWidget();
-    if(typeof renderFoodDiary==='function' && foodDate) renderFoodDiary();
+    if(typeof renderFoodDiary==='function'){
+        const active=document.getElementById('foodDate');
+        if(active && !active.value) active.value=foodDate;
+        renderFoodDiary();
+        if(typeof renderFoodHistory==='function') renderFoodHistory();
+    }
+    showToast(`Цель «${getGoalNutritionLabel(goal)}»: лимиты КБЖУ пересчитаны`);
 }
 function fScoreClamp(v,min=0,max=100){return Math.max(min,Math.min(max,v));}
 function fScoreRecent(history,daysStart,daysEnd=0){
@@ -11577,10 +11594,12 @@ function getGoalNutritionProfile(goal=getFScoreGoal()){
 }
 function getEffectiveFoodLimit(date){
     const saved=(data.foodDiary.limits||{})[date];
-    if(saved && !saved.autoGoal) return saved;
     const cfg=data.foodDiary.goalNutrition||{};
+    // Ручной лимит — единственное исключение. Все autoGoal-лимиты всегда
+    // вычисляются заново из текущей выбранной цели.
+    if(saved && saved.autoGoal===false) return saved;
     if(cfg.auto===false) return saved||{};
-    return {...getGoalNutritionProfile(),autoGoal:true,goal:getFScoreGoal()};
+    return {...getGoalNutritionProfile(getFScoreGoal()),autoGoal:true,goal:getFScoreGoal()};
 }
 function syncGoalFoodLimit(date){
     const cfg=data.foodDiary.goalNutrition||{};
