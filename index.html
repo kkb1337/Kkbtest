@@ -5774,7 +5774,7 @@ body{
 .progress-group-option.active{background:rgba(52,199,89,.16);}
 .progress-group-option small{color:var(--subtext);font-weight:600;}
 
-/* v1.4.7 Index UX */
+/* v1.4.8 Index UX */
 .fscore-goal-picker{margin:0 0 12px;padding:14px;border:1px solid var(--border);border-radius:18px;background:var(--card-bg)}
 .fscore-goal-picker-label{font-weight:850;margin-bottom:2px}.fscore-goal-picker-hint{font-size:12px;color:var(--subtext);margin-top:8px}.fscore-goal-picker .analytics-period{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:10px 0 0}.fscore-goal-picker .analytics-period button{padding:10px 6px!important;min-height:48px!important;font-size:12px!important}.fscore-goal-picker .analytics-period button.active{background:var(--accent)!important;color:#111!important;border-color:var(--accent)!important;box-shadow:0 0 0 3px rgba(212,255,79,.25)!important;transform:none!important}
 </style>
@@ -6401,6 +6401,45 @@ body{
 #programList button,#confirmScreen button{position:relative!important;z-index:20!important;pointer-events:auto!important;touch-action:manipulation!important}
 #programList{position:relative!important;z-index:10!important;pointer-events:auto!important}
 </style>
+<style id="ftracker-v148-index-ui">
+
+/* ===== v1.4.8 INDEX UI HOTFIX ===== */
+.fscore-goal-picker{margin:0 0 12px;padding:14px 14px 13px;border:1px solid var(--border);border-radius:18px;background:var(--card-bg);}
+.fscore-goal-picker-label{font-size:17px;font-weight:850;margin:0 0 3px;}
+.fscore-goal-picker-hint{font-size:13px;line-height:1.35;color:var(--subtext);margin:0 0 10px;}
+.fscore-goal-picker .analytics-period{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:0;}
+.fscore-goal-picker .analytics-period button{min-height:48px!important;padding:8px 5px!important;border-radius:12px!important;font-size:12px!important;font-weight:800!important;line-height:1.15!important;background:rgba(255,255,255,.035)!important;color:var(--subtext)!important;border:1px solid var(--border)!important;box-shadow:none!important;transform:none!important;}
+.fscore-goal-picker .analytics-period button.active{background:rgba(103,201,112,.16)!important;color:#9be39d!important;border-color:rgba(103,201,112,.72)!important;box-shadow:0 0 0 2px rgba(103,201,112,.12)!important;}
+.fscore-summary-card{padding:17px!important;margin-bottom:12px!important;}
+.fscore-detail-kicker{font-size:14px;font-weight:800;color:var(--subtext);margin-bottom:2px;}
+.fscore-detail-score{font-size:48px!important;line-height:1!important;letter-spacing:-1.5px;}
+.fscore-detail-score span{font-size:17px;letter-spacing:0;color:var(--subtext);margin-left:4px;font-weight:700;}
+.fscore-detail-status{display:inline-flex!important;margin-top:7px!important;padding:5px 9px;border-radius:999px;font-size:13px!important;font-weight:800;background:rgba(255,255,255,.06);}
+.fscore-detail-goal{align-self:flex-start;text-align:right;font-size:12px!important;color:var(--subtext)!important;line-height:1.3!important;}
+.fscore-detail-goal strong{display:block;font-size:17px;color:var(--text);margin-top:3px;}
+.fscore-detail-note{margin-top:13px!important;font-size:14px!important;line-height:1.5!important;color:var(--subtext)!important;}
+.analytics-card{overflow:hidden;}
+.analytics-card summary{font-size:18px!important;font-weight:850!important;line-height:1.25!important;padding:17px 18px!important;}
+.analytics-inner{padding:0 16px 16px!important;}
+.fscore-components{display:grid;gap:9px;}
+.fscore-component{padding:13px 14px!important;border-radius:15px!important;background:rgba(255,255,255,.035)!important;border:1px solid var(--border)!important;}
+.fscore-component-head{display:flex!important;align-items:flex-start!important;justify-content:space-between!important;gap:10px!important;}
+.fscore-component h3{font-size:16px!important;margin:0 0 4px!important;line-height:1.2!important;}
+.fscore-mini-status{display:block;font-size:12px!important;font-weight:750!important;color:var(--subtext);white-space:normal!important;}
+.fscore-component-value{font-size:22px!important;white-space:nowrap;line-height:1.15!important;}
+.fscore-component-note{margin:9px 0 0!important;font-size:13px!important;line-height:1.42!important;color:var(--subtext)!important;}
+.fscore-data-list{display:grid;gap:7px;margin:12px 0!important;}
+.fscore-data-row{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;padding:11px 12px!important;border-radius:12px!important;background:rgba(255,255,255,.035)!important;border:1px solid var(--border)!important;font-size:15px!important;line-height:1.2!important;}
+.fscore-data-row span{min-width:0;}
+.fscore-data-row b{flex:0 0 auto;font-size:12px!important;opacity:.9!important;white-space:nowrap!important;}
+.fscore-data-row.has-data b{color:#8fda93;}.fscore-data-row.no-data b{color:var(--subtext);}
+.index-formula-steps{display:grid;gap:10px;}
+.index-formula-steps>div{display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:start;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:14px;line-height:1.42;color:var(--subtext);}
+.index-formula-steps>div:last-child{border-bottom:0;}
+.index-formula-steps b{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:rgba(103,201,112,.16);color:#9be39d;font-size:13px;}
+@media(max-width:420px){.fscore-goal-picker .analytics-period button{font-size:11px!important}.fscore-detail-score{font-size:44px!important}.analytics-card summary{font-size:17px!important}.fscore-component-value{font-size:20px!important}}
+
+</style>
 </head>
 <body>
 <div class="safe-area"><div class="container" id="app">
@@ -6560,7 +6599,7 @@ body{
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.7 от 03.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.8 от 03.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -8145,7 +8184,7 @@ function renderFScoreHomeWidget(){
         el.className=`fscore-widget fscore-widget-${x.statusLevel}`;
         const goalName={cut:'Сушка',gain:'Набор',maintain:'Поддержание'}[x.goal]||'Поддержание';
         const displayStatus=x.phase==='calibration'?'Собираем данные':x.status;
-        el.innerHTML=`<span class="fscore-home-top"><span><span class="fscore-home-title">Индекс динамики</span><span class="fscore-home-goal">Цель: ${goalName}</span></span><span class="fscore-home-action">Подробнее <span aria-hidden="true">›</span></span></span><span class="fscore-home-middle"><span class="fscore-home-number-wrap"><span class="fscore-home-number">${x.availableCount?x.score:'—'}</span><span class="fscore-home-scale">/ 100</span></span><span class="fscore-home-status"><span class="fscore-home-dot" aria-hidden="true"></span><span class="fscore-home-status-text">${escapeHtml(displayStatus)}</span></span></span><span class="fscore-home-progress" aria-hidden="true"><span class="fscore-home-progress-fill" style="width:${x.availableCount?Math.max(0,Math.min(100,x.score)):0}%"></span></span><span class="fscore-home-hint">${x.phase==='calibration'?'Индекс уже использует доступные данные. Добавляйте замеры в разные даты — анализ динамики тела станет точнее.':x.availableCount?'Индекс рассчитан по данным, которые уже доступны':'Добавьте замеры, тренировки или питание для начала анализа'}</span>`;
+        el.innerHTML=`<span class="fscore-home-top"><span><span class="fscore-home-title">Индекс динамики</span><span class="fscore-home-goal">Цель: ${goalName}</span></span><span class="fscore-home-action">Подробнее <span aria-hidden="true">›</span></span></span><span class="fscore-home-middle"><span class="fscore-home-number-wrap"><span class="fscore-home-number">${x.availableCount?x.score:'—'}</span><span class="fscore-home-scale">/ 100</span></span><span class="fscore-home-status"><span class="fscore-home-dot" aria-hidden="true"></span><span class="fscore-home-status-text">${escapeHtml(displayStatus)}</span></span></span><span class="fscore-home-progress" aria-hidden="true"><span class="fscore-home-progress-fill" style="width:${x.availableCount?Math.max(0,Math.min(100,x.score)):0}%"></span></span><span class="fscore-home-hint">${x.phase==='calibration'?'Сейчас считаются тренировки и питание. История замеров подключит полноценный анализ тела.':x.availableCount?'Результат рассчитан только по доступным данным.':'Добавьте любые данные для начала анализа'}</span>`;
     }catch(err){
         console.error('FScore render failed',err);
         el.className='fscore-widget fscore-widget-attention';
@@ -8168,25 +8207,39 @@ function buildFScoreConclusion(x){
 function renderFScoreAnalytics(){
     const root=document.getElementById('fscoreAnalyticsContent');if(!root)return;
     const x=fScoreData(),gn={cut:'Сушка',gain:'Набор',maintain:'Поддержание'}[x.goal]||'Поддержание';
-    const metric=v=>Number.isFinite(v)?`${Math.round(v)} / 100`:'История собирается';
+    const metric=v=>Number.isFinite(v)?`${Math.round(v)} / 100`:'Собираем историю';
     const fields=getMeasurementFields();
     const measurements=x.measures||[];
     const latest=measurements.slice().sort((a,b)=>new Date(b.date)-new Date(a.date))[0]||{};
-    const bodyItems=fields.map(f=>({label:f.label,key:f.key,has:Number(latest[f.key])>0}));
-    const used=bodyItems.filter(i=>i.has), missing=bodyItems.filter(i=>!i.has);
-    const bodySummary=used.length?`Используемые показатели: ${used.map(i=>i.label).join(' · ')}.`:'Пока нет заполненных показателей тела.';
-    const bodyHint=used.length<2?'Для анализа динамики нужен хотя бы ещё один замер в другую дату.':`Доступно показателей: ${used.length}. История помогает точнее оценивать динамику.`;
-    const bodyRows=bodyItems.map(i=>`<div class="fscore-data-row"><span>${i.has?'🟢':'⚪'} ${escapeHtml(i.label)}</span><b>${i.has?'Есть данные':'Нет данных'}</b></div>`).join('');
+    const bodyItems=fields.map(f=>({label:f.label,has:Number(latest[f.key])>0}));
+    const used=bodyItems.filter(i=>i.has);
+    const bodyHint=used.length<2?'Добавьте следующий замер в другую дату — даже 1–2 замера в месяц подходят для построения истории.':`Доступно показателей: ${used.length}. Чем длиннее история, тем точнее анализ.`;
+    const bodyRows=bodyItems.map(i=>`<div class="fscore-data-row ${i.has?'has-data':'no-data'}"><span>${escapeHtml(i.label)}</span><b>${i.has?'Есть данные':'Нет данных'}</b></div>`).join('');
     const tc=x.training.consistency;
-    const comp=(icon,title,status,desc,value,note)=>`<section class="fscore-component"><div class="fscore-component-head"><div><h3>${icon} ${title}</h3><p>${desc}</p></div><span class="fscore-mini-status">${status}</span></div><div class="fscore-component-value">${metric(value)}</div><div class="fscore-component-note">${note}</div></section>`;
+    const component=(icon,title,status,value,note,cls='')=>`<section class="fscore-component ${cls}"><div class="fscore-component-head"><div><h3>${icon} ${title}</h3><span class="fscore-mini-status">${status}</span></div><strong class="fscore-component-value">${metric(value)}</strong></div><p class="fscore-component-note">${note}</p></section>`;
     root.innerHTML=`
-      <section class="fscore-goal-picker"><div class="fscore-goal-picker-label">🎯 Цель</div><div class="analytics-period"><button type="button" class="${x.goal==='gain'?'active':''}" onclick="setFScoreGoal('gain')">💪 Набор</button><button type="button" class="${x.goal==='cut'?'active':''}" onclick="setFScoreGoal('cut')">🔥 Сушка</button><button type="button" class="${x.goal==='maintain'?'active':''}" onclick="setFScoreGoal('maintain')">⚖️ Поддержание</button></div></section>
-      <div class="fscore-detail-card"><div class="fscore-detail-top"><div><div class="fscore-detail-score">${x.availableCount?x.score:'—'}</div><div class="fscore-detail-status ${x.statusLevel}"><span class="fscore-home-dot"></span>${escapeHtml(x.phase==='calibration'?'Собираем историю':x.status)}</div></div><div class="fscore-detail-goal">Текущая цель<br><strong>${gn}</strong></div></div><div class="fscore-detail-note"><strong>${x.confidence}.</strong> ${x.phase==='calibration'?'Индекс уже использует тренировки и питание, если они есть. Замеры тела подключатся к полноценному анализу по мере появления истории.':escapeHtml(buildFScoreConclusion(x))}</div></div>
-      <details class="analytics-card" open><summary>📊 Что сейчас учитывается</summary><div class="analytics-inner"><div class="fscore-components">${comp('📏','Замеры тела',used.length?'История собирается':'Нет данных',bodySummary,x.body.score,bodyHint)}${comp('🏋️','Тренировки',x.training.available?'Используются':'Нет данных','Системность и фактический прогресс.',x.training.score,tc.count?`${tc.count} тренировок за 30 дней.`:'Добавьте завершённую тренировку для анализа.')}${comp('🍽️','Питание',x.nutrition.available?'Используется':'Нет данных','Калории и белок относительно текущей цели.',x.nutrition.score,x.nutrition.days?`${x.nutrition.days} дней с данными за последние 7 дней.`:'Питание необязательно и не снижает индекс при отсутствии.')}</div></div></details>
-      <details class="analytics-card"><summary>📏 Какие замеры используются</summary><div class="analytics-inner"><div class="analytics-note"><strong>Индекс анализирует все параметры, которые вы ведёте.</strong><br>Нет необходимости заполнять каждый показатель — отсутствующие параметры не создают штраф.</div><div class="fscore-data-list">${bodyRows}</div><div class="analytics-note">${bodyHint}</div></div></details>
-      <details class="analytics-card"><summary>🧮 Как считается индекс</summary><div class="analytics-inner"><div class="analytics-note"><strong>1. Система берёт только доступные данные.</strong><br>📏 Тело · 🏋️ Тренировки · 🍽️ Питание<br><br><strong>2. Недостающие блоки исключаются.</strong> Их отсутствие не считается плохим результатом.<br><br><strong>3. Доступные блоки объединяются в общий индекс 0–100.</strong> Выбранная цель меняет правила оценки.</div></div></details>
-      <details class="analytics-card"><summary>➕ Как повысить точность</summary><div class="analytics-inner"><div class="analytics-note">${x.phase==='calibration'?'Добавьте следующий замер в другую дату — даже режим 1–2 замера в месяц подходит для постепенного построения истории.':'Продолжайте вести историю: новые замеры, тренировки и питание делают вывод точнее.'}<br><br>Не нужно заполнять всё сразу — индекс работает с тем, что уже есть.</div></div></details>
-      <details class="analytics-card"><summary>🏋️ О системности тренировок</summary><div class="analytics-inner"><div class="analytics-note"><strong>15 тренировок — ориентир, а не жёсткое требование.</strong><br>Один пропуск, болезнь или короткая пауза не обрушивают оценку. Система смотрит на регулярность в целом.</div></div></details>`;
+      <section class="fscore-goal-picker">
+        <div class="fscore-goal-picker-label">🎯 Выберите цель</div>
+        <div class="fscore-goal-picker-hint">Цель меняет правила оценки тела и питания.</div>
+        <div class="analytics-period">
+          <button type="button" class="${x.goal==='gain'?'active':''}" aria-pressed="${x.goal==='gain'}" onclick="setFScoreGoal('gain')">💪 Набор</button>
+          <button type="button" class="${x.goal==='cut'?'active':''}" aria-pressed="${x.goal==='cut'}" onclick="setFScoreGoal('cut')">🔥 Сушка</button>
+          <button type="button" class="${x.goal==='maintain'?'active':''}" aria-pressed="${x.goal==='maintain'}" onclick="setFScoreGoal('maintain')">⚖️ Поддержание</button>
+        </div>
+      </section>
+      <section class="fscore-detail-card fscore-summary-card">
+        <div class="fscore-detail-top"><div><div class="fscore-detail-kicker">Индекс динамики</div><div class="fscore-detail-score">${x.availableCount?x.score:'—'}<span>/100</span></div><div class="fscore-detail-status ${x.statusLevel}">${escapeHtml(x.phase==='calibration'?'Собираем историю':x.status)}</div></div><div class="fscore-detail-goal"><span>Текущая цель</span><strong>${gn}</strong></div></div>
+        <div class="fscore-detail-note"><strong>${x.confidence}.</strong> ${x.phase==='calibration'?'Система уже анализирует доступные тренировки и питание. Для оценки динамики тела нужна история замеров.':escapeHtml(buildFScoreConclusion(x))}</div>
+      </section>
+      <details class="analytics-card" open><summary>📊 Сейчас учитывается</summary><div class="analytics-inner"><div class="fscore-components compact-components">
+        ${component('📏','Замеры тела',used.length?`${used.length} показателей доступно`:'История собирается',x.body.score,bodyHint,'body')}
+        ${component('🏋️','Тренировки',x.training.available?'Используются':'Нет данных',x.training.score,tc.count?`${tc.count} тренировок за 30 дней.`:'Добавьте завершённую тренировку для анализа.','training')}
+        ${component('🍽️','Питание',x.nutrition.available?'Используется':'Нет данных',x.nutrition.score,x.nutrition.days?`${x.nutrition.days} дней с данными за последние 7 дней.`:'Питание опционально: отсутствие данных не снижает индекс.','nutrition')}
+      </div></div></details>
+      <details class="analytics-card"><summary>📏 Замеры тела</summary><div class="analytics-inner"><div class="analytics-note">Индекс использует все параметры, которые вы ведёте. Отсутствующие показатели не являются штрафом.</div><div class="fscore-data-list">${bodyRows}</div><div class="analytics-note">${bodyHint}</div></div></details>
+      <details class="analytics-card"><summary>🧮 Как считается индекс</summary><div class="analytics-inner"><div class="index-formula-steps"><div><b>1</b><span>Берём только доступные блоки: тело, тренировки и питание.</span></div><div><b>2</b><span>Недостающие блоки исключаются — это не плохой результат.</span></div><div><b>3</b><span>Активные блоки объединяются во взвешенный индекс 0–100.</span></div><div><b>4</b><span>Выбранная цель меняет правила оценки динамики и питания.</span></div></div></div></details>
+      <details class="analytics-card"><summary>➕ Как повысить точность</summary><div class="analytics-inner"><div class="analytics-note">${x.phase==='calibration'?'Продолжайте вносить замеры в разные даты. Не нужно измеряться ежедневно — 1–2 замера в месяц тоже формируют историю.':'Новые замеры, тренировки и питание повышают глубину анализа.'}</div></div></details>
+      <details class="analytics-card"><summary>🏋️ О системности тренировок</summary><div class="analytics-inner"><div class="analytics-note"><strong>15 тренировок — ориентир, а не жёсткая обязанность.</strong><br>Один пропуск, болезнь или короткая пауза не обрушивают оценку: система смотрит на общую регулярность.</div></div></details>`;
 }
 function showProgress() {
     showScreen('progressScreen');
@@ -16914,6 +16967,3 @@ window.closeImportConfirm=function(){
 
 </body>
 </html>
-
-/* v1.4.7 compact index data rows */
-.fscore-data-list{display:grid;gap:8px;margin:12px 0}.fscore-data-row{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;border-radius:12px;background:var(--card-bg,rgba(255,255,255,.05));font-size:14px}.fscore-data-row b{font-size:12px;opacity:.8}.fscore-mini-status{font-size:12px;font-weight:700;opacity:.75;white-space:nowrap}

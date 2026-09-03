@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'ftracker-v1.4.7-index-ux-measurements';
+const CACHE_VERSION = 'ftracker-v1.4.8-index-ui-hotfix';
 const CACHE_NAME = CACHE_VERSION;
 const APP_SHELL = [
   './',
