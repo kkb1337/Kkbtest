@@ -26,6 +26,6 @@
       "purpose": "any maskable"
     }
   ],
-  "_build": "ftracker-v1.4.3-workout-start-calibration",
-  "version": "1.4.3"
+  "_build": "ftracker-v1.4.4-goal-aware-index-workout-validation",
+  "version": "1.4.4"
 }

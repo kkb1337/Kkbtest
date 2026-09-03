@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'ftracker-v1.4.3-workout-start-calibration';
+const CACHE_VERSION = 'ftracker-v1.4.4-goal-aware-index-workout-validation';
 const CACHE_NAME = CACHE_VERSION;
 const APP_SHELL = [
   './',
