@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'ftracker-v1.3.9-audit-cleanup';
+const CACHE_VERSION = 'ftracker-v1.3.10-no-auto-first-set';
 const CACHE_NAME = CACHE_VERSION;
 const APP_SHELL = [
   './',
