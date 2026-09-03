@@ -8765,7 +8765,7 @@ window.showExerciseDuplicateModal=function(name,matches,exact,onAllow){
   modal.style.setProperty('z-index','2147483647','important');
   modal.style.setProperty('position','fixed','important');
   modal.querySelector('#exerciseDupTitle').textContent=exact?'Упражнение уже существует':'Найдено похожее упражнение';
-  modal.querySelector('#exerciseDupSub').textContent=exact?'Точную копию создать нельзя.':`В названии «${name}» найдено совпадение.`;
+  modal.querySelector('#exerciseDupSub').textContent=exact?'Точную копию создать нельзя, включая перестановку слов в названии.':`В названии «${name}» найдено совпадение.`;
   modal.querySelector('#exerciseDupList').innerHTML=matches.slice(0,6).map(x=>
     `<div class="exercise-dup-item"><div class="exercise-dup-name">${ftEsc(x.name)}</div>
      <div class="exercise-dup-meta">${ftEsc(x.group||'Другое')} · ${x.type==='cardio'?'Кардио':'Силовое'}</div>
@@ -15135,6 +15135,11 @@ function foodNorm(v){
     .replace(/\s+/g,' ');
 }
 function foodFullKey(v){ return foodNorm(v).replace(/ /g,''); }
+// [FIX v1.3.17] Identity for duplicate blocking ignores word order.
+// «Греческий йогурт» and «Йогурт греческий» are the same catalog product identity.
+function foodIdentityKey(v){
+  return foodNorm(v).split(' ').filter(Boolean).sort((a,b)=>a.localeCompare(b,'ru')).join(' ');
+}
 function foodWords(v){
   return [...new Set(foodNorm(v).split(' ').filter(Boolean))];
 }
@@ -15165,12 +15170,14 @@ function foodCatalogList(){
 }
 window.findFoodDuplicate=function(name,excludeIndex=null){
   const inputKey=foodFullKey(name);
+  const inputIdentity=foodIdentityKey(name);
   const inputWords=foodWords(name);
   const exact=[],similar=[];
   for(const item of foodCatalogList()){
     if(item.index===excludeIndex)continue;
-    if(item.key===inputKey){
-      exact.push({...item,reason:'Название совпадает после приведения регистра, пробелов, знаков и е/ё.'});
+    const itemIdentity=foodIdentityKey(item.name);
+    if(item.key===inputKey || itemIdentity===inputIdentity){
+      exact.push({...item,reason:'Название совпадает после нормализации; порядок слов, регистр, пробелы, знаки и е/ё не создают новый продукт.'});
       continue;
     }
     let reason='';
@@ -16799,6 +16806,19 @@ window.closeImportConfirm=function(){
 .catalog-section-title{width:100%;display:flex;justify-content:space-between;align-items:center;text-align:left;background:var(--card-bg);color:var(--text);padding:14px!important;margin:0!important;min-height:52px!important}
 .catalog-section-items{padding:0 8px 8px}.catalog-section-items.hidden{display:none!important}
 .catalog-empty{color:var(--subtext);text-align:center;padding:18px 8px}
+
+/* [FIX v1.3.17] Food search suggestions must never cover the product type selector.
+   Keep the list in normal document flow inside the modal, so it pushes the selector down instead of overlaying it. */
+#addFoodModal #foodPresetList{
+  position:relative!important;
+  top:auto!important;
+  left:auto!important;
+  right:auto!important;
+  width:100%!important;
+  margin:6px 0 8px!important;
+  max-height:min(34vh,280px)!important;
+  z-index:auto!important;
+}
 </style>
 <script>
 /* ===== CANONICAL FOOD CATALOG + WORKOUT PROGRESS ===== */
@@ -16841,7 +16861,7 @@ window.closeImportConfirm=function(){
 })();
 
 
-/* [FIX] v1.3.16: food creation identity + preset dropdown state.
+/* [FIX] v1.3.17: food creation identity + preset dropdown state.
    Exact duplicate names are already blocked by findFoodDuplicate/saveCatalogProduct.
    This final guard closes the search dropdown whenever the user changes the product type,
    so the suggestion list cannot overlap the "На 100 грамм / Готовое блюдо" selector. */
@@ -16855,26 +16875,26 @@ window.closeImportConfirm=function(){
   window.hideFoodPresetList=hideFoodPresetList;
 
   const baseSwitchFoodMode=window.switchFoodMode;
-  if(typeof baseSwitchFoodMode==='function' && !baseSwitchFoodMode.__v1316FoodPresetFix){
+  if(typeof baseSwitchFoodMode==='function' && !baseSwitchFoodMode.__v1317FoodPresetFix){
     const fixedSwitchFoodMode=function(mode){
       hideFoodPresetList();
       return baseSwitchFoodMode.apply(this,arguments);
     };
-    fixedSwitchFoodMode.__v1316FoodPresetFix=true;
+    fixedSwitchFoodMode.__v1317FoodPresetFix=true;
     window.switchFoodMode=fixedSwitchFoodMode;
   }
 
   const foodType=document.getElementById('foodType');
-  if(foodType && !foodType.dataset.v1316FoodPresetFix){
-    foodType.dataset.v1316FoodPresetFix='1';
+  if(foodType && !foodType.dataset.v1317FoodPresetFix){
+    foodType.dataset.v1317FoodPresetFix='1';
     foodType.addEventListener('pointerdown',hideFoodPresetList,true);
     foodType.addEventListener('focus',hideFoodPresetList,true);
     foodType.addEventListener('change',hideFoodPresetList,true);
   }
 
   const nameInput=document.getElementById('foodName');
-  if(nameInput && !nameInput.dataset.v1316EscapeFix){
-    nameInput.dataset.v1316EscapeFix='1';
+  if(nameInput && !nameInput.dataset.v1317EscapeFix){
+    nameInput.dataset.v1317EscapeFix='1';
     nameInput.addEventListener('keydown',e=>{if(e.key==='Escape')hideFoodPresetList();});
   }
 })();
