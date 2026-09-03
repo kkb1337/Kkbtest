@@ -26,6 +26,6 @@
       "purpose": "any maskable"
     }
   ],
-  "_build": "ftracker-v1.4.4-goal-aware-index-workout-validation",
-  "version": "1.4.4"
+  "_build": "ftracker-v1.4.5-goal-aware-nutrition",
+  "version": "1.4.5"
 }

@@ -6556,7 +6556,7 @@ body{
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.4 от 03.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.5 от 03.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -6775,7 +6775,7 @@ body{
 <div id="foodLimitModal" class="food-modal hidden" onclick="if(event.target === this) closeFoodLimitModal()">
     <div class="food-modal-content">
         <span class="close-btn" onclick="closeFoodLimitModal()">&times;</span>
-        <div style="font-size:22px; font-weight:700; margin-bottom:16px;">Лимиты на день</div>
+        <div style="font-size:22px; font-weight:700; margin-bottom:6px;">Лимиты КБЖУ</div><div style="font-size:12px;color:var(--subtext);margin-bottom:16px;">Автоматически рассчитываются по выбранной цели. Ручное сохранение переопределяет лимиты только для этого дня.</div>
         <label class="field-label">Калории (ккал)</label>
         <input type="number" id="foodLimitCal" placeholder="0">
         <label class="field-label">Белки (г)</label>
@@ -7362,7 +7362,7 @@ let data = {
     history: [],
     measurements: [],
     measurementFields: DEFAULT_MEASURE_FIELDS.map(f => ({...f})),
-    foodDiary: { limits: {}, entries: [] },
+    foodDiary: { limits: {}, entries: [], goalNutrition: { auto: true, baseMaintenance: 0 } },
     productCatalog: BUILTIN_PRODUCT_CATALOG.map(p=>({...p})),
     exerciseDirectory: [],
     exerciseDirectoryHidden: [],
@@ -7502,6 +7502,9 @@ function migrateFTrackerState(state){
     if(!['cut','gain','maintain'].includes(state.fscoreGoal)){
         try{ state.fscoreGoal=localStorage.getItem('ftracker_fscore_goal')||'cut'; }catch(e){ state.fscoreGoal='cut'; }
     }
+    if(!state.foodDiary) state.foodDiary={limits:{},entries:[]};
+    if(!state.foodDiary.goalNutrition || typeof state.foodDiary.goalNutrition!=='object') state.foodDiary.goalNutrition={auto:true,baseMaintenance:0};
+    if(state.foodDiary.goalNutrition.auto===undefined) state.foodDiary.goalNutrition.auto=true;
 
     state.measurementFields=state.measurementFields
       .filter(f=>f && f.key && f.label)
@@ -7931,8 +7934,11 @@ function setFScoreGoal(goal){
     if(!['cut','gain','maintain'].includes(goal)) return;
     data.fscoreGoal=goal;
     try{localStorage.setItem('ftracker_fscore_goal',goal);}catch(e){}
-    saveData(false,'Изменение цели индекса системности');
+    const foodDate=document.getElementById('foodDate')?.value;
+    if(foodDate) syncGoalFoodLimit(foodDate);
+    saveData(false,'Изменение цели индекса системности и КБЖУ');
     renderFScoreAnalytics(); renderFScoreHomeWidget();
+    if(typeof renderFoodDiary==='function' && foodDate) renderFoodDiary();
 }
 function fScoreClamp(v,min=0,max=100){return Math.max(min,Math.min(max,v));}
 function fScoreRecent(history,daysStart,daysEnd=0){
@@ -11245,9 +11251,45 @@ function getDateWithWeekday(dateStr) {
     const d = new Date(dateStr + 'T00:00:00');
     return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', weekday: 'long' });
 }
+function getGoalNutritionLabel(goal=getFScoreGoal()){
+    return goal==='gain'?'Набор массы':goal==='cut'?'Сушка':'Поддержание';
+}
+function getLatestBodyWeight(){
+    const rows=(data.measurements||[]).filter(m=>Number(m.weight)>0).sort((a,b)=>String(a.date).localeCompare(String(b.date)));
+    return rows.length?Number(rows[rows.length-1].weight):null;
+}
+function getGoalNutritionProfile(goal=getFScoreGoal()){
+    data.foodDiary=data.foodDiary||{limits:{},entries:[]};
+    data.foodDiary.goalNutrition=data.foodDiary.goalNutrition||{auto:true,baseMaintenance:0};
+    const cfg=data.foodDiary.goalNutrition;
+    const weight=getLatestBodyWeight()||75;
+    const maintenance=Number(cfg.baseMaintenance)>0?Number(cfg.baseMaintenance):Math.round(weight*33);
+    const factor=goal==='gain'?1.10:goal==='cut'?0.80:1.00;
+    const calories=Math.round((maintenance*factor)/10)*10;
+    const proteinPerKg=goal==='cut'?2.0:1.8;
+    const fatPerKg=goal==='cut'?0.7:goal==='gain'?0.9:0.8;
+    const protein=Math.round(weight*proteinPerKg);
+    const fat=Math.max(40,Math.round(weight*fatPerKg));
+    const carbs=Math.max(0,Math.round((calories-protein*4-fat*9)/4));
+    return {calories,protein,fat,carbs,weight,maintenance,estimated:!Number(cfg.baseMaintenance)};
+}
+function getEffectiveFoodLimit(date){
+    const saved=(data.foodDiary.limits||{})[date];
+    if(saved && !saved.autoGoal) return saved;
+    const cfg=data.foodDiary.goalNutrition||{};
+    if(cfg.auto===false) return saved||{};
+    return {...getGoalNutritionProfile(),autoGoal:true,goal:getFScoreGoal()};
+}
+function syncGoalFoodLimit(date){
+    const cfg=data.foodDiary.goalNutrition||{};
+    if(cfg.auto===false) return;
+    const p=getGoalNutritionProfile();
+    data.foodDiary.limits[date]={calories:p.calories,protein:p.protein,fat:p.fat,carbs:p.carbs,autoGoal:true,goal:getFScoreGoal(),updatedAt:Date.now()};
+}
 function renderFoodDiary() {
     const date = document.getElementById('foodDate').value;
-    const lim = data.foodDiary.limits[date] || {};
+    if(date && !(data.foodDiary.limits||{})[date]) syncGoalFoodLimit(date);
+    const lim = getEffectiveFoodLimit(date);
     const dayEntries = data.foodDiary.entries.filter(e => e.date === date);
     let totalCal = 0, totalProtein = 0, totalFat = 0, totalCarbs = 0;
     dayEntries.forEach(e => { totalCal += parseFloat(e.calories)||0; totalProtein += parseFloat(e.protein)||0; totalFat += parseFloat(e.fat)||0; totalCarbs += parseFloat(e.carbs)||0; });
@@ -11265,7 +11307,7 @@ function renderFoodDiary() {
     }
     document.getElementById('foodSummary').innerHTML = `
         <div class="food-day-head">
-            <div><div class="food-day-title">${getDateWithWeekday(date)}</div><div class="food-day-status ${calorieStatusClass}">${calorieStatus}</div></div>
+            <div><div class="food-day-title">${getDateWithWeekday(date)}</div><div class="food-day-status ${calorieStatusClass}">${calorieStatus} · ${getGoalNutritionLabel()}</div></div>
             <div class="food-calorie-main"><span class="food-calorie-label">Калории</span><strong>${Math.round(totalCal)} ккал</strong><span>из ${targetCal || '—'} ккал</span></div>
         </div>
         <div class="food-macro-grid">
@@ -11295,7 +11337,7 @@ function renderFoodHistory() {
     if (days.size === 0) { container.innerHTML = '<div style="color:var(--subtext); text-align:center;">Нет записей</div>'; return; }
     const sorted = Array.from(days).sort((a,b) => b.localeCompare(a));
     container.innerHTML = sorted.map(date => {
-        const lim = data.foodDiary.limits[date] || {};
+        const lim = getEffectiveFoodLimit(date);
         const dayEntries = data.foodDiary.entries.filter(e => e.date === date);
         let totalCal = 0;
         dayEntries.forEach(e => totalCal += parseFloat(e.calories)||0);
@@ -11989,7 +12031,7 @@ function deleteFoodEntry(index) { pendingDeleteType = 'foodEntry'; pendingDelete
 
 function setFoodLimit() {
     const date = document.getElementById('foodDate').value;
-    const lim = data.foodDiary.limits[date] || {};
+    const lim = getEffectiveFoodLimit(date);
     document.getElementById('foodLimitCal').value = lim.calories || '';
     document.getElementById('foodLimitProtein').value = lim.protein || '';
     document.getElementById('foodLimitFat').value = lim.fat || '';
@@ -12003,7 +12045,7 @@ function saveFoodLimit() {
     const protein = parseInt(document.getElementById('foodLimitProtein').value) || 0;
     const fat = parseInt(document.getElementById('foodLimitFat').value) || 0;
     const carbs = parseInt(document.getElementById('foodLimitCarbs').value) || 0;
-    data.foodDiary.limits[date] = { calories: cal, protein, fat, carbs };
+    data.foodDiary.limits[date] = { calories: cal, protein, fat, carbs, autoGoal:false };
     saveData();
     closeFoodLimitModal();
     renderFoodDiary();
