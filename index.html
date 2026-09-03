@@ -6643,7 +6643,7 @@ body{
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.12 от 03.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.13 от 03.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -8149,14 +8149,19 @@ function fScoreOtherMeasurements(goal){
     if(!vals.length)return null;
     const scores=vals.map(t=>{
         const c=t.change;
-        if(goal==='gain')return c>0?fScoreClamp(78+c*16):fScoreClamp(82+c*18);
-        if(goal==='cut')return c>=-1.5?100:fScoreClamp(100-(Math.abs(c)-1.5)*20);
-        return Math.abs(c)<=1.5?100:fScoreClamp(100-(Math.abs(c)-1.5)*18);
+        if(goal==='gain') return c>0?fScoreClamp(78+c*16):fScoreClamp(82+c*18);
+        // На сушке небольшая погрешность допустима, но подтверждённая потеря
+        // нескольких мышечных объёмов должна заметно снижать качество сушки.
+        if(goal==='cut') return c>=-1.0?100:fScoreClamp(100-(Math.abs(c)-1.0)*32);
+        // Поддержание: любое устойчивое направление хуже стабильности.
+        return Math.abs(c)<=1.0?100:fScoreClamp(100-(Math.abs(c)-1.0)*30);
     });
-    return scores.reduce((a,b)=>a+b,0)/scores.length;
+    const losses=vals.filter(t=>t.change<=-2).length;
+    const avg=scores.reduce((a,b)=>a+b,0)/scores.length;
+    return {score:avg,losses,count:vals.length,vals};
 }
 function fScoreBody(goal){
-    const weight=fScoreMeasurementTrend('weight'),waist=fScoreMeasurementTrend('waist'),other=fScoreOtherMeasurements(goal);
+    const weight=fScoreMeasurementTrend('weight'),waist=fScoreMeasurementTrend('waist'),otherData=fScoreOtherMeasurements(goal),other=otherData?otherData.score:null;
     const parts=[];
     if(weight)parts.push({score:fScoreRateScore(goal,weight.speed),weight:goal==='cut'?25:goal==='gain'?30:35,name:'Вес'});
     if(waist){
@@ -8167,9 +8172,21 @@ function fScoreBody(goal){
         parts.push({score,weight:goal==='cut'?35:goal==='gain'?10:25,name:'Талия'});
     }
     if(other!=null)parts.push({score:other,weight:goal==='gain'?40:25,name:'Остальные замеры'});
-    if(!parts.length)return {score:null,available:false,weight,waist,other};
+    if(!parts.length)return {score:null,available:false,weight,waist,other,otherData};
     const total=parts.reduce((a,p)=>a+p.weight,0);
-    return {score:parts.reduce((a,p)=>a+p.score*p.weight,0)/total,available:true,weight,waist,other};
+    let score=parts.reduce((a,p)=>a+p.score*p.weight,0)/total;
+    // Защита качества сушки: быстрое снижение веса + подтверждённая потеря
+    // нескольких мышечных объёмов не может считаться хорошим результатом.
+    if(goal==='cut' && otherData?.losses>=2){
+        const severity=Math.min(35,otherData.losses*8);
+        score-=severity;
+    }
+    // Поддержание требует реальной стабильности: рост или снижение веса не
+    // должны получать почти такой же балл, как идеальная стабильность.
+    if(goal==='maintain' && weight && Math.abs(weight.speed)>.3){
+        score-=Math.min(35,(Math.abs(weight.speed)-.3)*55);
+    }
+    return {score:fScoreClamp(score),available:true,weight,waist,other,otherData};
 }
 function fScoreWorkingWeightTrend(history){
     const by={};
@@ -8441,9 +8458,8 @@ function renderFScoreAnalytics(){
       </section>
 
       <section class="analytics-card fscore-v149-card fscore-explanation-card">
-        <div class="fscore-explanation-head"><b>🧠 Почему такой индекс</b>${scoreChange?`<span class="fscore-score-change ${scoreChange.delta>0?'up':'down'}">${scoreChange.delta>0?'↑':'↓'} ${Math.abs(scoreChange.delta)} с прошлого расчёта</span>`:'<span class="fscore-score-change neutral">Текущий расчёт</span>'}</div>
-        <p class="analytics-note">Это не просто список данных: ниже показано, какие факторы сейчас повышают, ограничивают или пока не участвуют в индексе.</p>
-        <div class="fscore-explanation-list">${explanation.map(r=>`<div class="fscore-explanation-row ${r.kind}"><span>${r.kind==='good'?'🟢':r.kind==='bad'?'🔴':r.kind==='attention'?'🟡':r.kind==='muted'?'⚪':'🔵'}</span><div><b>${escapeHtml(r.title)}</b><small>${escapeHtml(r.text)}</small></div></div>`).join('')}</div>
+        <div class="fscore-explanation-head"><b>🧠 Почему ${scoreText==='—'?'такой индекс':scoreText+' / 100'}</b>${scoreChange?`<span class="fscore-score-change ${scoreChange.delta>0?'up':'down'}">${scoreChange.delta>0?'↑':'↓'} ${Math.abs(scoreChange.delta)}</span>`:''}</div>
+        <div class="fscore-explanation-list">${explanation.slice(0,4).map(r=>`<div class="fscore-explanation-row ${r.kind}"><span>${r.kind==='good'?'🟢':r.kind==='bad'?'🔴':r.kind==='attention'?'🟡':r.kind==='muted'?'⚪':'🔵'}</span><div><b>${escapeHtml(r.title)}</b><small>${escapeHtml(r.text)}</small></div></div>`).join('')}</div>
       </section>
 
       <details class="analytics-card fscore-v149-card" open>
