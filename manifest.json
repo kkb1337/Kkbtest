@@ -26,6 +26,6 @@
       "purpose": "any maskable"
     }
   ],
-  "_build": "ftracker-v1.4.0-index-engine",
-  "version": "1.4.0"
+  "_build": "ftracker-v1.4.1-index-engine-fixes",
+  "version": "1.4.1"
 }

@@ -5930,7 +5930,7 @@ body{
 .fscore-analytics-status.good{color:var(--positive);background:rgba(52,199,89,.12);border:1px solid rgba(52,199,89,.22)}
 .fscore-analytics-status.attention{color:#f2c94c;background:rgba(242,201,76,.10);border:1px solid rgba(242,201,76,.20)}
 .fscore-analytics-status.bad{color:var(--negative);background:rgba(255,59,48,.10);border:1px solid rgba(255,59,48,.20)}
-.analytics-card{border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.045);border-radius:20px;margin:10px 0;overflow:hidden}.analytics-card>summary{list-style:none;cursor:pointer;padding:16px 18px;font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:12px}.analytics-card>summary::-webkit-details-marker{display:none}.analytics-card>summary:after{content:'›';font-size:22px;color:var(--subtext);transition:transform .18s}.analytics-card[open]>summary:after{transform:rotate(90deg)}.analytics-inner{padding:0 18px 18px;color:var(--subtext);line-height:1.5}.analytics-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.analytics-stat{padding:13px;border-radius:16px;background:rgba(255,255,255,.045)}.analytics-stat strong{display:block;font-size:21px;color:var(--text);letter-spacing:-.5px}.analytics-stat span{font-size:12px}.analytics-note{padding:14px;border-radius:16px;background:rgba(212,255,79,.07);border:1px solid rgba(212,255,79,.12);color:var(--text)}.analytics-hero{padding:20px;border-radius:22px;background:linear-gradient(135deg,rgba(212,255,79,.10),rgba(120,90,255,.09));border:1px solid rgba(255,255,255,.10);margin-bottom:12px}.analytics-hero-row{display:flex;align-items:center;justify-content:space-between}.analytics-score{font-size:52px;font-weight:850;letter-spacing:-2px}.analytics-period{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}.analytics-period button{min-height:36px;padding:0 12px;border-radius:999px}.analytics-period button.active{background:var(--accent);color:#111;border-color:var(--accent)}
+.analytics-card{border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.045);border-radius:20px;margin:10px 0;overflow:hidden}.analytics-card>summary{list-style:none;cursor:pointer;padding:16px 18px;font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:12px}.analytics-card>summary::-webkit-details-marker{display:none}.analytics-card>summary:after{content:'›';font-size:22px;color:var(--subtext);transition:transform .18s}.analytics-card[open]>summary:after{transform:rotate(90deg)}.analytics-inner{padding:0 18px 18px;color:var(--subtext);line-height:1.5}.analytics-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.analytics-stat{padding:13px;border-radius:16px;background:rgba(255,255,255,.045)}.analytics-stat strong{display:block;font-size:21px;color:var(--text);letter-spacing:-.5px}.analytics-stat span{font-size:12px}.analytics-note{padding:14px;border-radius:16px;background:rgba(212,255,79,.07);border:1px solid rgba(212,255,79,.12);color:var(--text)}.analytics-hero{padding:20px;border-radius:22px;background:linear-gradient(135deg,rgba(212,255,79,.10),rgba(120,90,255,.09));border:1px solid rgba(255,255,255,.10);margin-bottom:12px}.analytics-hero-row{display:flex;align-items:center;justify-content:space-between}.analytics-score{font-size:52px;font-weight:850;letter-spacing:-2px}.analytics-period{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}.analytics-period button{min-height:36px;padding:0 12px;border-radius:999px}.analytics-period button.active{background:var(--accent);color:#111;border-color:var(--accent);box-shadow:0 0 0 3px rgba(212,255,79,.22);font-weight:900;transform:translateY(-1px)}
 
 /* ===== F-Score v2: compact widget + clean breakdown ===== */
 #fscoreHomeWidget.fscore-widget{
@@ -6223,6 +6223,7 @@ body{
   border-radius:50%!important;
   background:currentColor!important;
 }
+#fscoreHomeWidget .fscore-home-goal{display:block!important;margin-top:2px!important;color:var(--subtext)!important;font-size:12px!important;line-height:1.2!important;font-weight:750!important;white-space:normal!important}
 #fscoreHomeWidget .fscore-home-hint{
   display:block!important;
   color:var(--subtext)!important;
@@ -6253,7 +6254,8 @@ body{
   #fscoreHomeWidget .fscore-home-number-wrap{padding-right:10px!important}
   #fscoreHomeWidget .fscore-home-number{font-size:34px!important}
   #fscoreHomeWidget .fscore-home-status{font-size:14px!important}
-  #fscoreHomeWidget .fscore-home-hint{font-size:10px!important}
+  #fscoreHomeWidget .fscore-home-goal{display:block!important;margin-top:2px!important;color:var(--subtext)!important;font-size:12px!important;line-height:1.2!important;font-weight:750!important;white-space:normal!important}
+#fscoreHomeWidget .fscore-home-hint{font-size:10px!important}
   #fscoreHomeWidget .fscore-home-arrow{width:26px!important;height:26px!important;font-size:20px!important}
 }
 </style>
@@ -6374,6 +6376,7 @@ body{
 }
 #fscoreHomeWidget.fscore-widget-attention .fscore-home-progress-fill{background:#f2c94c!important}
 #fscoreHomeWidget.fscore-widget-bad .fscore-home-progress-fill{background:#f2a23a!important}
+#fscoreHomeWidget .fscore-home-goal{display:block!important;margin-top:2px!important;color:var(--subtext)!important;font-size:12px!important;line-height:1.2!important;font-weight:750!important;white-space:normal!important}
 #fscoreHomeWidget .fscore-home-hint{
   display:block!important;
   margin-top:8px!important;
@@ -6388,8 +6391,11 @@ body{
   #fscoreHomeWidget .fscore-home-title{font-size:16px!important}
   #fscoreHomeWidget .fscore-home-number{font-size:34px!important}
   #fscoreHomeWidget .fscore-home-status{font-size:13px!important}
-  #fscoreHomeWidget .fscore-home-hint{font-size:10.5px!important}
+  #fscoreHomeWidget .fscore-home-goal{display:block!important;margin-top:2px!important;color:var(--subtext)!important;font-size:12px!important;line-height:1.2!important;font-weight:750!important;white-space:normal!important}
+#fscoreHomeWidget .fscore-home-hint{font-size:10.5px!important}
 }
+#programList button,#confirmScreen button{position:relative!important;z-index:20!important;pointer-events:auto!important;touch-action:manipulation!important}
+#programList{position:relative!important;z-index:10!important;pointer-events:auto!important}
 </style>
 </head>
 <body>
@@ -6415,7 +6421,7 @@ body{
                 <span class="fscore-home-status"><span class="fscore-home-dot" aria-hidden="true"></span><span class="fscore-home-status-text">Ниже желаемого</span></span>
             </span>
             <span class="fscore-home-progress" aria-hidden="true"><span class="fscore-home-progress-fill"></span></span>
-            <span class="fscore-home-hint">Насколько системно вы тренируетесь и двигаетесь к цели</span>
+            <span class="fscore-home-hint">Насколько данные соответствуют выбранной цели</span>
         </button>
         <div class="nav-buttons">
             <button onclick="showProgress()" class="outline">
@@ -6550,7 +6556,7 @@ body{
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.0 от 03.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.1 от 03.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -8079,7 +8085,7 @@ function fScoreData(){
     const phase=measureCount<3||days<14?'calibration':measureCount>=8&&days>=28?'full':'preliminary';
     const confidence=phase==='calibration'?'Калибровка':phase==='preliminary'?'Предварительная оценка':'Высокая точность';
     const statusLevel=!blocks.length?'attention':score>=80?'good':score>=55?'attention':'bad';
-    const status=!blocks.length?'Пока нет данных':statusLevel==='good'?'Отличная динамика':statusLevel==='attention'?'Есть куда расти':'Ниже желаемого';
+    const status=phase==='calibration'?'Собираем данные':(!blocks.length?'Пока нет данных':statusLevel==='good'?'Отличная динамика':statusLevel==='attention'?'Есть куда расти':'Ниже желаемого');
     return {score,status,statusLevel,goal,history:h,measures:data.measurements||[],recent,prev,body,training,nutrition,blocks,availableCount:blocks.length,phase,confidence};
 }
 function fScoreFmt(v,u){return v==null?'—':(v>0?'+':'')+v.toFixed(1)+u;}
@@ -8088,11 +8094,13 @@ function renderFScoreHomeWidget(){
     try{
         const x=fScoreData();
         el.className=`fscore-widget fscore-widget-${x.statusLevel}`;
-        el.innerHTML=`<span class="fscore-home-top"><span class="fscore-home-title">Индекс системности</span><span class="fscore-home-action">Подробнее <span aria-hidden="true">›</span></span></span><span class="fscore-home-middle"><span class="fscore-home-number-wrap"><span class="fscore-home-number">${x.phase==='calibration'?'—':x.score}</span><span class="fscore-home-scale">/ 100</span></span><span class="fscore-home-status"><span class="fscore-home-dot" aria-hidden="true"></span><span class="fscore-home-status-text">${escapeHtml(x.status)}</span></span></span><span class="fscore-home-progress" aria-hidden="true"><span class="fscore-home-progress-fill" style="width:${Math.max(0,Math.min(100,x.score))}%"></span></span><span class="fscore-home-hint">Насколько системно вы тренируетесь и двигаетесь к цели</span>`;
+        const goalName={cut:'Сушка',gain:'Набор',maintain:'Поддержание'}[x.goal]||'Поддержание';
+        const displayStatus=x.phase==='calibration'?'Собираем данные':x.status;
+        el.innerHTML=`<span class="fscore-home-top"><span><span class="fscore-home-title">Индекс динамики</span><span class="fscore-home-goal">Цель: ${goalName}</span></span><span class="fscore-home-action">Подробнее <span aria-hidden="true">›</span></span></span><span class="fscore-home-middle"><span class="fscore-home-number-wrap"><span class="fscore-home-number">${x.phase==='calibration'?'—':x.score}</span><span class="fscore-home-scale">/ 100</span></span><span class="fscore-home-status"><span class="fscore-home-dot" aria-hidden="true"></span><span class="fscore-home-status-text">${escapeHtml(displayStatus)}</span></span></span><span class="fscore-home-progress" aria-hidden="true"><span class="fscore-home-progress-fill" style="width:${x.phase==='calibration'?0:Math.max(0,Math.min(100,x.score))}%"></span></span><span class="fscore-home-hint">${x.phase==='calibration'?'Нужно больше замеров для определения устойчивой динамики':x.availableCount?'Индекс рассчитан только по доступным данным':'Добавьте замеры или тренировки для начала анализа'}</span>`;
     }catch(err){
         console.error('FScore render failed',err);
         el.className='fscore-widget fscore-widget-attention';
-        el.innerHTML='<span class="fscore-home-top"><span class="fscore-home-title">Индекс системности</span><span class="fscore-home-action">Подробнее <span aria-hidden="true">›</span></span></span><span class="fscore-home-middle"><span class="fscore-home-number-wrap"><span class="fscore-home-number">0</span><span class="fscore-home-scale">/ 100</span></span><span class="fscore-home-status"><span class="fscore-home-dot"></span><span class="fscore-home-status-text">Пока нет данных</span></span></span><span class="fscore-home-progress"><span class="fscore-home-progress-fill" style="width:0%"></span></span><span class="fscore-home-hint">Записывайте тренировки и замеры — индекс начнёт рассчитываться</span>';
+        el.innerHTML='<span class="fscore-home-top"><span class="fscore-home-title">Индекс динамики</span><span class="fscore-home-action">Подробнее <span aria-hidden="true">›</span></span></span><span class="fscore-home-middle"><span class="fscore-home-number-wrap"><span class="fscore-home-number">0</span><span class="fscore-home-scale">/ 100</span></span><span class="fscore-home-status"><span class="fscore-home-dot"></span><span class="fscore-home-status-text">Пока нет данных</span></span></span><span class="fscore-home-progress"><span class="fscore-home-progress-fill" style="width:0%"></span></span><span class="fscore-home-hint">Записывайте тренировки и замеры — индекс начнёт рассчитываться</span>';
     }
 }
 function showFScoreAnalytics(){
@@ -8123,7 +8131,9 @@ function renderFScoreAnalytics(){
         ${comp('Тренировки','Системность, прогресс рабочих весов и повторений.',x.training.score,tc.count?`${tc.count} тренировок за 30 дней. Оптимальная зона: 13–17. Частота: ${Math.round(tc.frequency)} / 100${tc.distribution?` · самая длинная пауза: ${Math.round(tc.distribution.maxGap)} дн.`:''}`:'Нет тренировок для оценки.')}
         ${comp('Питание','Опциональный уточняющий блок: калории, белок и подтверждённость данных.',x.nutrition.score,x.nutrition.days?`${x.nutrition.days} заполненных дней за последние 7 дней. При отсутствии свежих данных блок автоматически исключается из формулы.`:'Нет свежих данных — блок не участвует в расчёте.')}
       </div>
-      <details class="analytics-card"><summary>Как рассчитывается индекс</summary><div class="analytics-inner"><div class="analytics-note"><strong>Index Engine v1:</strong><br>1. Проверяются доступные данные.<br>2. Неподтверждённые выбросы исключаются из тренда.<br>3. Замеры сглаживаются EMA.<br>4. Мёртвая зона применяется к тренду, чтобы не реагировать на воду и разовые колебания.<br>5. BODY / TRAINING / NUTRITION считаются отдельно.<br>6. Недоступные блоки исключаются, а веса нормализуются.<br><br><strong>Базовые веса:</strong> замеры 40%, тренировки 30%, питание 30%.</div></div></details>
+      <details class="analytics-card" open><summary>Формула и данные текущего расчёта</summary><div class="analytics-inner"><div class="analytics-note"><strong>Итоговый индекс = взвешенное среднее только активных блоков.</strong><br><br><strong>Сейчас учитываются:</strong><br>• Замеры тела: ${x.body.available?'ДА':'нет данных'}${x.body.available?` (${metric(x.body.score)})`:''}<br>• Тренировки: ${x.training.available?'ДА':'нет данных'}${x.training.available?` (${metric(x.training.score)})`:''}<br>• Питание: ${x.nutrition.available?'ДА':'нет данных'}${x.nutrition.available?` (${metric(x.nutrition.score)})`:''}<br><br><strong>Базовая формула при наличии всех данных:</strong><br>INDEX = BODY × 40% + TRAINING × 30% + NUTRITION × 30%.<br><br>Если блока нет, он <strong>не получает 0 и не штрафует</strong> — его вес перераспределяется между доступными блоками до 100%.<br><br><strong>Что ещё применяется:</strong><br>1. Подтверждение выбросов.<br>2. EMA-сглаживание тренда.<br>3. Dead Zone для отсечения бытового шума.<br>4. Оценка скорости изменения относительно цели.<br>5. Разная интерпретация для Набора, Сушки и Поддержания.</div></div></details>
+      <details class="analytics-card"><summary>Из чего состоят блоки</summary><div class="analytics-inner"><div class="analytics-note"><strong>BODY_SCORE</strong><br>Набор: вес 30%, остальные замеры 40%, стабильность/качество тренда 15%, талия — контекст без штрафа.<br>Сушка: вес 25%, талия 35%, остальные замеры 25%, стабильность 15%.<br>Поддержание: вес 35%, талия 25%, остальные замеры 25%, стабильность 15%.<br><br><strong>TRAINING_SCORE</strong><br>Системность 40%, прогресс нагрузки 30%, повторения/объём 20%, стабильность 10%.<br><br><strong>NUTRITION_SCORE</strong><br>Калорийное соответствие 40%, белок 30%, подтверждённость данных 15%, стабильность 15%.</div></div></details>
+      <details class="analytics-card"><summary>Чего не хватает для более точного индекса</summary><div class="analytics-inner"><div class="analytics-note">${x.phase==='calibration'?'Сейчас идёт калибровка: нужно минимум 3 точки замеров в течение 14 дней для предварительной оценки.':'Индекс уже рассчитывается.'}<br><br>${!x.body.available?'• Добавьте минимум несколько замеров тела в разные даты.<br>':''}${!x.training.available?'• Добавьте завершённые тренировки для оценки системности и прогресса.<br>':''}${!x.nutrition.available?'• Питание необязательно, но свежие записи КБЖУ позволят точнее оценивать соответствие цели.<br>':''}${x.body.available&&x.training.available&&x.nutrition.available?'Все три блока доступны. Дальнейшая точность будет расти вместе с историей данных.':'Отсутствующие данные не снижают балл автоматически — они только уменьшают глубину анализа.'}</div></div></details>
       <details class="analytics-card"><summary>Системность тренировок</summary><div class="analytics-inner"><div class="analytics-note"><strong>15 тренировок — ориентир, а не жёсткий минимум.</strong><br>Оптимальная зона: 13–17 тренировок за 30 дней. Оценка учитывает 60% частоты и 40% равномерности распределения. История предыдущего периода мягко сглаживает разовый плохой месяц, поэтому болезнь, плохое самочувствие или один пропуск не обрушивают индекс. Больше тренировок не даёт бесконечных бонусов.</div></div></details>
       <details class="analytics-card"><summary>Цели и как их читать</summary><div class="analytics-inner"><div class="analytics-period"><button type="button" class="${x.goal==='cut'?'active':''}" onclick="setFScoreGoal('cut')">🔥 Сушка</button><button type="button" class="${x.goal==='gain'?'active':''}" onclick="setFScoreGoal('gain')">💪 Набор</button><button type="button" class="${x.goal==='maintain'?'active':''}" onclick="setFScoreGoal('maintain')">⚖️ Поддержание</button></div><div class="analytics-note"><strong>💪 Набор:</strong> оценивается контролируемый рост веса и положительная динамика остальных замеров.<br><strong>🔥 Сушка:</strong> оценивается контролируемое снижение веса с учётом талии и сохранения остальных параметров.<br><strong>⚖️ Поддержание:</strong> оценивается стабильность показателей.<br><br>Одни и те же данные могут дать разные оценки при разных целях — это нормальная работа движка.</div></div></details>`;
 }
