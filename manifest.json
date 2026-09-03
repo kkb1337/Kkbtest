@@ -26,6 +26,6 @@
       "purpose": "any maskable"
     }
   ],
-  "_build": "ftracker-v1.4.8-index-ui-hotfix",
-  "version": "1.4.8"
+  "_build": "ftracker-v1.4.9-index-ux-consolidation",
+  "version": "1.4.9"
 }
