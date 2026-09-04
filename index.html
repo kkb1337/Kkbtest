@@ -7230,9 +7230,10 @@ body{
 </div>
 <div id="bodyGraphModal" class="catalog-modal hidden" onclick="if(event.target===this) closeBodyGraph()">
     <div class="catalog-modal-content body-graph-modal-content">
-        <span class="close-btn" onclick="closeBodyGraph()">&times;</span>
-        <div style="font-size:21px;font-weight:800;">📈 Динамика параметра</div>
-        <div style="color:var(--subtext);font-size:13px;margin-top:3px;">История изменения выбранного параметра</div>
+        <div class="unified-surface-header">
+            <button class="surface-back-btn" type="button" onclick="closeBodyGraph()">← Назад</button>
+            <div class="surface-title">Динамика параметра</div>
+        </div>
         <label class="field-label" style="margin-top:14px;">Параметр</label>
         <select id="bodyGraphField" onchange="renderBodyGraph()"></select>
         <div id="bodyGraphSummary" style="margin-top:10px;"></div>
@@ -7469,7 +7470,7 @@ body{
 
 <script id="ftracker-app">
 /* ================================================================
-   FTracker v1.4.33
+   FTracker v1.4.34
    One centralized stack: only the top modal can scroll/interact.
    ================================================================ */
 const modalStack = [];
@@ -7481,7 +7482,7 @@ let modalStackObserverStarted = false;
 const FULLSCREEN_MODAL_IDS = new Set([
   'renameExerciseModal','directoryNewExerciseModal','workoutNewExerciseModal',
   'replaceExerciseModal','exerciseModal','workoutDetailModal','achievementsModal',
-  'manualWorkoutModal','addFoodModal','foodLimitModal','catalogEditModal',
+  'manualWorkoutModal','addFoodModal','foodLimitModal',
   'workoutSummaryModal','bodyGraphModal','chartModal','measurementManagerModal',
   'measurementFieldModal'
 ]);
@@ -7492,7 +7493,7 @@ function isFullscreenModalSurface(modal) {
 function isModalElement(el) {
   if (!(el instanceof Element)) return false;
   /* Exercise Card is a standalone full-screen surface, never a stack modal. */
-  if (['techniqueModal','chartModal','measurementManagerModal','measurementFieldModal','newMeasurementModal','editMeasurementModal','addFoodModal','foodLimitModal'].includes(el.id)) return false;
+  if (['techniqueModal','chartModal','measurementManagerModal','measurementFieldModal','newMeasurementModal','editMeasurementModal','addFoodModal','foodLimitModal','catalogEditModal'].includes(el.id)) return false;
   if (el.id && /Modal$/i.test(el.id)) return true;
   const cls = typeof el.className === 'string' ? el.className : '';
   return /(?:^|\s)[\w-]*modal(?:\s|$)/i.test(cls);
@@ -7508,7 +7509,7 @@ function getModalRoots() {
     '.food-modal', '.catalog-modal'
   ].join(',');
   return Array.from(document.querySelectorAll(selectors))
-    .filter(el => !['techniqueModal','chartModal','measurementManagerModal','measurementFieldModal','newMeasurementModal','editMeasurementModal','addFoodModal','foodLimitModal'].includes(el.id))
+    .filter(el => !['techniqueModal','chartModal','measurementManagerModal','measurementFieldModal','newMeasurementModal','editMeasurementModal','addFoodModal','foodLimitModal','catalogEditModal'].includes(el.id))
     .filter(isModalElement);
 }
 
@@ -12140,11 +12141,17 @@ function renderTextStats() {
     const daysCount = daysWithData.size;
     const avgCal = daysCount > 0 ? Math.round(totalCal / daysCount) : 0;
     container.innerHTML = `
-        <div style="margin-bottom:12px;">
-            <div><strong>Дней с записями:</strong> ${daysCount}</div>
-            <div><strong>Средняя калорийность:</strong> ${avgCal} ккал/день</div>
-            <div><strong>Всего калорий:</strong> ${totalCal} ккал</div>
-            <div><strong>Белки:</strong> ${totalProtein} г | <strong>Жиры:</strong> ${totalFat} г | <strong>Углеводы:</strong> ${totalCarbs} г</div>
+        <div class="nutrition-summary">
+            <div class="nutrition-summary-main">
+                <div class="nutrition-stat"><span>Дней с записями</span><b>${daysCount}</b></div>
+                <div class="nutrition-stat"><span>Средняя калорийность</span><b>${avgCal} <small>ккал/день</small></b></div>
+                <div class="nutrition-stat"><span>Всего калорий</span><b>${totalCal} <small>ккал</small></b></div>
+            </div>
+            <div class="nutrition-macros">
+                <div class="nutrition-macro"><span>Белки</span><b>${totalProtein} г</b></div>
+                <div class="nutrition-macro"><span>Жиры</span><b>${totalFat} г</b></div>
+                <div class="nutrition-macro"><span>Углеводы</span><b>${totalCarbs} г</b></div>
+            </div>
         </div>
     `;
 }
@@ -12427,7 +12434,7 @@ function openAddToCatalog() {
     document.getElementById('catalogName').value = '';
     document.getElementById('catalogType').value = 'per100';
     toggleCatalogTypeFields();
-    lockModalScroll(); document.getElementById('catalogEditModal').classList.remove('hidden');
+    document.getElementById('catalogEditModal').classList.remove('hidden');
 }
 
 function editCatalogProduct(index) {
@@ -12448,7 +12455,7 @@ function editCatalogProduct(index) {
         document.getElementById('catalogFat100').value = prod.fat100 || '';
         document.getElementById('catalogCarbs100').value = prod.carbs100 || '';
     }
-    lockModalScroll(); document.getElementById('catalogEditModal').classList.remove('hidden');
+    document.getElementById('catalogEditModal').classList.remove('hidden');
 }
 
 function toggleCatalogTypeFields() {
@@ -17662,6 +17669,28 @@ window.closeImportConfirm=function(){
 #chartModal .chart-modal-header>.surface-back-btn{display:inline-flex!important;flex:0 0 auto!important;width:auto!important;margin:0!important;}
 #chartModal .chart-modal-header>.chart-modal-title{display:block!important;flex:1 1 auto!important;min-width:0!important;margin:0!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;}
 #chartModal>.chart-modal-content>.close-btn,#chartModal .chart-modal-header .close-btn{display:none!important;}
+</style>
+
+<style id="ftracker-v1-4-34-source-cleanup">
+/* v1.4.34 — source-level cleanup for catalog editor, parameter dynamics and nutrition statistics. */
+#catalogEditModal{position:fixed!important;inset:0!important;margin:0!important;padding:0!important;display:block!important;overflow:hidden!important;background:var(--bg)!important;z-index:6000!important;box-sizing:border-box!important;}
+#catalogEditModal.hidden{display:none!important;}
+#catalogEditModal>.catalog-modal-content{position:absolute!important;inset:0!important;width:auto!important;height:auto!important;min-width:0!important;min-height:0!important;max-width:none!important;max-height:none!important;margin:0!important;border-radius:0!important;background:var(--bg)!important;box-sizing:border-box!important;overflow-y:auto!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch!important;padding:calc(env(safe-area-inset-top,0px) + 16px) calc(env(safe-area-inset-right,0px) + 16px) calc(env(safe-area-inset-bottom,0px) + 24px) calc(env(safe-area-inset-left,0px) + 16px)!important;}
+#catalogEditModal .unified-surface-header,#bodyGraphModal .unified-surface-header{display:flex!important;align-items:center!important;gap:10px!important;margin:0 0 16px!important;min-width:0!important;}
+#catalogEditModal .surface-back-btn,#bodyGraphModal .surface-back-btn,#chartModal .surface-back-btn{display:inline-flex!important;align-items:center!important;justify-content:center!important;flex:0 0 auto!important;width:auto!important;min-height:40px!important;margin:0!important;padding:0 13px!important;border:1px solid var(--window-border)!important;border-radius:12px!important;background:var(--window-surface-2)!important;color:var(--text)!important;font-size:15px!important;font-weight:700!important;white-space:nowrap!important;}
+#catalogEditModal .surface-title,#bodyGraphModal .surface-title,#chartModal .chart-modal-title{flex:1 1 auto!important;min-width:0!important;margin:0!important;font-size:20px!important;font-weight:700!important;line-height:1.2!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;}
+#catalogEditModal .modal-stack-auto-close,#catalogEditModal>.close-btn,#bodyGraphModal .close-btn{display:none!important;}
+.nutrition-summary{display:flex;flex-direction:column;gap:10px;margin:0 0 14px;}
+.nutrition-summary-main{display:grid;grid-template-columns:1fr;gap:8px;}
+.nutrition-stat,.nutrition-macro{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--window-surface);border:1px solid var(--window-border);border-radius:14px;padding:11px 13px;box-sizing:border-box;}
+.nutrition-stat span,.nutrition-macro span{color:var(--subtext);font-size:13px;line-height:1.2;min-width:0;}
+.nutrition-stat b,.nutrition-macro b{font-size:15px;line-height:1.2;white-space:nowrap;text-align:right;color:var(--text);}
+.nutrition-stat small{font-size:11px;color:var(--subtext);font-weight:600;}
+.nutrition-macros{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;}
+.nutrition-macro{flex-direction:column;align-items:flex-start;justify-content:center;gap:5px;min-width:0;padding:11px 10px;}
+.nutrition-macro span{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;}
+.nutrition-macro b{font-size:14px;max-width:100%;overflow:hidden;text-overflow:ellipsis;}
+@media(max-width:390px){.nutrition-macro{padding:10px 8px}.nutrition-macro span{font-size:11px}.nutrition-macro b{font-size:13px}.nutrition-stat{padding:10px 12px}}
 </style>
 </body>
 </html>
