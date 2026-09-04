@@ -6547,6 +6547,21 @@ body{
   z-index:50!important;
 }
 </style>
+
+<style id="ftracker-measurement-surfaces-v1-4-29">
+/* Direct fullscreen surfaces: same viewport model as the working Exercise Card and Nutrition Chart. */
+.surface-back-btn{position:relative;z-index:20;display:inline-flex;align-items:center;min-height:40px;margin:0 0 14px;padding:0;background:transparent;border:0;color:var(--text);font-size:16px;font-weight:800;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.surface-title{font-size:21px;font-weight:800;margin:0 0 4px;}
+#chartModal>.chart-modal-content{padding-top:calc(env(safe-area-inset-top,0px) + 16px)!important;}
+#chartModal .chart-modal-header{padding-right:0!important;margin-bottom:18px!important;}
+#chartModal .legend{display:flex!important;flex-wrap:nowrap!important;align-items:center!important;justify-content:space-between!important;gap:6px!important;margin:8px 0 0!important;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 8px)!important;overflow-x:auto!important;font-size:12px!important;}
+#chartModal .legend-item{flex:0 0 auto!important;white-space:nowrap!important;gap:3px!important;font-size:12px!important;}
+#chartModal .legend-dot{width:8px!important;height:8px!important;flex:0 0 8px!important;}
+#measurementManagerModal,#measurementFieldModal,#newMeasurementModal,#editMeasurementModal{position:fixed!important;inset:0!important;width:auto!important;height:auto!important;min-height:0!important;max-height:none!important;margin:0!important;padding:0!important;display:block!important;overflow:hidden!important;background:var(--bg)!important;box-sizing:border-box!important;z-index:6000!important;}
+#measurementManagerModal.hidden,#measurementFieldModal.hidden,#newMeasurementModal.hidden,#editMeasurementModal.hidden{display:none!important;}
+#measurementManagerModal>.measurement-manager-modal-content,#measurementFieldModal>.measurement-manager-modal-content,#newMeasurementModal>.measurement-manager-modal-content,#editMeasurementModal>.measurement-manager-modal-content{position:absolute!important;inset:0!important;width:auto!important;height:auto!important;min-width:0!important;min-height:0!important;max-width:none!important;max-height:none!important;margin:0!important;border-radius:0!important;border:none!important;background:var(--bg)!important;box-sizing:border-box!important;overflow-y:auto!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior:contain!important;padding:calc(env(safe-area-inset-top,0px) + 16px) calc(env(safe-area-inset-right,0px) + 16px) calc(env(safe-area-inset-bottom,0px) + 24px) calc(env(safe-area-inset-left,0px) + 16px)!important;}
+#measurementManagerModal .close-btn,#measurementFieldModal .close-btn,#newMeasurementModal .close-btn,#editMeasurementModal .close-btn{display:none!important;}
+</style>
 </head>
 <body>
 <div class="safe-area"><div class="container" id="app">
@@ -6706,7 +6721,7 @@ body{
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.28 от 04.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.29 от 04.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -7026,7 +7041,7 @@ body{
 
 <div id="chartModal" class="catalog-modal hidden" onclick="if(event.target === this) closeChartModal()">
     <div class="catalog-modal-content chart-modal-content">
-        <span class="close-btn" onclick="closeChartModal()">&times;</span>
+        <button class="surface-back-btn" type="button" onclick="closeChartModal()">← Назад</button>
         <div class="chart-modal-header">
             <div class="chart-modal-icon">📊</div>
             <div><div class="chart-modal-title">График питания</div><div class="chart-modal-subtitle">Выберите период и показатель</div></div>
@@ -7057,8 +7072,8 @@ body{
 </div>
 <div id="measurementManagerModal" class="catalog-modal hidden" onclick="if(event.target === this) closeMeasurementManager()">
     <div class="catalog-modal-content measurement-manager-modal-content">
-        <span class="close-btn" onclick="closeMeasurementManager()">&times;</span>
-        <div style="font-size:21px;font-weight:800;margin-bottom:4px;">⚙️ Параметры</div>
+        <button class="surface-back-btn" type="button" onclick="closeMeasurementManager()">← Назад</button>
+        <div class="surface-title">⚙️ Параметры</div>
         <div class="measurement-modal-note">Здесь можно менять список параметров. История уже сохранённых замеров останется на месте.</div>
         <div id="measurementManagerList" class="measurement-manager-list"></div>
         <button onclick="openMeasurementFieldEditor()">➕ Добавить параметр</button>
@@ -7067,8 +7082,8 @@ body{
 </div>
 <div id="measurementFieldModal" class="catalog-modal hidden" onclick="if(event.target === this) closeMeasurementFieldEditor()">
     <div class="catalog-modal-content measurement-manager-modal-content">
-        <span class="close-btn" onclick="closeMeasurementFieldEditor()">&times;</span>
-        <div id="measurementFieldModalTitle" style="font-size:21px;font-weight:800;margin-bottom:12px;">Новый параметр</div>
+        <button class="surface-back-btn" type="button" onclick="closeMeasurementFieldEditor()">← Назад</button>
+        <div id="measurementFieldModalTitle" class="surface-title">Новый параметр</div>
         <label class="field-label">Название параметра</label>
         <input type="text" id="measurementFieldNameInput" maxlength="40" placeholder="Например, Икры">
         <button onclick="saveMeasurementFieldEditor()">💾 Сохранить</button>
@@ -7238,7 +7253,7 @@ body{
 
 <script id="ftracker-app">
 /* ================================================================
-   FTracker v1.4.28
+   FTracker v1.4.29
    One centralized stack: only the top modal can scroll/interact.
    ================================================================ */
 const modalStack = [];
@@ -7261,7 +7276,7 @@ function isFullscreenModalSurface(modal) {
 function isModalElement(el) {
   if (!(el instanceof Element)) return false;
   /* Exercise Card is a standalone full-screen surface, never a stack modal. */
-  if (el.id === 'techniqueModal' || el.id === 'chartModal') return false;
+  if (['techniqueModal','chartModal','measurementManagerModal','measurementFieldModal','newMeasurementModal','editMeasurementModal'].includes(el.id)) return false;
   if (el.id && /Modal$/i.test(el.id)) return true;
   const cls = typeof el.className === 'string' ? el.className : '';
   return /(?:^|\s)[\w-]*modal(?:\s|$)/i.test(cls);
@@ -7277,7 +7292,7 @@ function getModalRoots() {
     '.food-modal', '.catalog-modal'
   ].join(',');
   return Array.from(document.querySelectorAll(selectors))
-    .filter(el => el.id !== 'techniqueModal' && el.id !== 'chartModal')
+    .filter(el => !['techniqueModal','chartModal','measurementManagerModal','measurementFieldModal','newMeasurementModal','editMeasurementModal'].includes(el.id))
     .filter(isModalElement);
 }
 
@@ -9262,7 +9277,7 @@ window.showExerciseDuplicateModal=function(name,matches,exact,onAllow){
   } else add.onclick=null;
 
   document.body.appendChild(modal);
-  lockModalScroll(); modal.classList.remove('hidden');
+  modal.classList.remove('hidden');
   sheet?.scrollTo(0,0);
 };
 window.ftFindExerciseDuplicate=ftFindDuplicate;
@@ -9446,7 +9461,7 @@ function openExerciseModal(realIdx){
     openedExerciseName=meta.name; exerciseGraphMetric=meta.type==='strength'?'weight':'reps';
     const title=document.getElementById('exerciseModalTitle'); if(title)title.textContent=meta.name;
     const modal=document.getElementById('exerciseModal'); if(!modal)return;
-    lockModalScroll(); modal.classList.remove('hidden');
+    modal.classList.remove('hidden');
     const labels=[['history','Обзор'],['records','Рекорды'],['graph','График']];
     modal.querySelectorAll('.tabs .tab').forEach(t=>{const x=labels.find(v=>v[0]===t.dataset.tab);if(x)t.textContent=x[1];});
     switchExerciseModalTab('history');
@@ -9593,7 +9608,7 @@ function ensureMeasurementHistoryModal() {
 function openBodyHistory() {
     const modal = ensureMeasurementHistoryModal();
     renderMeasurementHistory();
-    lockModalScroll(); modal.classList.remove('hidden');
+    modal.classList.remove('hidden');
 }
 function closeBodyHistory() { document.getElementById('measurementHistoryModal')?.classList.add('hidden'); }
 
@@ -9621,8 +9636,8 @@ function openNewMeasurementModal() {
     };
     modal.innerHTML = `
         <div class="catalog-modal-content measurement-manager-modal-content">
-            <span class="close-btn" onclick="closeNewMeasurementModal()">&times;</span>
-            <div style="font-size:21px;font-weight:800;margin-bottom:4px;">＋ Новый замер</div>
+            <button class="surface-back-btn" type="button" onclick="closeNewMeasurementModal()">← Назад</button>
+            <div class="surface-title">＋ Новый замер</div>
             <div class="measurement-modal-note">Последние значения подставлены автоматически — измени только то, что поменялось.</div>
             <label class="field-label">Дата</label>
             <input type="date" id="newMeasurementDate" value="${today}">
@@ -9635,7 +9650,7 @@ function openNewMeasurementModal() {
             <button onclick="prepareNewMeasurementSave()">💾 Сохранить</button>
             <button class="gray" onclick="closeNewMeasurementModal()">Отмена</button>
         </div>`;
-    lockModalScroll(); modal.classList.remove('hidden');
+    modal.classList.remove('hidden');
 }
 
 function closeNewMeasurementModal() {
@@ -9692,8 +9707,8 @@ function openLastMeasurementEdit() {
 
     modal.innerHTML = `
         <div class="catalog-modal-content measurement-manager-modal-content">
-            <span class="close-btn" onclick="closeLastMeasurementEdit()">&times;</span>
-            <div style="font-size:21px;font-weight:800;margin-bottom:4px;">✏️ Изменить последний замер</div>
+            <button class="surface-back-btn" type="button" onclick="closeLastMeasurementEdit()">← Назад</button>
+            <div class="surface-title">✏️ Изменить последний замер</div>
             <div class="measurement-modal-note">Изменения исправят существующий последний замер, новый замер не создаётся.</div>
             <label class="field-label">Дата</label>
             <input type="date" id="editMeasurementDate" value="${dateValue}">
@@ -9707,7 +9722,7 @@ function openLastMeasurementEdit() {
             <button class="gray" onclick="closeLastMeasurementEdit()">Отмена</button>
         </div>`;
 
-    lockModalScroll(); modal.classList.remove('hidden');
+    modal.classList.remove('hidden');
 }
 
 function closeLastMeasurementEdit() {
@@ -9751,7 +9766,7 @@ function prepareLastMeasurementEdit() {
 
 function openMeasurementManager() {
     renderMeasurementFieldManager();
-    lockModalScroll(); document.getElementById('measurementManagerModal').classList.remove('hidden');
+    document.getElementById('measurementManagerModal').classList.remove('hidden');
 }
 function closeMeasurementManager() {
     document.getElementById('measurementManagerModal').classList.add('hidden');
@@ -9782,7 +9797,7 @@ function openMeasurementFieldEditor(index = null) {
         title.textContent = 'Новый параметр';
         input.value = '';
     }
-    lockModalScroll(); document.getElementById('measurementFieldModal').classList.remove('hidden');
+    document.getElementById('measurementFieldModal').classList.remove('hidden');
     setTimeout(() => input.focus(), 80);
 }
 
@@ -9911,7 +9926,7 @@ function openHistoricalMeasurementEdit(index) {
         <button onclick="prepareHistoricalMeasurementSave(${index})">💾 Сохранить изменения</button>
         <button class="gray" onclick="closeHistoricalMeasurementEdit()">Отмена</button>
     </div>`;
-    lockModalScroll(); modal.classList.remove('hidden');
+    modal.classList.remove('hidden');
 }
 function closeHistoricalMeasurementEdit(){ document.getElementById('historicalMeasurementEditModal')?.classList.add('hidden'); }
 function prepareHistoricalMeasurementSave(index){
@@ -11322,7 +11337,7 @@ function openRenameExerciseModal(oldName){
     const modal=document.getElementById('renameExerciseModal'); if(!modal) return;
     document.getElementById('renameExerciseOld').value=oldName;
     document.getElementById('renameExerciseInput').value=oldName;
-    lockModalScroll(); modal.classList.remove('hidden');
+    modal.classList.remove('hidden');
     setTimeout(()=>document.getElementById('renameExerciseInput')?.focus(),50);
 }
 function closeRenameExerciseModal(){ document.getElementById('renameExerciseModal')?.classList.add('hidden'); }
@@ -11427,7 +11442,7 @@ let exercisePickerProgramIndex=null;
 function openExercisePicker(progIdx){
     exercisePickerProgramIndex=progIdx; const modal=document.getElementById('exercisePickerModal'); if(!modal)return;
     document.getElementById('exercisePickerTitle').textContent='Добавить упражнение в «'+(data.programs[progIdx]?.name||'сплит')+'»';
-    const input=document.getElementById('exercisePickerSearch'); if(input)input.value=''; lockModalScroll(); modal.classList.remove('hidden'); renderExercisePicker();
+    const input=document.getElementById('exercisePickerSearch'); if(input)input.value=''; modal.classList.remove('hidden'); renderExercisePicker();
 }
 function closeExercisePicker(){exercisePickerProgramIndex=null;document.getElementById('exercisePickerModal')?.classList.add('hidden');}
 function renderExercisePickerBase(){
@@ -12052,10 +12067,11 @@ function renderChart() {
 
     const legendContainer = document.getElementById('chartLegend');
     if (legendContainer) {
+        const compactLegend = { calories: 'Ккал', protein: 'Б', fat: 'Ж', carbs: 'У' };
         legendContainer.innerHTML = typesToShow.map(type => `
             <div class="legend-item">
                 <span class="legend-dot" style="background:${CHART_COLORS[type]}"></span>
-                ${CHART_LABELS[type]}
+                ${typesToShow.length > 1 ? compactLegend[type] : CHART_LABELS[type]}
             </div>
         `).join('');
     }
