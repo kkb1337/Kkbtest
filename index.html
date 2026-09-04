@@ -64,11 +64,46 @@ input, select { width: 100%; padding: 10px; border-radius: 10px; border: 0; back
 .comparison .positive { color: var(--positive); } .comparison .negative { color: var(--negative); }
 .theme-toggle-btn { position: absolute; top: 20px; right: 20px; width: 44px; height: 44px; border-radius: 22px; background: var(--card-bg); display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 10; }
 .close-workout-btn { position: absolute; top: 16px; right: 20px; width: 40px; height: 40px; border-radius: 20px; background: var(--card-bg); display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.3); z-index: 10; border: none; color: var(--text); }
-#deleteConfirmModal { z-index: 2001 !important; }
-#deleteConfirmModal .confirm-modal-content { position: relative; z-index: 1001; }
-.theme-modal, .exercise-modal, .date-modal, .confirm-modal, .workout-detail-modal, .manual-workout-modal, .achievements-modal, .food-modal, .catalog-modal { position: fixed; inset: 0; box-sizing: border-box; background: var(--modal-overlay); z-index: 2001; overscroll-behavior: contain; }
-.theme-modal.hidden, .exercise-modal.hidden, .date-modal.hidden, .confirm-modal.hidden, .workout-detail-modal.hidden, .manual-workout-modal.hidden, .achievements-modal.hidden, .food-modal.hidden, .catalog-modal.hidden { display: none; }
-.theme-modal-content, .exercise-modal-content, .date-modal-content, .confirm-modal-content, .workout-detail-content, .manual-workout-content, .achievements-content, .food-modal-content, .catalog-modal-content { background: var(--card-bg); border-radius: 20px; padding: 24px; width: 100%; max-width: none; max-height: none; overflow-y: visible; position: relative; box-sizing: border-box; }
+/* Unified modal architecture: every modal uses the same safe-area viewport. */
+#deleteConfirmModal { z-index: 2001; }
+#deleteConfirmModal .confirm-modal-content { position: relative; }
+.theme-modal, .exercise-modal, .date-modal, .confirm-modal, .workout-detail-modal, .manual-workout-modal, .achievements-modal, .food-modal, .catalog-modal,
+.modal-stack-root {
+  position: fixed;
+  inset: 0;
+  padding:
+    calc(env(safe-area-inset-top, 0px) + 12px)
+    12px
+    calc(env(safe-area-inset-bottom, 0px) + 12px);
+  box-sizing: border-box;
+  background: var(--modal-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+}
+.theme-modal.hidden, .exercise-modal.hidden, .date-modal.hidden, .confirm-modal.hidden, .workout-detail-modal.hidden, .manual-workout-modal.hidden, .achievements-modal.hidden, .food-modal.hidden, .catalog-modal.hidden,
+.modal-stack-root.hidden { display: none !important; }
+.theme-modal-content, .exercise-modal-content, .date-modal-content, .confirm-modal-content, .workout-detail-content, .manual-workout-content, .achievements-content, .food-modal-content, .catalog-modal-content,
+.modal-stack-content {
+  background: var(--card-bg);
+  border-radius: 22px;
+  padding: 24px;
+  width: min(100%, 760px);
+  max-width: 760px;
+  max-height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  box-sizing: border-box;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+/* Compact confirmation dialogs keep their natural height while still respecting the same viewport. */
+.confirm-modal-content { width: min(100%, 560px); max-height: 100%; }
+.modal-stack-inactive { pointer-events: none !important; }
+.modal-stack-active { pointer-events: auto !important; }
 /* [FIX] v1.3.10: visible build information inside the gear/settings sheet. */
 #themeModal .app-version-info{margin:0 34px 14px 0;color:var(--subtext);font-size:12px;font-weight:700;line-height:1.2;letter-spacing:.1px;}
 .close-btn, .modal-close-btn { position: absolute; top: 12px; right: 16px; font-size: 24px; color: var(--subtext); cursor: pointer; background: none; border: none; }
@@ -137,7 +172,7 @@ input, select { width: 100%; padding: 10px; border-radius: 10px; border: 0; back
 .field-label { display: block; font-size: 12px; color: var(--subtext); margin: 6px 0 2px; }
 
 /* --- Refined charts / body parameters UI --- */
-.chart-modal-content { max- max-height:none; padding: 20px; border-radius: 24px; }
+.chart-modal-content { max- max-height: 88vh; padding: 20px; border-radius: 24px; }
 .chart-modal-header { display:flex; align-items:center; gap:12px; padding-right:28px; margin-bottom:18px; }
 .chart-modal-icon { width:42px; height:42px; border-radius:14px; display:flex; align-items:center; justify-content:center; background:var(--input-bg); font-size:22px; }
 .chart-modal-title { font-size:21px; font-weight:800; }
@@ -192,7 +227,7 @@ input, select { width: 100%; padding: 10px; border-radius: 10px; border: 0; back
 .body-history-values { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
 .body-history-value { background:var(--card-bg); border-radius:9px; padding:5px 8px; font-size:12px; color:var(--text); }
 .body-history-comparison { margin-top:9px; padding-top:9px; border-top:1px solid var(--border); }
-.measurement-manager-modal-content { max-height:none; }
+.measurement-manager-modal-content { max-height:82vh; }
 .measurement-manager-list { display:grid; gap:7px; margin:12px 0; }
 .measurement-manager-row { display:flex; align-items:center; gap:8px; background:var(--input-bg); border-radius:13px; padding:8px; }
 .measurement-manager-row-name { flex:1; min-width:0; font-weight:600; font-size:14px; }
@@ -216,7 +251,7 @@ input, select { width: 100%; padding: 10px; border-radius: 10px; border: 0; back
 .progress-filter button{flex:0 0 auto;width:auto;margin:0;padding:9px 12px;font-size:13px;background:var(--input-bg);color:var(--subtext)}
 .progress-filter button.active{background:var(--accent-gradient);color:#fff}
 .body-graph-btn{width:auto;margin:0;padding:8px 10px;font-size:13px}
-.body-graph-modal-content{max-height:none}
+.body-graph-modal-content{max-height:88vh}
 .body-graph-chart{height:210px;background:var(--input-bg);border-radius:15px;padding:0;margin-top:12px;position:relative;overflow:hidden}
 .body-graph-chart canvas{width:100%;height:100%;display:block}
 .summary-record{background:rgba(52,199,89,.12);border:1px solid rgba(52,199,89,.25);border-radius:13px;padding:10px;margin-top:7px}
@@ -582,7 +617,7 @@ body { padding-top: env(safe-area-inset-top); }
 .progress-ex-change{margin-top:10px;border-top:1px solid var(--border)}.progress-ex-change-row{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px}.progress-ex-change-row:last-child{border-bottom:0}.progress-ex-positive{color:var(--positive);font-weight:850}.progress-ex-negative{color:#ff453a;font-weight:850}.progress-ex-neutral{color:var(--subtext);font-weight:700}
 .progress-ex-chart{height:205px;margin-top:10px;border-radius:14px;background:var(--input-bg);padding:5px;box-sizing:border-box}.progress-ex-chart canvas{width:100%;height:100%}
 .progress-ex-history{display:grid;gap:6px;margin-top:10px}.progress-ex-history-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 11px;background:var(--input-bg);border-radius:12px;font-size:13px}.progress-ex-history-date{font-weight:750}.progress-ex-history-value{text-align:right;font-weight:800}.progress-ex-history-value small{display:block;color:var(--subtext);font-weight:500;margin-top:2px}
-.exercise-modal-content{max-height:none;padding:18px!important}.exercise-modal-title{padding-right:28px!important;font-size:20px!important}.exercise-modal-content .tabs{gap:6px;margin:14px 0!important;padding:4px;background:var(--input-bg);border-radius:14px}.exercise-modal-content .tabs .tab{padding:10px 6px!important;border-radius:10px!important;font-size:12px!important}.exercise-modal-content .best-result{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;text-align:left!important}.exercise-modal-content .best-item{background:var(--input-bg);border-radius:13px;padding:11px}.exercise-modal-content .best-value{font-size:19px!important}.exercise-modal-content .best-label{font-size:11px!important;line-height:1.25}.exercise-modal-content .history-item{padding:11px 0!important}.exercise-modal-content .graph-container{height:220px!important;background:var(--input-bg);border-radius:14px;padding:5px;box-sizing:border-box}
+.exercise-modal-content{max-height:86vh!important;padding:18px!important}.exercise-modal-title{padding-right:28px!important;font-size:20px!important}.exercise-modal-content .tabs{gap:6px;margin:14px 0!important;padding:4px;background:var(--input-bg);border-radius:14px}.exercise-modal-content .tabs .tab{padding:10px 6px!important;border-radius:10px!important;font-size:12px!important}.exercise-modal-content .best-result{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;text-align:left!important}.exercise-modal-content .best-item{background:var(--input-bg);border-radius:13px;padding:11px}.exercise-modal-content .best-value{font-size:19px!important}.exercise-modal-content .best-label{font-size:11px!important;line-height:1.25}.exercise-modal-content .history-item{padding:11px 0!important}.exercise-modal-content .graph-container{height:220px!important;background:var(--input-bg);border-radius:14px;padding:5px;box-sizing:border-box}
 @media(max-width:420px){.progress-ex-title{font-size:22px}.progress-ex-metric-value{font-size:15px}.progress-ex-chart{height:190px}.progress-ex-selected-meta{display:none}.workout-analytics-title{font-size:13px}}
 
 /* v67 header alignment only: safe area + stable header layout */
@@ -711,7 +746,7 @@ body { padding-top: env(safe-area-inset-top); }
 #bodyScreen .body-empty-title{font-size:19px;font-weight:850}
 #bodyScreen .body-empty-sub{font-size:12px;color:var(--subtext);margin:5px auto 14px;max-width:300px;line-height:1.4}
 #measurementHistoryModal{z-index:1450!important}
-#measurementHistoryModal .body-history-modal-content{max-height:none;padding:20px;border-radius:22px}
+#measurementHistoryModal .body-history-modal-content{max-height:88vh;padding:20px;border-radius:22px}
 #measurementHistoryModal .body-history-modal-title{font-size:21px;font-weight:900}
 #measurementHistoryModal .body-history-modal-sub{color:var(--subtext);font-size:12px;margin-top:3px}
 #measurementHistoryModal .body-history-modal-head{padding-right:26px;margin-bottom:12px}
@@ -863,7 +898,7 @@ body { padding-top: env(safe-area-inset-top); }
 
 
 
-.replace-exercise-sheet{max-height:none;overflow:visible;padding:22px 18px 16px!important;}
+.replace-exercise-sheet{max-height:88vh!important;overflow:hidden!important;padding:22px 18px 16px!important;}
 .replace-sheet-title{font-size:23px;font-weight:850;letter-spacing:-.4px;}
 .replace-sheet-current{margin-top:4px;color:var(--subtext);font-size:14px;font-weight:650;}
 .replace-search-wrap{position:relative;margin:18px 0 12px;}
@@ -1082,9 +1117,9 @@ body { padding-top: env(safe-area-inset-top); }
 
 
 /* ===== Мышцы и техника v3: модальная карточка, статичные фазы ===== */
-.technique-modal{position:fixed;inset:0;background:var(--modal-overlay);display:flex;align-items:center;justify-content:center;z-index:2001;overscroll-behavior:contain;}
+.technique-modal{position:fixed;inset:0;padding:calc(env(safe-area-inset-top,0px) + 12px) 12px calc(env(safe-area-inset-bottom,0px) + 12px);box-sizing:border-box;background:var(--app-bg);z-index:6000;}
 .technique-modal.hidden{display:none;}
-.technique-modal-content{background:var(--card-bg);border-radius:20px;padding:20px;overflow:visible;position:relative;}
+.technique-modal-content{background:var(--card-bg);border-radius:20px;padding:20px;position:relative;-webkit-overflow-scrolling:touch;box-sizing:border-box;}
 .technique-modal-sub{font-size:13px;font-weight:700;color:var(--button-green);margin:-12px 0 14px;}
 /* Кликабельное название упражнения в тренировке */
 .workout-exercise-title{cursor:pointer;}
@@ -1377,7 +1412,7 @@ body.light-mode #workoutScreen #exerciseStrip .exercise-dot.active{background:rg
 #workoutScreen .workout-bottom-action.next-action{background:#22252f!important;border:1px solid #3a3f50!important;color:#fff!important;}
 #workoutScreen .workout-bottom-action:active{transform:scale(.965)!important;}
 #replaceExerciseModal .replace-exercise-sheet{
-  display:flex!important;flex-direction:column!important;max-height:none;overflow:visible;
+  display:flex!important;flex-direction:column!important;max-height:88vh!important;overflow:hidden!important;
   position:relative!important;z-index:1!important;
 }
 #replaceExerciseModal .replace-exercise-list{
@@ -1611,7 +1646,7 @@ input,select{border:1px solid var(--border)!important;background:var(--input-bg)
 #workoutScreen .workout-bottom-action:active{transform:scale(.965)!important;}
 /* All modal/list surfaces share one geometry. */
 .exercise-modal,.catalog-modal,.theme-modal,.confirm-modal,.date-modal,.food-modal,.workout-detail-modal,.manual-workout-modal,.achievements-modal{padding:16px!important;}
-.exercise-modal-content,.catalog-modal-content,.theme-modal-content,.confirm-modal-content,.date-modal-content,.food-modal-content,.workout-detail-content,.manual-workout-content,.achievements-content{width:100%;max-width:none;max-height:none;padding:18px!important;border-radius:22px!important;background:var(--card-bg)!important;border:1px solid var(--border)!important;overflow:visible;}
+.exercise-modal-content,.catalog-modal-content,.theme-modal-content,.confirm-modal-content,.date-modal-content,.food-modal-content,.workout-detail-content,.manual-workout-content,.achievements-content{width:min(100%,540px)!important;max-width:540px!important;max-height:88vh!important;padding:18px!important;border-radius:22px!important;background:var(--card-bg)!important;border:1px solid var(--border)!important;overflow:auto!important;}
 .replace-exercise-sheet{display:flex!important;flex-direction:column!important;min-height:0!important;}
 .replace-exercise-list{min-height:120px!important;max-height:46vh!important;overflow-y:auto!important;overscroll-behavior:contain!important;display:grid!important;gap:7px!important;}
 .replace-exercise-option{width:100%!important;min-height:54px!important;margin:0!important;padding:10px 12px!important;border-radius:13px!important;background:var(--input-bg)!important;border:1px solid var(--border)!important;color:var(--text)!important;display:grid!important;grid-template-columns:minmax(0,1fr) auto 24px!important;gap:8px!important;align-items:center!important;text-align:left!important;pointer-events:auto!important;}
@@ -1812,8 +1847,8 @@ body.light-mode{
 #foodScreen .food-calorie-main strong{font-size:20px!important;white-space:nowrap!important;margin-left:auto!important;}
 #foodScreen .food-calorie-main>span:last-child{display:inline!important;margin:0!important;font-size:12px!important;white-space:nowrap!important;flex:0 0 auto!important;}
 /* Large exercise/detail modals start from the top so long content is readable without awkward centering. */
-#techniqueModal.technique-modal,#exerciseModal.exercise-modal,#catalogModal.catalog-modal,#chartModal.catalog-modal{align-items:flex-start!important;justify-content:center!important;padding-top:calc(env(safe-area-inset-top,0px) + 12px)!important;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 12px)!important;box-sizing:border-box!important;}
-#techniqueModal .technique-modal-content,#exerciseModal .exercise-modal-content,#catalogModal .catalog-modal-content,#chartModal .chart-modal-content{margin-top:0!important;}
+#exerciseModal.exercise-modal,#catalogModal.catalog-modal,#chartModal.catalog-modal{align-items:flex-start!important;justify-content:center!important;padding-top:calc(env(safe-area-inset-top,0px) + 12px)!important;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 12px)!important;box-sizing:border-box!important;}
+#exerciseModal .exercise-modal-content,#catalogModal .catalog-modal-content,#chartModal .chart-modal-content{margin-top:0!important;}
 /* Compact structured editor rows: 1. [text], with textarea growing only as needed. */
 #techniqueModal .manual-field-card{padding:9px 10px!important;border-radius:14px!important;}
 #techniqueModal .manual-field-head{align-items:flex-start!important;gap:9px!important;}
@@ -1854,7 +1889,7 @@ body.light-mode{
 .screen-header-spacer{width:44px!important;height:40px!important;flex:0 0 44px!important;}
 .screen-header .title.section-title{min-width:0!important;width:100%!important;}
 /* All large sheets start near the safe top and scroll inside their own content. */
-.technique-modal,.exercise-modal,.catalog-modal,.food-modal,.confirm-modal,.date-modal,.workout-detail-modal,.manual-workout-modal,.achievements-modal{align-items:flex-start!important;padding-top:calc(env(safe-area-inset-top,0px) + 10px)!important;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 10px)!important;}
+.exercise-modal,.catalog-modal,.food-modal,.confirm-modal,.date-modal,.workout-detail-modal,.manual-workout-modal,.achievements-modal{align-items:flex-start!important;padding-top:calc(env(safe-area-inset-top,0px) + 10px)!important;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 10px)!important;}
 .technique-modal-content,.exercise-modal-content,.catalog-modal-content,.food-modal-content,.confirm-modal-content,.date-modal-content,.workout-detail-content,.manual-workout-content,.achievements-content{margin-top:0!important;}
 /* Compact, elegant confirmation/event sheets. */
 .confirm-modal-content{width:min(92%,360px)!important;max-width:360px!important;padding:18px!important;border-radius:18px!important;}
@@ -2385,7 +2420,7 @@ body.light-mode{
 
 
 /* v44: clean, touch-safe modal/picker surfaces */
-.catalog-modal-content,.workout-new-exercise-sheet{width:100%;max-width:none;max-height:none;overflow:visible;overscroll-behavior:contain!important;border-radius:24px!important;padding:20px!important;box-sizing:border-box!important;}
+.catalog-modal-content,.workout-new-exercise-sheet{width:min(92vw,520px)!important;max-width:520px!important;max-height:86vh!important;overflow-y:auto!important;overscroll-behavior:contain!important;border-radius:24px!important;padding:20px!important;box-sizing:border-box!important;}
 .catalog-modal-content input,.catalog-modal-content select,.workout-new-exercise-sheet input,.workout-new-exercise-sheet select{width:100%!important;box-sizing:border-box!important;min-height:50px!important;border-radius:14px!important;margin:6px 0 12px!important;font-size:16px!important;}
 .catalog-modal-content .field-label,.workout-new-exercise-sheet .field-label{display:block!important;margin-top:8px!important;font-size:13px!important;font-weight:800!important;color:var(--subtext)!important;}
 .catalog-modal-content button,.workout-new-exercise-sheet button{width:100%!important;min-height:52px!important;border-radius:15px!important;margin-top:8px!important;font-size:16px!important;font-weight:800!important;}
@@ -2429,7 +2464,7 @@ body.light-mode{
 
 /* Manual exercise cards use the same card shell as built-in exercises. */
 #techniqueModal{z-index:6000!important;}
-#techniqueModal .technique-modal-content{max-height:none;overflow:visible;background:var(--card-bg)!important;color:var(--text)!important;border:1px solid var(--border)!important;border-radius:24px!important;padding:20px!important;box-sizing:border-box!important;box-shadow:0 24px 80px rgba(0,0,0,.42)!important;}
+#techniqueModal .technique-modal-content{width:100%;height:100%;max-height:none;overflow-y:auto;overflow-x:hidden;background:var(--card-bg);color:var(--text);border:1px solid var(--border);border-radius:24px;padding:20px;box-sizing:border-box;box-shadow:0 24px 80px rgba(0,0,0,.42);}
 #techniqueModal .technique-title{font-size:23px!important;font-weight:900!important;line-height:1.12!important;padding-right:38px!important;overflow-wrap:anywhere!important;margin:0!important;}
 #techniqueModal .technique-group{margin-top:5px!important;color:var(--button-green)!important;font-size:15px!important;font-weight:850!important;}
 #techniqueModal .technique-tabs{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:7px!important;padding:4px!important;background:var(--input-bg)!important;border-radius:16px!important;margin:16px 0!important;}
@@ -2461,18 +2496,6 @@ body.light-mode{
 }
 
 /* ===== V52.1 final visual consistency fixes ===== */
-#techniqueModal{
-  align-items:flex-start!important;
-  justify-content:center!important;
-  padding:clamp(84px,9vh,150px) 12px max(18px,env(safe-area-inset-bottom,0px))!important;
-  overflow-y:auto!important;
-  box-sizing:border-box!important;
-}
-#techniqueModal .technique-modal-content{
-  margin:0 auto!important;
-  max-height:calc(100dvh - clamp(102px,11vh,170px))!important;
-  transform:none!important;
-}
 /* One header geometry across all normal sections. */
 .screen-header{
   display:grid!important;
@@ -5693,21 +5716,24 @@ body{
 }
 
 
-/* FTracker Modal Stack: canonical geometry. Modal roots are independent viewport layers. */
+/* FTracker Modal Stack: one active scrolling surface at a time. */
 .modal-stack-root {
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-  box-sizing: border-box;
-  padding: calc(12px + env(safe-area-inset-top, 0px)) 12px calc(12px + env(safe-area-inset-bottom, 0px));
-  overflow-y: auto;
-  overflow-x: hidden;
-  overscroll-behavior: contain;
-  -webkit-overflow-scrolling: touch;
+  position: fixed !important;
+  inset: 0 !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+  overscroll-behavior: contain !important;
 }
-.modal-stack-root.hidden { display: none; }
+.modal-stack-root.hidden { display: none !important; }
 .modal-stack-root > .theme-modal-content,
 .modal-stack-root > .exercise-modal-content,
 .modal-stack-root > .date-modal-content,
@@ -5721,36 +5747,42 @@ body{
 .modal-stack-root > .chart-modal-content,
 .modal-stack-root > .technique-modal-content,
 .modal-stack-root > .modal-content,
-.modal-stack-root > .modal-stack-content,
 .modal-stack-root > [class*="modal"][class*="content"] {
-  position: relative;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  overscroll-behavior: contain !important;
+  -webkit-overflow-scrolling: touch;
   box-sizing: border-box;
-  width: 100%;
-  max-width: 1200px;
-  max-height: none;
-  min-height: 0;
-  height: auto;
-  margin: 0 auto;
-  overflow: visible;
+  width: 100% !important;
+  max-width: 500px;
 }
 .modal-stack-root .modal-close-btn,
 .modal-stack-root .close-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
+  position: absolute !important;
+  top: 10px !important;
+  right: 10px !important;
 }
 .modal-stack-root.is-stack-inactive {
-  pointer-events: none;
-  overflow: hidden;
+  pointer-events: none !important;
+  overflow: hidden !important;
 }
-.modal-stack-root.is-stack-active { pointer-events: auto; }
+.modal-stack-root.is-stack-active {
+  pointer-events: auto !important;
+}
 
-/* FTracker v1.0.7 — unified modal close controls */
+
+/* FTracker v1.0.7 — unified modal close controls and stack surface */
 .home-title-clickable{cursor:pointer;user-select:none;display:inline-flex!important;align-items:center;justify-content:center;gap:7px;}
 .home-title-clickable:focus-visible{outline:2px solid var(--accent);outline-offset:4px;border-radius:8px;}
 .home-title-gear{font-size:.78em;line-height:1;opacity:1;display:inline-block!important;visibility:visible!important;color:var(--subtext)!important;-webkit-text-fill-color:var(--subtext)!important;}
-.modal-stack-root .modal-close-btn,.modal-stack-root .close-btn{width:36px!important;height:36px!important;min-width:36px!important;min-height:36px!important;margin:0!important;padding:0!important;display:flex!important;align-items:center!important;justify-content:center!important;border-radius:10px!important;box-sizing:border-box!important;font-size:22px!important;line-height:1!important;z-index:20!important;}
+.modal-stack-root{position:fixed!important;inset:0!important;top:0!important;left:0!important;right:0!important;bottom:0!important;width:100%!important;height:100%!important;display:flex!important;align-items:center!important;justify-content:center!important;box-sizing:border-box!important;overflow:hidden!important;overscroll-behavior:contain!important;}
+.modal-stack-root.hidden{display:none!important;}
+.modal-stack-root>.modal-stack-content{position:relative!important;overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch!important;box-sizing:border-box!important;max-height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 28px)!important;width:100%!important;}
+.modal-stack-root.is-stack-inactive{pointer-events:none!important;overflow:hidden!important;}
+.modal-stack-root.is-stack-active{pointer-events:auto!important;}
+.modal-stack-root .modal-close-btn,.modal-stack-root .close-btn{position:absolute!important;top:10px!important;right:10px!important;width:36px!important;height:36px!important;min-width:36px!important;min-height:36px!important;margin:0!important;padding:0!important;display:flex!important;align-items:center!important;justify-content:center!important;border-radius:10px!important;box-sizing:border-box!important;font-size:22px!important;line-height:1!important;z-index:20!important;}
 .modal-stack-root .modal-stack-auto-close{background:var(--input-bg)!important;border:1px solid var(--border)!important;color:var(--subtext)!important;}
+
 
 /* v1.0.15 targeted workout button/readability fixes */
 #workoutScreen .workout-bottom-action{min-width:0!important;overflow:hidden!important;padding:12px 10px!important;}
@@ -6650,7 +6682,7 @@ body{
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.20 от 04.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.21 от 04.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -7022,7 +7054,7 @@ body{
 
 
 <div id="exercisePickerModal" class="date-modal hidden" onclick="if(event.target===this)closeExercisePicker()">
-  <div class="date-modal-content" style="display:flex;flex-direction:column;">
+  <div class="date-modal-content" style="max-height:86vh;display:flex;flex-direction:column;">
     <span class="close-btn" onclick="closeExercisePicker()">&times;</span>
     <div id="exercisePickerTitle" style="font-size:20px;font-weight:800;margin-bottom:5px;padding-right:30px;">Добавить упражнение</div>
     <div style="font-size:13px;color:var(--subtext);margin-bottom:10px;">Выбери упражнение из справочника или воспользуйся поиском.</div>
@@ -7031,7 +7063,7 @@ body{
   </div>
 </div>
 <div id="progressExercisePickerModal" class="date-modal hidden" onclick="if(event.target===this)closeProgressExercisePicker()">
-  <div class="date-modal-content" style="display:flex;flex-direction:column;">
+  <div class="date-modal-content" style="max-height:82vh;display:flex;flex-direction:column;">
     <span class="close-btn" onclick="closeProgressExercisePicker()">&times;</span>
     <div style="font-size:20px;font-weight:700;margin-bottom:5px;">Упражнения с прогрессом</div>
     <div style="font-size:13px;color:var(--subtext);margin-bottom:12px;">Выбери упражнение, по которому уже есть сохранённые данные.</div>
@@ -7040,7 +7072,7 @@ body{
   </div>
 </div>
 <div id="exerciseOrderModal" class="date-modal hidden" onclick="if(event.target===this)closeExerciseOrderModal()">
-  <div class="date-modal-content" style="display:flex;flex-direction:column;">
+  <div class="date-modal-content" style="max-height:82vh;display:flex;flex-direction:column;">
     <span class="close-btn" onclick="closeExerciseOrderModal()">&times;</span>
     <div id="exerciseOrderTitle" style="font-size:20px;font-weight:700;margin-bottom:5px;">Порядок упражнений</div>
     <div style="font-size:13px;color:var(--subtext);margin-bottom:12px;">Для каждого упражнения выбери новую позицию. Изменения применятся только после «Сохранить порядок».</div>
@@ -7198,7 +7230,15 @@ function isModalElement(el) {
 }
 
 function getModalRoots() {
-  return Array.from(document.body.children).filter(isModalElement);
+  /* Modals can be opened from inside another modal. Search the whole document,
+     otherwise nested windows are pruned from the stack and clicks leak through. */
+  const selectors = [
+    '[id$="Modal"]',
+    '.theme-modal', '.exercise-modal', '.date-modal', '.confirm-modal',
+    '.workout-detail-modal', '.manual-workout-modal', '.achievements-modal',
+    '.food-modal', '.catalog-modal', '.technique-modal'
+  ].join(',');
+  return Array.from(document.querySelectorAll(selectors)).filter(isModalElement);
 }
 
 function isConfirmationModal(modal) {
@@ -7293,7 +7333,7 @@ function updateModalStackState() {
       content.style.overflowX = 'hidden';
       content.style.overscrollBehavior = 'contain';
       content.style.webkitOverflowScrolling = 'touch';
-      
+      content.style.maxHeight = 'calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 28px)';
       content.style.boxSizing = 'border-box';
     }
   });
@@ -12485,7 +12525,7 @@ function showToast(msg) {
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=1.4.20', {updateViaCache:'none'})
+        navigator.serviceWorker.register('./sw.js?v=1.4.21', {updateViaCache:'none'})
             .then(reg => console.log('SW registered', reg.scope))
             .catch(err => console.log('SW failed', err));
     });
@@ -17342,8 +17382,8 @@ window.closeImportConfirm=function(){
 </script>
 
 
-<style id="ftracker-v1419-neutral-notifications">
-/* v1.4.20 — neutral system notifications, keeping the v1.4.18 safe-area architecture */
+<style id="ftracker-v1420-modal-stack">
+/* v1.4.20 — unified safe-area modal stack and neutral system notifications */
 .toast{
   background:rgba(28,28,30,.98)!important;
   color:#f5f5f7!important;
