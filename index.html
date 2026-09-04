@@ -6694,7 +6694,7 @@ body{
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.22 от 04.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.23 от 04.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -12592,7 +12592,7 @@ function showToast(msg) {
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=1.4.22', {updateViaCache:'none'})
+        navigator.serviceWorker.register('./sw.js?v=1.4.23', {updateViaCache:'none'})
             .then(reg => console.log('SW registered', reg.scope))
             .catch(err => console.log('SW failed', err));
     });
@@ -17468,7 +17468,7 @@ body.light-mode .toast{
 
 
 <style id="ftracker-v1421-authoritative-modal-geometry">
-/* v1.4.22 — authoritative modal geometry.
+/* v1.4.23 — authoritative modal geometry.
    Legacy 82/86/88vh caps are intentionally overridden here.
    The modal root owns the whole safe viewport; the content owns the only scroll surface. */
 .modal-stack-root{
@@ -17553,7 +17553,7 @@ body.light-mode .toast{
 
 
 <style id="ftracker-v1422-true-fullscreen-modals">
-/* v1.4.22 — TRUE FULLSCREEN MODALS.
+/* v1.4.23 — TRUE FULLSCREEN MODALS.
    Non-confirmation modal windows are application screens, not centered cards. */
 .modal-stack-root:not(.hidden):not(#importConfirmModal):not(#deleteConfirmModal):not(#measurementSaveConfirmModal):not(#foodCopyConfirmModal){
   position:fixed!important;
@@ -17598,3 +17598,174 @@ body.light-mode .toast{
   z-index:1000!important;
 }
 </style>
+
+
+<style id="ftracker-v1423-authoritative-fullscreen-modal-screens">
+/* =========================================================
+   v1.4.23 — AUTHORITATIVE FULLSCREEN MODAL SCREENS
+   This is the final geometry layer and intentionally replaces
+   all legacy centered-card / 82vh / 86vh / 88vh modal rules.
+   ========================================================= */
+
+/* Fullscreen second-level screens: the ROOT is the whole viewport. */
+#techniqueModal,
+#exerciseModal,
+#catalogModal,
+#chartModal,
+#bodyGraphModal,
+#measurementManagerModal,
+#measurementFieldModal,
+#measurementHistoryModal,
+#progressExercisePickerModal,
+#exercisePickerModal,
+#exerciseOrderModal{
+  position:fixed!important;
+  inset:0!important;
+  width:100vw!important;
+  height:100dvh!important;
+  min-height:100dvh!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:0!important;
+  display:block!important;
+  box-sizing:border-box!important;
+  overflow:hidden!important;
+  overscroll-behavior:none!important;
+  touch-action:none!important;
+  z-index:2147483000!important;
+  border-radius:0!important;
+}
+
+/* Preserve the app's hidden contract. */
+#techniqueModal.hidden,
+#exerciseModal.hidden,
+#catalogModal.hidden,
+#chartModal.hidden,
+#bodyGraphModal.hidden,
+#measurementManagerModal.hidden,
+#measurementFieldModal.hidden,
+#measurementHistoryModal.hidden,
+#progressExercisePickerModal.hidden,
+#exercisePickerModal.hidden,
+#exerciseOrderModal.hidden{
+  display:none!important;
+  pointer-events:none!important;
+}
+
+/* The CONTENT is also a real application screen and owns the only scroll. */
+#techniqueModal > .technique-modal-content,
+#exerciseModal > .exercise-modal-content,
+#catalogModal > .catalog-modal-content,
+#chartModal > .chart-modal-content,
+#bodyGraphModal > .body-graph-modal-content,
+#measurementManagerModal > .measurement-manager-modal-content,
+#measurementFieldModal > .measurement-modal-content,
+#measurementHistoryModal > .body-history-modal-content,
+#progressExercisePickerModal > .catalog-modal-content,
+#exercisePickerModal > .catalog-modal-content,
+#exerciseOrderModal > .catalog-modal-content,
+#techniqueModal > .exercise-card-unified,
+#techniqueModal > .exercise-editor-unified{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100dvh!important;
+  min-height:100dvh!important;
+  max-width:none!important;
+  max-height:none!important;
+  margin:0!important;
+  box-sizing:border-box!important;
+  border-radius:0!important;
+  transform:none!important;
+
+  /* Safe area belongs INSIDE the screen, never outside it. */
+  padding-top:calc(env(safe-area-inset-top,0px) + 14px)!important;
+  padding-right:calc(env(safe-area-inset-right,0px) + 16px)!important;
+  padding-bottom:calc(env(safe-area-inset-bottom,0px) + 28px)!important;
+  padding-left:calc(env(safe-area-inset-left,0px) + 16px)!important;
+
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  -webkit-overflow-scrolling:touch!important;
+  overscroll-behavior:contain!important;
+  touch-action:pan-y!important;
+}
+
+/* The exercise card has legacy rules with viewport caps; explicitly erase them. */
+#techniqueModal .technique-modal-content.exercise-card-unified,
+#techniqueModal .technique-modal-content.exercise-editor-unified{
+  height:100dvh!important;
+  min-height:100dvh!important;
+  max-height:none!important;
+  margin:0!important;
+  border-radius:0!important;
+}
+
+/* Do not allow any old parent/card rule to clip the bottom of a fullscreen screen. */
+#techniqueModal,
+#techniqueModal .technique-modal-content,
+#techniqueModal .exercise-card-unified,
+#techniqueModal .exercise-editor-unified{
+  clip-path:none!important;
+  -webkit-clip-path:none!important;
+}
+
+/* Close button stays inside the fullscreen screen and above content. */
+#techniqueModal .exercise-card-close,
+#techniqueModal > .technique-modal-content > .modal-close-btn,
+#exerciseModal .close-btn,
+#catalogModal .close-btn,
+#chartModal .close-btn{
+  position:absolute!important;
+  top:calc(env(safe-area-inset-top,0px) + 10px)!important;
+  right:calc(env(safe-area-inset-right,0px) + 12px)!important;
+  z-index:2147483646!important;
+}
+
+/* Topmost modal is always above app chrome / bottom navigation. */
+#techniqueModal:not(.hidden),
+#exerciseModal:not(.hidden),
+#catalogModal:not(.hidden),
+#chartModal:not(.hidden),
+#bodyGraphModal:not(.hidden),
+#measurementManagerModal:not(.hidden),
+#measurementFieldModal:not(.hidden),
+#measurementHistoryModal:not(.hidden),
+#progressExercisePickerModal:not(.hidden),
+#exercisePickerModal:not(.hidden),
+#exerciseOrderModal:not(.hidden){
+  pointer-events:auto!important;
+}
+
+/* Stack safety: only the latest explicitly active fullscreen modal receives input. */
+.modal-stack-root.is-stack-inactive{pointer-events:none!important;}
+</style>
+<script id="ftracker-v1423-fullscreen-modal-runtime">
+(function(){
+  /* Normalize dynamically created second-level modal roots as soon as they appear.
+     This avoids old inline geometry winning over the canonical fullscreen layout. */
+  const ids=[
+    'techniqueModal','exerciseModal','catalogModal','chartModal','bodyGraphModal',
+    'measurementManagerModal','measurementFieldModal','measurementHistoryModal',
+    'progressExercisePickerModal','exercisePickerModal','exerciseOrderModal'
+  ];
+  function normalize(){
+    ids.forEach(function(id){
+      const root=document.getElementById(id);
+      if(!root) return;
+      root.style.setProperty('position','fixed','important');
+      root.style.setProperty('inset','0','important');
+      root.style.setProperty('width','100vw','important');
+      root.style.setProperty('height','100dvh','important');
+      root.style.setProperty('max-height','none','important');
+      root.style.setProperty('margin','0','important');
+      root.style.setProperty('padding','0','important');
+      root.style.setProperty('overflow','hidden','important');
+      root.style.setProperty('z-index','2147483000','important');
+    });
+  }
+  const run=()=>requestAnimationFrame(normalize);
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',run,{once:true}); else run();
+  new MutationObserver(run).observe(document.documentElement,{childList:true,subtree:true});
+})();
+</script>
