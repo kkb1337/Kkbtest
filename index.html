@@ -3594,15 +3594,10 @@ body.light-mode{
 
 /* ---- VIEW CARD ---- */
 #techniqueModal .exercise-card-unified{
-  max-
-  max-height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 24px)!important;
-  overflow-y:auto!important;
-  overflow-x:hidden!important;
-  padding:0!important;
-  border-radius:26px!important;
-  border:1px solid rgba(255,255,255,.09)!important;
-  background:linear-gradient(180deg,rgba(35,35,45,.98),rgba(23,23,31,.99))!important;
-  box-shadow:0 24px 80px rgba(0,0,0,.48)!important;
+  /* Geometry is owned only by .technique-modal-content. */
+  width:100%;
+  min-height:100%;
+  margin:0;
 }
 #techniqueModal .exercise-card-header{
   display:flex!important;
@@ -5640,12 +5635,10 @@ body{
 .food-modal-content,
 .catalog-modal-content,
 .workout-new-exercise-sheet,
-.technique-modal-content,
 .chart-modal-content,
 .measurement-manager-modal-content,
 .body-graph-modal-content,
 .body-history-modal-content,
-.exercise-card-unified,
 .exercise-editor-unified,
 .exercise-dup-sheet {
   width: 100% !important;
@@ -6620,7 +6613,7 @@ body{
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.22 от 04.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.23 от 04.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -7210,8 +7203,18 @@ function ensureModalCloseButton(modal) {
   content.appendChild(button);
 }
 
+function isTechniqueFullscreenSurface(modal) {
+  return !!modal && modal.id === 'techniqueModal';
+}
+
 function prepareModalRoot(modal) {
   if (!modal) return;
+  /* Exercise card is a real full-screen app surface. Keep it in the stack for
+     interaction ordering, but never apply compact modal geometry to it. */
+  if (isTechniqueFullscreenSurface(modal)) {
+    modal.setAttribute('aria-modal', 'true');
+    return;
+  }
   modal.classList.add('modal-stack-root');
   modal.setAttribute('aria-modal', 'true');
   const content = getModalContent(modal);
@@ -7257,14 +7260,33 @@ function updateModalStackState() {
 
   modalStack.forEach((modal, index) => {
     const active = modal === top;
-    modal.style.zIndex = String(1000 + (index + 1) * 10);
+    const isTechniqueSurface = isTechniqueFullscreenSurface(modal);
+    modal.style.zIndex = isTechniqueSurface
+      ? String(6000 + index)
+      : String(1000 + (index + 1) * 10);
     modal.classList.toggle('is-stack-active', active);
     modal.classList.toggle('is-stack-inactive', !active);
     modal.style.pointerEvents = active ? 'auto' : 'none';
-    modal.style.overflow = 'hidden';
-    modal.style.overscrollBehavior = 'contain';
 
     const content = getModalContent(modal);
+    if (isTechniqueSurface) {
+      /* Do not inject modal geometry into the exercise card. */
+      modal.style.overflow = '';
+      modal.style.overscrollBehavior = '';
+      if (content) {
+        content.style.pointerEvents = active ? 'auto' : 'none';
+        content.style.overflowY = '';
+        content.style.overflowX = '';
+        content.style.overscrollBehavior = '';
+        content.style.webkitOverflowScrolling = '';
+        content.style.maxHeight = '';
+        content.style.boxSizing = '';
+      }
+      return;
+    }
+
+    modal.style.overflow = 'hidden';
+    modal.style.overscrollBehavior = 'contain';
     if (content) {
       content.style.pointerEvents = active ? 'auto' : 'none';
       content.style.overflowY = 'auto';
@@ -12463,7 +12485,7 @@ function showToast(msg) {
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=1.4.22', {updateViaCache:'none'})
+        navigator.serviceWorker.register('./sw.js?v=1.4.23', {updateViaCache:'none'})
             .then(reg => console.log('SW registered', reg.scope))
             .catch(err => console.log('SW failed', err));
     });
@@ -14842,6 +14864,10 @@ function ensureTechniqueModal(){
     m.onclick=e=>{ if(e.target===m) window.closeTechniqueModal?.(); };
     document.body.appendChild(m);
   }
+  /* The exercise card is a full-screen app surface, not a compact stack modal. */
+  m.classList.remove('modal-stack-root','modal-stack-content');
+  const existingContent = m.firstElementChild;
+  existingContent?.classList.remove('modal-stack-content');
   lockModalScroll(); m.classList.remove('hidden');
   m.style.pointerEvents='auto';
   m.setAttribute('aria-hidden','false');

@@ -1,4 +1,4 @@
-const CACHE_VERSION='ftracker-v1.4.22-exercise-card-fullscreen-surface';
+const CACHE_VERSION='ftracker-v1.4.23-exercise-card-fullscreen-surface-stack-conflict-fixed';
 const CACHE_NAME=CACHE_VERSION;
 const APP_SHELL=['./','./index.html','./manifest.json','./icon-192.png','./icon-512.png'];
 self.addEventListener('install',event=>event.waitUntil((async()=>{const c=await caches.open(CACHE_NAME);await c.addAll(APP_SHELL);await self.skipWaiting();})()));

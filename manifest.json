@@ -26,6 +26,6 @@
       "purpose": "any maskable"
     }
   ],
-  "_build": "ftracker-v1.4.22-exercise-card-fullscreen-surface",
-  "version": "1.4.22"
+  "_build": "ftracker-v1.4.23-exercise-card-fullscreen-surface-stack-conflict-fixed",
+  "version": "1.4.23"
 }
