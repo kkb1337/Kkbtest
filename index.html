@@ -6563,216 +6563,12 @@ body{
 #measurementManagerModal .close-btn,#measurementFieldModal .close-btn,#newMeasurementModal .close-btn,#editMeasurementModal .close-btn{display:none!important;}
 </style>
 
-<style id="ftracker-unified-window-design-v1-4-30">
-/* Unified visual language. Geometry and touch logic are intentionally untouched. */
-:root{--window-surface:#1a1c20;--window-surface-2:#22252b;--window-border:rgba(255,255,255,.10);--window-shadow:0 10px 30px rgba(0,0,0,.28);}
-/* Main section headers: back control and title share one horizontal line. */
-.screen-header{display:grid!important;grid-template-columns:auto minmax(0,1fr) auto!important;align-items:center!important;gap:10px!important;}
-.screen-header>button.gray,.screen-header>button:not(.theme-toggle-btn){justify-self:start!important;white-space:nowrap!important;}
-.screen-header .title{align-self:center!important;text-align:left!important;}
-.screen-header-spacer{display:block!important;min-width:40px!important;}
-/* Fullscreen surface headers: Back sits directly left of the title. */
-#measurementManagerModal>.measurement-manager-modal-content,#measurementFieldModal>.measurement-manager-modal-content,#newMeasurementModal>.measurement-manager-modal-content,#editMeasurementModal>.measurement-manager-modal-content{display:grid!important;grid-template-columns:auto minmax(0,1fr)!important;column-gap:12px!important;align-content:start!important;}
-#measurementManagerModal>.measurement-manager-modal-content>.surface-back-btn,#measurementFieldModal>.measurement-manager-modal-content>.surface-back-btn,#newMeasurementModal>.measurement-manager-modal-content>.surface-back-btn,#editMeasurementModal>.measurement-manager-modal-content>.surface-back-btn{grid-column:1!important;grid-row:1!important;align-self:center!important;margin:0!important;min-height:42px!important;padding:0 2px!important;color:var(--text)!important;font-size:16px!important;}
-#measurementManagerModal>.measurement-manager-modal-content>.surface-title,#measurementFieldModal>.measurement-manager-modal-content>.surface-title,#newMeasurementModal>.measurement-manager-modal-content>.surface-title,#editMeasurementModal>.measurement-manager-modal-content>.surface-title{grid-column:2!important;grid-row:1!important;align-self:center!important;margin:0!important;min-width:0!important;font-size:22px!important;line-height:1.15!important;letter-spacing:-.25px!important;}
-#measurementManagerModal>.measurement-manager-modal-content> :not(.surface-back-btn):not(.surface-title),#measurementFieldModal>.measurement-manager-modal-content> :not(.surface-back-btn):not(.surface-title),#newMeasurementModal>.measurement-manager-modal-content> :not(.surface-back-btn):not(.surface-title),#editMeasurementModal>.measurement-manager-modal-content> :not(.surface-back-btn):not(.surface-title){grid-column:1 / -1!important;}
-/* Measurement form: compact typography and controls that never exceed the viewport. */
-.measurement-manager-modal-content .measurement-modal-note{background:var(--window-surface-2)!important;border:1px solid var(--window-border)!important;border-radius:16px!important;padding:12px 14px!important;margin:16px 0 10px!important;line-height:1.45!important;font-size:13px!important;color:var(--subtext)!important;box-shadow:var(--window-shadow)!important;}
-.measurement-manager-modal-content .field-label{font-size:13px!important;font-weight:800!important;letter-spacing:.1px!important;margin:12px 0 6px!important;color:var(--text)!important;}
-.measurement-manager-modal-content input{width:100%!important;min-width:0!important;max-width:100%!important;height:48px!important;padding:0 14px!important;border-radius:14px!important;box-sizing:border-box!important;background:var(--window-surface-2)!important;border:1px solid var(--window-border)!important;color:var(--text)!important;font-size:16px!important;box-shadow:none!important;}
-.measurement-manager-modal-content input[type="date"]{font-size:15px!important;letter-spacing:0!important;-webkit-appearance:none!important;appearance:none!important;}
-.measurement-manager-modal-content button:not(.surface-back-btn){min-height:48px!important;border-radius:15px!important;margin-top:14px!important;font-weight:800!important;}
-/* Common visual treatment for large window cards without changing their dimensions. */
-.catalog-modal-content,.theme-modal-content,.exercise-modal-content,.food-modal-content,.workout-detail-content,.manual-workout-content,.achievements-content{background:linear-gradient(180deg,var(--window-surface),var(--card-bg))!important;border-color:var(--window-border)!important;box-shadow:var(--window-shadow)!important;}
-/* Nutrition chart: full legend names in one row, with responsive text instead of abbreviations. */
-#chartModal .legend{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;align-items:center!important;gap:5px!important;overflow:visible!important;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 8px)!important;}
-#chartModal .legend-item{min-width:0!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:4px!important;white-space:nowrap!important;font-size:clamp(10px,2.8vw,12px)!important;overflow:hidden!important;text-overflow:clip!important;}
-#chartModal .legend-dot{flex:0 0 7px!important;width:7px!important;height:7px!important;}
-@media(max-width:390px){#chartModal .legend{gap:3px!important;}#chartModal .legend-item{gap:2px!important;font-size:10px!important;letter-spacing:-.25px!important;}#chartModal .legend-dot{flex-basis:6px!important;width:6px!important;height:6px!important;}}
-/* Shared refined window typography. */
-.catalog-modal-content .surface-title,.chart-modal-title,.body-history-modal-title{letter-spacing:-.3px!important;}
-.catalog-modal-content .chart-modal-subtitle,.catalog-modal-content .measurement-modal-note{color:var(--subtext)!important;}
-</style>
-
-<style id="ftracker-global-window-audit-v1-4-31">
-/* v1.4.33 — targeted global window audit: visual consistency without changing the working Exercise Card architecture. */
-:root{
-  --window-surface:#1a1c20;
-  --window-surface-2:#22252b;
-  --window-surface-3:#2a2e35;
-  --window-border:rgba(255,255,255,.10);
-  --window-border-strong:rgba(255,255,255,.15);
-}
-/* One compact, single-line header system. */
-.screen-header{
-  grid-template-columns:auto minmax(0,1fr) auto!important;
-  align-items:center!important;
-  min-width:0!important;
-}
-.screen-header .title,.screen-header .title.section-title,.screen-header .section-title{
-  min-width:0!important;
-  max-width:100%!important;
-  white-space:nowrap!important;
-  overflow:hidden!important;
-  text-overflow:ellipsis!important;
-  font-size:clamp(18px,5vw,22px)!important;
-  line-height:1.15!important;
-  font-weight:750!important;
-  letter-spacing:-.25px!important;
-}
-/* Back controls everywhere use the same quiet gray framed treatment. */
-.screen-header>button.gray,.surface-back-btn,.chart-back-btn,.back-btn,.modal-back-btn{
-  display:inline-flex!important;
-  align-items:center!important;
-  justify-content:center!important;
-  min-height:40px!important;
-  height:40px!important;
-  width:auto!important;
-  min-width:40px!important;
-  padding:0 12px!important;
-  margin:0!important;
-  border-radius:12px!important;
-  border:1px solid var(--window-border-strong)!important;
-  background:var(--window-surface-2)!important;
-  color:var(--text)!important;
-  box-shadow:0 3px 12px rgba(0,0,0,.18)!important;
-  font-size:14px!important;
-  font-weight:750!important;
-  line-height:1!important;
-}
-.surface-back-btn{justify-self:start!important;white-space:nowrap!important;}
-/* Direct fullscreen measurement surfaces use the same proven viewport model as the working chart/card. */
-#measurementManagerModal,#measurementFieldModal,#newMeasurementModal,#editMeasurementModal{
-  position:fixed!important;
-  inset:0!important;
-  margin:0!important;
-  padding:0!important;
-  display:block!important;
-  overflow:hidden!important;
-  background:var(--bg)!important;
-  box-sizing:border-box!important;
-  z-index:7000!important;
-}
-#measurementManagerModal>.measurement-manager-modal-content,
-#measurementFieldModal>.measurement-manager-modal-content,
-#newMeasurementModal>.measurement-manager-modal-content,
-#editMeasurementModal>.measurement-manager-modal-content{
-  position:absolute!important;
-  inset:0!important;
-  margin:0!important;
-  max-width:none!important;
-  max-height:none!important;
-  border:0!important;
-  border-radius:0!important;
-  background:var(--bg)!important;
-  overflow-y:auto!important;
-  overflow-x:hidden!important;
-  -webkit-overflow-scrolling:touch!important;
-  overscroll-behavior:contain!important;
-  box-sizing:border-box!important;
-  padding:calc(env(safe-area-inset-top,0px) + 14px) calc(env(safe-area-inset-right,0px) + 16px) calc(env(safe-area-inset-bottom,0px) + 24px) calc(env(safe-area-inset-left,0px) + 16px)!important;
-}
-/* Measurement header stays on one line; title shrinks instead of wrapping. */
-#measurementManagerModal .measurement-manager-modal-content,
-#measurementFieldModal .measurement-manager-modal-content,
-#newMeasurementModal .measurement-manager-modal-content,
-#editMeasurementModal .measurement-manager-modal-content{
-  grid-template-columns:auto minmax(0,1fr)!important;
-  column-gap:10px!important;
-}
-#measurementManagerModal .surface-title,#measurementFieldModal .surface-title,#newMeasurementModal .surface-title,#editMeasurementModal .surface-title{
-  min-width:0!important;
-  white-space:nowrap!important;
-  overflow:hidden!important;
-  text-overflow:ellipsis!important;
-  font-size:clamp(18px,5vw,21px)!important;
-  font-weight:750!important;
-}
-.measurement-manager-modal-content input,.measurement-manager-modal-content select{
-  width:100%!important;
-  max-width:100%!important;
-  min-width:0!important;
-  box-sizing:border-box!important;
-}
-.measurement-manager-modal-content input[type="date"]{
-  font-size:14px!important;
-  letter-spacing:-.15px!important;
-  padding-left:12px!important;
-  padding-right:8px!important;
-}
-/* Confirmation dialogs must always be above direct fullscreen surfaces. */
-.confirm-modal{position:fixed!important;inset:0!important;z-index:12000!important;}
-#deleteConfirmModal,#measurementSaveConfirmModal,#finishWorkoutConfirmModal,#importConfirmModal{z-index:12050!important;}
-.confirm-modal-content{position:relative!important;z-index:1!important;background:linear-gradient(180deg,var(--window-surface-2),var(--window-surface))!important;border:1px solid var(--window-border-strong)!important;box-shadow:0 18px 48px rgba(0,0,0,.48)!important;}
-/* Remove decorative water directly under known section titles. */
-.chart-modal-subtitle,.measurement-modal-note,.progress-section-subtitle{display:none!important;}
-/* Chart header stays one horizontal row. */
-#chartModal .chart-modal-header{display:flex!important;align-items:center!important;gap:10px!important;min-width:0!important;}
-#chartModal .chart-modal-header .chart-modal-title{min-width:0!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;font-size:clamp(18px,5vw,22px)!important;font-weight:750!important;}
-#chartModal .chart-section-label{display:none!important;}
-/* Nutrition legend: full names, one line, responsive without clipping. */
-#chartModal .legend{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:3px!important;align-items:center!important;}
-#chartModal .legend-item{min-width:0!important;justify-content:center!important;white-space:nowrap!important;overflow:visible!important;text-overflow:unset!important;font-size:clamp(8.5px,2.45vw,12px)!important;letter-spacing:-.25px!important;}
-#chartModal .legend-dot{width:6px!important;height:6px!important;flex:0 0 6px!important;}
-/* Shared surface cards and controls. */
-.card,.catalog-choice,.measurement-manager-list>*,.workout-history-exercise{
-  background:linear-gradient(180deg,var(--window-surface-2),var(--window-surface))!important;
-  border:1px solid var(--window-border)!important;
-  border-radius:16px!important;
-}
-/* Workout history detail: replace plain text on black with structured cards. */
-#workoutDetailModal .workout-detail-content{background:var(--bg)!important;}
-#workoutDetailTitle{margin:0 0 14px!important;padding:12px 14px!important;background:linear-gradient(180deg,var(--window-surface-2),var(--window-surface))!important;border:1px solid var(--window-border)!important;border-radius:16px!important;}
-.workout-detail-title-main{font-size:20px!important;font-weight:760!important;line-height:1.2!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;}
-.workout-detail-title-date{margin-top:4px!important;font-size:13px!important;color:var(--subtext)!important;font-weight:600!important;}
-.workout-history-detail-list{display:grid!important;gap:10px!important;}
-.workout-history-exercise{padding:13px!important;box-shadow:0 6px 18px rgba(0,0,0,.16)!important;}
-.workout-history-exercise-name{font-size:16px!important;font-weight:760!important;margin-bottom:10px!important;}
-.workout-history-sets{display:grid!important;gap:7px!important;}
-.workout-history-set{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;padding:9px 10px!important;border-radius:11px!important;background:rgba(255,255,255,.035)!important;color:var(--subtext)!important;font-size:13px!important;}
-.workout-history-set b{color:var(--text)!important;font-size:14px!important;white-space:nowrap!important;}
-.workout-history-empty{color:var(--subtext)!important;font-size:13px!important;padding:8px 0!important;}
-/* Dynamic/progress surfaces: any legacy close icon aligns with the title line instead of floating into the safe area. */
-.fscore-screen-header .close-btn,.fscore-screen-header .modal-close-btn,.progress-screen .close-btn,.progress-screen .modal-close-btn{
-  position:static!important;
-  align-self:center!important;
-  margin:0!important;
-  width:40px!important;height:40px!important;min-width:40px!important;
-  display:inline-flex!important;align-items:center!important;justify-content:center!important;
-  border:1px solid var(--window-border-strong)!important;border-radius:12px!important;background:var(--window-surface-2)!important;
-}
-</style>
 
 
-<style id="ftracker-targeted-window-polish-v1-4-32">
-/* v1.4.33: targeted fixes only. Working exercise card remains untouched. */
-.unified-surface-header{display:flex!important;align-items:center!important;gap:10px!important;min-width:0!important;margin:0 0 16px!important;}
-.unified-surface-header .surface-back-btn{flex:0 0 auto!important;margin:0!important;min-height:40px!important;padding:0 12px!important;border-radius:12px!important;background:var(--window-surface-2)!important;border:1px solid var(--window-border)!important;color:var(--text)!important;font-size:15px!important;font-weight:750!important;line-height:1!important;box-shadow:none!important;}
-.unified-surface-header .surface-title,.unified-surface-header .chart-modal-title{min-width:0!important;margin:0!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;font-size:clamp(18px,5vw,22px)!important;line-height:1.15!important;font-weight:750!important;}
-/* Nutrition chart: back and title are one header line; custom period stays available. */
-#chartModal .chart-modal-header{display:flex!important;align-items:center!important;gap:10px!important;margin:0 0 16px!important;padding:0!important;}
-#chartModal .chart-modal-header>.surface-back-btn{flex:0 0 auto!important;margin:0!important;}
-#chartModal .chart-modal-title{flex:1 1 auto!important;}
-#chartModal .chart-modal-subtitle{display:none!important;}
-#chartModal .period-selector{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;overflow:visible!important;gap:6px!important;padding:4px!important;}
-#chartModal .period-selector button{min-width:0!important;width:auto!important;flex:auto!important;padding:9px 4px!important;font-size:12px!important;white-space:nowrap!important;}
-#chartModal .data-type-selector{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important;}
-#chartModal .data-type-selector button{min-width:0!important;white-space:nowrap!important;padding:9px 6px!important;font-size:13px!important;}
-#chartModal .legend{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:2px!important;}
-#chartModal .legend-item{font-size:clamp(8px,2.35vw,11px)!important;letter-spacing:-.3px!important;}
-/* Measurement parameters: keep any legacy close control on the same title line, never in the safe-area corner. */
-#measurementManagerModal .close-btn,#measurementFieldModal .close-btn,.fscore-screen-header .close-btn,.progress-screen .close-btn{top:auto!important;right:auto!important;bottom:auto!important;left:auto!important;position:static!important;transform:none!important;align-self:center!important;}
-/* Large food editors use the proven direct viewport model and are excluded from compact modal geometry. */
-#addFoodModal,#foodLimitModal{position:fixed!important;inset:0!important;width:auto!important;height:auto!important;min-height:0!important;max-height:none!important;margin:0!important;padding:0!important;display:block!important;overflow:hidden!important;background:var(--bg)!important;box-sizing:border-box!important;z-index:6000!important;}
-#addFoodModal>.food-modal-content,#foodLimitModal>.food-modal-content{position:absolute!important;inset:0!important;width:auto!important;height:auto!important;min-width:0!important;min-height:0!important;max-width:none!important;max-height:none!important;margin:0!important;border:0!important;border-radius:0!important;background:var(--bg)!important;box-sizing:border-box!important;overflow-y:auto!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior:contain!important;padding:calc(env(safe-area-inset-top,0px) + 16px) calc(env(safe-area-inset-right,0px) + 16px) calc(env(safe-area-inset-bottom,0px) + 24px) calc(env(safe-area-inset-left,0px) + 16px)!important;}
-#addFoodModal .close-btn,#foodLimitModal .close-btn{display:none!important;}
-#addFoodModal .food-modal-content input,#addFoodModal .food-modal-content select,#foodLimitModal .food-modal-content input{max-width:100%!important;width:100%!important;box-sizing:border-box!important;}
-/* Stats cards: compact, aligned values; prevent macro labels/values splitting awkwardly. */
-.food-macro-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:7px!important;}
-.food-macro-card{min-width:0!important;text-align:center!important;padding:10px 6px!important;}
-.food-macro-card span,.food-macro-card strong,.food-macro-card small{white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;}
-@media(max-width:390px){#chartModal .period-selector{grid-template-columns:repeat(2,minmax(0,1fr))!important;}#chartModal .period-selector button{font-size:12px!important;}.food-macro-card strong{font-size:14px!important;}}
-</style>
+
+
+
+
 </head>
 <body>
 <div class="safe-area"><div class="container" id="app">
@@ -7470,7 +7266,7 @@ body{
 
 <script id="ftracker-app">
 /* ================================================================
-   FTracker v1.4.34
+   FTracker v1.4.35
    One centralized stack: only the top modal can scroll/interact.
    ================================================================ */
 const modalStack = [];
@@ -17658,21 +17454,10 @@ window.closeImportConfirm=function(){
 #importConfirmModal button{min-height:48px!important;margin:8px 0 0!important;width:100%!important;}
 </style>
 
-<style id="ftracker-targeted-source-fixes-v1-4-33">
-/* v1.4.33: fix the actual Catalog editor markup and keep chart header as one explicit row. */
-#catalogEditModal .catalog-modal-content > .close-btn{display:none!important;}
-#catalogEditModal .unified-surface-header{display:flex!important;align-items:center!important;gap:10px!important;margin:0 0 16px!important;min-width:0!important;}
-#catalogEditModal .unified-surface-header .surface-back-btn{flex:0 0 auto!important;margin:0!important;}
-#catalogEditModal .unified-surface-header .surface-title{flex:1 1 auto!important;min-width:0!important;margin:0!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;}
-/* Nutrition chart has one header row: framed Back at left and title immediately beside it. */
-#chartModal .chart-modal-header{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:flex-start!important;gap:10px!important;width:100%!important;margin:0 0 16px!important;padding:0!important;}
-#chartModal .chart-modal-header>.surface-back-btn{display:inline-flex!important;flex:0 0 auto!important;width:auto!important;margin:0!important;}
-#chartModal .chart-modal-header>.chart-modal-title{display:block!important;flex:1 1 auto!important;min-width:0!important;margin:0!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;}
-#chartModal>.chart-modal-content>.close-btn,#chartModal .chart-modal-header .close-btn{display:none!important;}
-</style>
+
 
 <style id="ftracker-v1-4-34-source-cleanup">
-/* v1.4.34 — source-level cleanup for catalog editor, parameter dynamics and nutrition statistics. */
+/* v1.4.35 — source-level cleanup for catalog editor, parameter dynamics and nutrition statistics. */
 #catalogEditModal{position:fixed!important;inset:0!important;margin:0!important;padding:0!important;display:block!important;overflow:hidden!important;background:var(--bg)!important;z-index:6000!important;box-sizing:border-box!important;}
 #catalogEditModal.hidden{display:none!important;}
 #catalogEditModal>.catalog-modal-content{position:absolute!important;inset:0!important;width:auto!important;height:auto!important;min-width:0!important;min-height:0!important;max-width:none!important;max-height:none!important;margin:0!important;border-radius:0!important;background:var(--bg)!important;box-sizing:border-box!important;overflow-y:auto!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch!important;padding:calc(env(safe-area-inset-top,0px) + 16px) calc(env(safe-area-inset-right,0px) + 16px) calc(env(safe-area-inset-bottom,0px) + 24px) calc(env(safe-area-inset-left,0px) + 16px)!important;}
@@ -17691,6 +17476,304 @@ window.closeImportConfirm=function(){
 .nutrition-macro span{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;}
 .nutrition-macro b{font-size:14px;max-width:100%;overflow:hidden;text-overflow:ellipsis;}
 @media(max-width:390px){.nutrition-macro{padding:10px 8px}.nutrition-macro span{font-size:11px}.nutrition-macro b{font-size:13px}.nutrition-stat{padding:10px 12px}}
+</style>
+
+<style id="ftracker-v1-4-35-unified-pwa-geometry">
+/* v1.4.35 — unified PWA geometry. Functional JS untouched. */
+:root{
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-right:env(safe-area-inset-right,0px);
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+  --safe-left:env(safe-area-inset-left,0px);
+  --page-pad:16px;
+  --page-gap:12px;
+  --tap-size:44px;
+}
+
+/* Viewport and page containment */
+html{width:100%;min-width:0;max-width:100%;overflow-x:hidden;}
+body{width:100%;min-width:0;max-width:100%;margin:0;padding:0;overflow-x:hidden;}
+#app{width:100%;min-width:0;max-width:100%;min-height:100dvh;overflow-x:hidden;}
+.container{
+  width:100%;
+  max-width:600px;
+  margin:0 auto;
+  padding:0 calc(var(--page-pad) + var(--safe-right)) var(--safe-bottom) calc(var(--page-pad) + var(--safe-left));
+  box-sizing:border-box;
+  overflow-x:hidden;
+}
+
+/* One ordinary-screen header geometry */
+.screen-header{
+  position:sticky;
+  top:0;
+  z-index:100;
+  width:100%;
+  min-width:0;
+  min-height:52px;
+  margin:0 0 var(--page-gap);
+  padding:calc(var(--safe-top) + 6px) 0 6px;
+  display:grid;
+  grid-template-columns:minmax(var(--tap-size),auto) minmax(0,1fr) minmax(var(--tap-size),auto);
+  align-items:center;
+  gap:8px;
+  box-sizing:border-box;
+  background:var(--bg);
+}
+.screen-header>.title,
+.screen-header>.section-title,
+.screen-header .title.section-title{
+  grid-column:2;
+  grid-row:1;
+  min-width:0;
+  max-width:100%;
+  margin:0;
+  text-align:center;
+  font-size:22px;
+  line-height:1.15;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.screen-header>button:first-child{
+  grid-column:1;
+  grid-row:1;
+  justify-self:start;
+  width:auto;
+  min-width:var(--tap-size);
+  min-height:var(--tap-size);
+  margin:0;
+  padding:8px 10px;
+  box-sizing:border-box;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+.screen-header>.screen-header-spacer{
+  grid-column:3;
+  grid-row:1;
+  width:100%;
+  min-width:var(--tap-size);
+}
+
+/* Unified back / close hit areas */
+.surface-back-btn,
+.chart-back-btn,
+.back-btn,
+.modal-back-btn,
+.screen-header>button:first-child,
+.modal-stack-root .modal-close-btn,
+.modal-stack-root .close-btn{
+  box-sizing:border-box;
+  min-width:var(--tap-size);
+  min-height:var(--tap-size);
+  width:var(--tap-size);
+  height:var(--tap-size);
+  margin:0;
+  padding:0;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 var(--tap-size);
+  border-radius:12px;
+  line-height:1;
+}
+.modal-stack-root .modal-close-btn,
+.modal-stack-root .close-btn{
+  position:absolute;
+  top:calc(var(--safe-top) + 10px);
+  right:calc(var(--safe-right) + 10px);
+  z-index:20;
+}
+
+/* Fullscreen surfaces: viewport owns the layer, inner content owns scrolling */
+.modal-fullscreen-root,
+#chartModal,
+#catalogEditModal,
+#bodyGraphModal,
+#measurementManagerModal,
+#measurementFieldModal,
+#newMeasurementModal,
+#editMeasurementModal{
+  position:fixed;
+  inset:0;
+  width:100%;
+  height:100%;
+  min-width:0;
+  min-height:0;
+  max-width:none;
+  max-height:none;
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  overflow:hidden;
+  background:var(--bg);
+}
+.modal-fullscreen-root>.modal-fullscreen-content,
+#chartModal>.chart-modal-content,
+#catalogEditModal>.catalog-modal-content,
+#measurementManagerModal>.measurement-manager-modal-content,
+#measurementFieldModal>.measurement-manager-modal-content,
+#newMeasurementModal>.measurement-manager-modal-content,
+#editMeasurementModal>.measurement-manager-modal-content{
+  position:absolute;
+  inset:0;
+  width:100%;
+  min-width:0;
+  min-height:0;
+  max-width:none;
+  max-height:none;
+  margin:0;
+  box-sizing:border-box;
+  border:0;
+  border-radius:0;
+  background:var(--bg);
+  overflow-y:auto;
+  overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+  padding:calc(var(--safe-top) + 16px)
+           calc(var(--page-pad) + var(--safe-right))
+           calc(var(--safe-bottom) + 24px)
+           calc(var(--page-pad) + var(--safe-left));
+}
+.modal-fullscreen-root>.modal-fullscreen-content .close-btn,
+.modal-fullscreen-root>.modal-fullscreen-content .modal-close-btn,
+#chartModal>.chart-modal-content>.close-btn{
+  top:calc(var(--safe-top) + 10px);
+  right:calc(var(--safe-right) + 10px);
+  width:var(--tap-size);
+  height:var(--tap-size);
+  min-width:var(--tap-size);
+  min-height:var(--tap-size);
+}
+
+/* Regular stacked dialogs */
+.modal-stack-root{
+  position:fixed;
+  inset:0;
+  width:100%;
+  height:100%;
+  padding:calc(var(--safe-top) + 12px) calc(var(--page-pad) + var(--safe-right)) calc(var(--safe-bottom) + 12px) calc(var(--page-pad) + var(--safe-left));
+  box-sizing:border-box;
+  background:var(--modal-overlay);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  overscroll-behavior:contain;
+}
+.modal-stack-root>.modal-stack-content{
+  position:relative;
+  width:min(100%,760px);
+  max-width:760px;
+  max-height:calc(100dvh - var(--safe-top) - var(--safe-bottom) - 24px);
+  min-width:0;
+  box-sizing:border-box;
+  padding:18px;
+  overflow-y:auto;
+  overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+  background:var(--card-bg);
+}
+.modal-stack-root .modal-close-btn,
+.modal-stack-root .close-btn{
+  width:var(--tap-size);
+  height:var(--tap-size);
+  min-width:var(--tap-size);
+  min-height:var(--tap-size);
+}
+
+/* Every modal surface gets an opaque layer */
+.theme-modal,
+.exercise-modal,
+.date-modal,
+.confirm-modal,
+.workout-detail-modal,
+.manual-workout-modal,
+.achievements-modal,
+.food-modal,
+.catalog-modal{
+  box-sizing:border-box;
+  background:var(--modal-overlay);
+}
+.theme-modal-content,
+.exercise-modal-content,
+.date-modal-content,
+.confirm-modal-content,
+.workout-detail-content,
+.manual-workout-content,
+.achievements-content,
+.food-modal-content,
+.catalog-modal-content{
+  box-sizing:border-box;
+  min-width:0;
+  max-width:100%;
+  overflow-x:hidden;
+}
+
+/* Unified tab geometry */
+.tabs,
+.stats-tabs,
+.directory-tabs,
+.food-main-tabs{
+  width:100%;
+  min-width:0;
+  display:flex;
+  flex-wrap:nowrap;
+  gap:6px;
+  padding:4px;
+  margin:12px 0;
+  box-sizing:border-box;
+  overflow:hidden;
+  background:var(--input-bg);
+  border-radius:14px;
+}
+.tabs .tab,
+.stats-tabs .stats-tab,
+.directory-tabs .directory-tab,
+.food-main-tabs .tab{
+  flex:1 1 0;
+  min-width:0;
+  min-height:42px;
+  margin:0;
+  padding:9px 6px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-sizing:border-box;
+  border-radius:11px;
+  font-size:13px;
+  font-weight:750;
+  line-height:1.15;
+  text-align:center;
+  white-space:normal;
+  overflow-wrap:anywhere;
+}
+.tabs .tab.active,
+.stats-tabs .stats-tab.active,
+.directory-tabs .directory-tab.active,
+.food-main-tabs .tab.active{
+  background:var(--accent-gradient);
+  color:#fff;
+}
+
+/* Lists and cards cannot create page-width overflow */
+.card,
+.directory-list>*,
+.measurement-manager-list>*,
+.exercise-dup-list>*,
+.order-position-list>*,
+.progress-picker-list>*,
+.replace-exercise-list>*,
+.catalog-modal-list>*{
+  min-width:0;
+  max-width:100%;
+  box-sizing:border-box;
+}
+img,video,canvas,svg{max-width:100%;box-sizing:border-box;}
+input,select,textarea,button{max-width:100%;box-sizing:border-box;}
 </style>
 </body>
 </html>
@@ -17713,38 +17796,7 @@ window.closeImportConfirm=function(){
 </style>
 
 
-<style id="ftracker-v1418-notification-safearea">
-/* v1.4.18 — canonical top notification: the content itself starts BELOW the unsafe area */
-.toast{
-  position:fixed !important;
-  top:0 !important;
-  left:0 !important;
-  right:0 !important;
-  width:100% !important;
-  max-width:none !important;
-  margin:0 !important;
-  box-sizing:border-box !important;
-  /* Safe area is inside the notification, so text can never sit in the notch area */
-  padding-top:calc(env(safe-area-inset-top, 0px) + 12px) !important;
-  padding-right:calc(env(safe-area-inset-right, 0px) + 18px) !important;
-  padding-bottom:12px !important;
-  padding-left:calc(env(safe-area-inset-left, 0px) + 18px) !important;
-  border-radius:0 0 16px 16px !important;
-  background:var(--toast-bg) !important;
-  color:var(--toast-text) !important;
-  text-align:center !important;
-  font-size:14px !important;
-  font-weight:800 !important;
-  line-height:1.35 !important;
-  z-index:2147483647 !important;
-  box-shadow:0 8px 24px rgba(0,0,0,.24) !important;
-  pointer-events:none !important;
-  transform:translateY(-110%) !important;
-  opacity:0 !important;
-  transition:transform .24s ease, opacity .18s ease !important;
-}
-.toast.toast-visible{transform:translateY(0) !important;opacity:1 !important;}
-</style>
+
 <script id="ftracker-v1418-notification-runtime">
 (function(){
   /* One and only runtime implementation. Replaces all older toast wrappers. */
@@ -17767,19 +17819,4 @@ window.closeImportConfirm=function(){
 </script>
 
 
-<style id="ftracker-v1420-modal-stack">
-/* v1.4.20 — unified safe-area modal stack and neutral system notifications */
-.toast{
-  background:rgba(28,28,30,.98)!important;
-  color:#f5f5f7!important;
-  border:0!important;
-  border-bottom:1px solid rgba(255,255,255,.10)!important;
-  box-shadow:0 8px 24px rgba(0,0,0,.30)!important;
-}
-body.light-mode .toast{
-  background:rgba(255,255,255,.98)!important;
-  color:#1c1c1e!important;
-  border-bottom:1px solid rgba(0,0,0,.10)!important;
-  box-shadow:0 8px 24px rgba(0,0,0,.14)!important;
-}
-</style>
+
