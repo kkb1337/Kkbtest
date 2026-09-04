@@ -6501,6 +6501,52 @@ body{
 .modal-fullscreen-root>.modal-fullscreen-content .chart-container{max-width:100%;}
 </style>
 
+
+<style id="ftracker-chart-direct-surface-v1-4-28">
+/* Nutrition chart follows the same direct viewport architecture as the working exercise card. */
+#chartModal{
+  position:fixed!important;
+  inset:0!important;
+  width:auto!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:0!important;
+  display:block!important;
+  overflow:hidden!important;
+  background:var(--bg)!important;
+  box-sizing:border-box!important;
+  z-index:6000!important;
+}
+#chartModal.hidden{display:none!important;}
+#chartModal>.chart-modal-content{
+  position:absolute!important;
+  inset:0!important;
+  width:auto!important;
+  height:auto!important;
+  min-width:0!important;
+  min-height:0!important;
+  max-width:none!important;
+  max-height:none!important;
+  margin:0!important;
+  border-radius:0!important;
+  border:none!important;
+  background:var(--bg)!important;
+  box-sizing:border-box!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  -webkit-overflow-scrolling:touch!important;
+  overscroll-behavior:contain!important;
+  padding:calc(env(safe-area-inset-top,0px) + 64px) calc(env(safe-area-inset-right,0px) + 16px) calc(env(safe-area-inset-bottom,0px) + 24px) calc(env(safe-area-inset-left,0px) + 16px)!important;
+}
+#chartModal>.chart-modal-content>.close-btn{
+  position:absolute!important;
+  top:calc(env(safe-area-inset-top,0px) + 10px)!important;
+  right:calc(env(safe-area-inset-right,0px) + 10px)!important;
+  z-index:50!important;
+}
+</style>
 </head>
 <body>
 <div class="safe-area"><div class="container" id="app">
@@ -6660,7 +6706,7 @@ body{
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.27 от 04.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.28 от 04.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -7192,7 +7238,7 @@ body{
 
 <script id="ftracker-app">
 /* ================================================================
-   FTracker v1.4.27
+   FTracker v1.4.28
    One centralized stack: only the top modal can scroll/interact.
    ================================================================ */
 const modalStack = [];
@@ -7215,7 +7261,7 @@ function isFullscreenModalSurface(modal) {
 function isModalElement(el) {
   if (!(el instanceof Element)) return false;
   /* Exercise Card is a standalone full-screen surface, never a stack modal. */
-  if (el.id === 'techniqueModal') return false;
+  if (el.id === 'techniqueModal' || el.id === 'chartModal') return false;
   if (el.id && /Modal$/i.test(el.id)) return true;
   const cls = typeof el.className === 'string' ? el.className : '';
   return /(?:^|\s)[\w-]*modal(?:\s|$)/i.test(cls);
@@ -7231,7 +7277,7 @@ function getModalRoots() {
     '.food-modal', '.catalog-modal'
   ].join(',');
   return Array.from(document.querySelectorAll(selectors))
-    .filter(el => el.id !== 'techniqueModal')
+    .filter(el => el.id !== 'techniqueModal' && el.id !== 'chartModal')
     .filter(isModalElement);
 }
 
@@ -11879,7 +11925,8 @@ let chartCustomEnd = '';
 
 function openChartModal() {
     const modal=document.getElementById('chartModal'); if(!modal) return;
-    lockModalScroll(); modal.classList.remove('hidden');
+    /* Nutrition chart is a standalone fullscreen surface; never enter Modal Stack/body lock. */
+    modal.classList.remove('hidden');
     requestAnimationFrame(()=>{
         setChartPeriod(chartPeriod==='custom'&&chartCustomStart&&chartCustomEnd?'custom':'week',{render:false});
         setChartDataType(chartDataType||'calories',{render:false});
