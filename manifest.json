@@ -26,6 +26,6 @@
       "purpose": "any maskable"
     }
   ],
-  "_build": "ftracker-v1.4.21-authoritative-modal-geometry",
-  "version": "1.4.21"
+  "_build": "ftracker-v1.4.22-authoritative-modal-geometry",
+  "version": "1.4.22"
 }

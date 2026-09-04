@@ -6694,7 +6694,7 @@ body{
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.21 от 04.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.22 от 04.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -7284,10 +7284,64 @@ function ensureModalCloseButton(modal) {
   content.appendChild(button);
 }
 
+
+function applyAuthoritativeModalGeometry(modal) {
+  if (!modal || isConfirmationModal(modal)) return;
+  const content = getModalContent(modal);
+  if (!content) return;
+
+  // Root always covers the physical viewport.
+  Object.assign(modal.style, {
+    position: 'fixed',
+    inset: '0',
+    top: '0',
+    right: '0',
+    bottom: '0',
+    left: '0',
+    width: '100%',
+    height: '100dvh',
+    minHeight: '100dvh',
+    margin: '0',
+    padding: '0',
+    display: 'block',
+    overflow: 'hidden',
+    boxSizing: 'border-box',
+    borderRadius: '0'
+  });
+
+  // The actual modal surface is a full-screen screen, not a centered card.
+  Object.assign(content.style, {
+    position: 'fixed',
+    inset: '0',
+    top: '0',
+    right: '0',
+    bottom: '0',
+    left: '0',
+    width: '100%',
+    height: '100dvh',
+    minHeight: '100dvh',
+    maxWidth: 'none',
+    maxHeight: 'none',
+    margin: '0',
+    borderRadius: '0',
+    boxSizing: 'border-box',
+    overflowX: 'hidden',
+    overflowY: 'auto',
+    WebkitOverflowScrolling: 'touch',
+    overscrollBehavior: 'contain',
+    touchAction: 'pan-y',
+    paddingTop: 'calc(env(safe-area-inset-top, 0px) + 12px)',
+    paddingRight: 'calc(env(safe-area-inset-right, 0px) + 16px)',
+    paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 16px)',
+    paddingLeft: 'calc(env(safe-area-inset-left, 0px) + 16px)'
+  });
+}
+
 function prepareModalRoot(modal) {
   if (!modal) return;
   modal.classList.add('modal-stack-root');
   modal.setAttribute('aria-modal', 'true');
+  applyAuthoritativeModalGeometry(modal);
   const content = getModalContent(modal);
   if (content) {
     content.classList.add('modal-stack-content');
@@ -7324,6 +7378,7 @@ function updateModalStackState() {
   }
   openRoots.forEach(modal => {
     prepareModalRoot(modal);
+    applyAuthoritativeModalGeometry(modal);
     if (!modalStack.includes(modal)) modalStack.push(modal);
   });
 
@@ -12537,7 +12592,7 @@ function showToast(msg) {
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=1.4.21', {updateViaCache:'none'})
+        navigator.serviceWorker.register('./sw.js?v=1.4.22', {updateViaCache:'none'})
             .then(reg => console.log('SW registered', reg.scope))
             .catch(err => console.log('SW failed', err));
     });
@@ -17413,7 +17468,7 @@ body.light-mode .toast{
 
 
 <style id="ftracker-v1421-authoritative-modal-geometry">
-/* v1.4.21 — authoritative modal geometry.
+/* v1.4.22 — authoritative modal geometry.
    Legacy 82/86/88vh caps are intentionally overridden here.
    The modal root owns the whole safe viewport; the content owns the only scroll surface. */
 .modal-stack-root{
@@ -17493,5 +17548,53 @@ body.light-mode .toast{
   top:10px!important;
   right:10px!important;
   z-index:100!important;
+}
+</style>
+
+
+<style id="ftracker-v1422-true-fullscreen-modals">
+/* v1.4.22 — TRUE FULLSCREEN MODALS.
+   Non-confirmation modal windows are application screens, not centered cards. */
+.modal-stack-root:not(.hidden):not(#importConfirmModal):not(#deleteConfirmModal):not(#measurementSaveConfirmModal):not(#foodCopyConfirmModal){
+  position:fixed!important;
+  inset:0!important;
+  width:100%!important;
+  height:100dvh!important;
+  min-height:100dvh!important;
+  margin:0!important;
+  padding:0!important;
+  display:block!important;
+  overflow:hidden!important;
+  border-radius:0!important;
+  box-sizing:border-box!important;
+}
+.modal-stack-root:not(.hidden):not(#importConfirmModal):not(#deleteConfirmModal):not(#measurementSaveConfirmModal):not(#foodCopyConfirmModal) > .modal-stack-content{
+  position:fixed!important;
+  inset:0!important;
+  width:100%!important;
+  height:100dvh!important;
+  min-height:100dvh!important;
+  max-width:none!important;
+  max-height:none!important;
+  margin:0!important;
+  border-radius:0!important;
+  box-sizing:border-box!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  -webkit-overflow-scrolling:touch!important;
+  overscroll-behavior:contain!important;
+  touch-action:pan-y!important;
+  padding-top:calc(env(safe-area-inset-top,0px) + 12px)!important;
+  padding-right:calc(env(safe-area-inset-right,0px) + 16px)!important;
+  padding-bottom:calc(env(safe-area-inset-bottom,0px) + 16px)!important;
+  padding-left:calc(env(safe-area-inset-left,0px) + 16px)!important;
+}
+.modal-stack-root:not(.hidden) > .modal-stack-content .close-btn,
+.modal-stack-root:not(.hidden) > .modal-stack-content .modal-close-btn{
+  position:sticky!important;
+  float:right!important;
+  top:0!important;
+  right:0!important;
+  z-index:1000!important;
 }
 </style>
