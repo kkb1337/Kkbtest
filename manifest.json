@@ -26,6 +26,6 @@
       "purpose": "any maskable"
     }
   ],
-  "_build": "ftracker-v1.4.17-clean-index-notifications",
-  "version": "1.4.17"
+  "_build": "ftracker-v1.4.18-safearea-notifications",
+  "version": "1.4.18"
 }
