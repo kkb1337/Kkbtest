@@ -6773,7 +6773,7 @@ body{
 .food-macro-card span,.food-macro-card strong,.food-macro-card small{white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;}
 @media(max-width:390px){#chartModal .period-selector{grid-template-columns:repeat(2,minmax(0,1fr))!important;}#chartModal .period-selector button{font-size:12px!important;}.food-macro-card strong{font-size:14px!important;}}
 
-/* FTracker v1.4.37 — cosmetic cleanup.
+/* FTracker v1.4.38 — cosmetic cleanup.
    Keep the stable application logic intact; normalize only viewport geometry and redundant helper UI. */
 html,body{margin:0!important;padding:0!important;width:100%!important;min-height:100%!important;overflow-x:hidden!important;}
 body{min-height:100dvh!important;background:var(--bg)!important;}
@@ -6815,7 +6815,7 @@ body{min-height:100dvh!important;background:var(--bg)!important;}
 </style>
 
 <style id="ftracker-v1-4-37-safe-area-final">
-/* v1.4.37 — final safe-area geometry pass.
+/* v1.4.38 — final safe-area geometry pass.
    The app shell already lives below the iOS safe area, so no second top inset
    is allowed on the container or on full-screen content surfaces. */
 .safe-area>.container,#app.container{
@@ -6860,7 +6860,7 @@ body{min-height:100dvh!important;background:var(--bg)!important;}
 }
 </style>
 <style id="ftracker-v1-4-37-authoritative-geometry">
-/* v1.4.37 — authoritative geometry fix.
+/* v1.4.38 — authoritative geometry fix.
    .safe-area already consumes the iOS top inset. Ordinary screens and the workout
    must never add that inset a second time. */
 .safe-area>.container,#app.container{padding-top:0!important;}
@@ -6884,6 +6884,48 @@ body{min-height:100dvh!important;background:var(--bg)!important;}
   display:inline-flex!important;align-items:center!important;justify-content:center!important;
 }
 </style>
+<style id="ftracker-v1-4-38-final-polish">
+/* v1.4.38 — compact home + Index collapse control + exercise analytics close alignment.
+   Cosmetic only. Existing application logic/data remain untouched. */
+@media (max-width:430px){
+  /* Home: fit the primary dashboard on one iPhone viewport without page scrolling. */
+  #homeScreen{padding-bottom:0!important;}
+  #homeScreen>.title:first-child{font-size:31px!important;line-height:1!important;margin-bottom:5px!important;}
+  #homeScreen #programList{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:7px!important;margin:0!important;}
+  #homeScreen #programList .card.centered-card{margin:0!important;padding:9px 5px!important;min-height:69px!important;height:69px!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;border-radius:14px!important;box-sizing:border-box!important;}
+  #homeScreen #programList .program-icon{font-size:22px!important;line-height:1!important;margin:0!important;}
+  #homeScreen #programList .split-title{font-size:12px!important;line-height:1.1!important;margin-top:5px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;max-width:100%!important;}
+  #homeScreen #programList .card.centered-card>div:last-child{font-size:9px!important;line-height:1!important;margin-top:3px!important;white-space:nowrap!important;}
+  #fscoreHomeWidget.fscore-widget{min-height:82px!important;height:82px!important;margin:8px 0 10px!important;padding:10px 12px!important;border-radius:16px!important;}
+  #fscoreHomeWidget .fscore-home-middle{margin-top:6px!important;}
+  #fscoreHomeWidget .fscore-home-number{font-size:30px!important;}
+  #fscoreHomeWidget .fscore-home-hint{display:none!important;}
+  #fscoreHomeWidget .fscore-home-progress{margin-top:6px!important;height:4px!important;}
+  #homeScreen .nav-buttons{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important;margin-top:0!important;}
+  #homeScreen .nav-buttons button{min-height:46px!important;height:46px!important;padding:6px 5px!important;border-radius:13px!important;font-size:12px!important;line-height:1.05!important;gap:3px!important;}
+  #homeScreen .nav-buttons .nav-icon{width:19px!important;height:19px!important;margin-right:2px!important;}
+}
+/* Index: explicit single-tap collapse/expand of the long explanatory sections. */
+#fscoreAnalyticsScreen .fscore-screen-header{position:sticky!important;top:0!important;}
+#fscoreAnalyticsScreen .fscore-collapse-btn{flex:0 0 auto!important;width:auto!important;min-width:66px!important;height:36px!important;min-height:36px!important;margin:0!important;padding:0 9px!important;border-radius:10px!important;background:var(--input-bg)!important;color:var(--subtext)!important;border:1px solid var(--border)!important;font-size:11px!important;font-weight:800!important;line-height:1!important;}
+#fscoreAnalyticsScreen .fscore-collapse-btn:active{transform:scale(.98)!important;}
+/* Exercise Analytics/Records modal: keep the close control inside the modal card, not in the tab content. */
+#exerciseModal .exercise-modal-content{position:relative!important;}
+#exerciseModal .exercise-modal-content>.modal-close-btn{position:absolute!important;top:10px!important;right:10px!important;width:34px!important;height:34px!important;min-width:34px!important;min-height:34px!important;margin:0!important;padding:0!important;display:flex!important;align-items:center!important;justify-content:center!important;border-radius:10px!important;background:var(--input-bg)!important;border:1px solid var(--border)!important;color:var(--subtext)!important;font-size:22px!important;line-height:1!important;z-index:30!important;}
+#exerciseModal #exerciseModalTitle{padding-right:44px!important;}
+</style>
+<script>
+function toggleFScoreSections(btn){
+  const root=document.getElementById('fscoreAnalyticsScreen');
+  if(!root||!btn)return;
+  const details=root.querySelectorAll('details');
+  const shouldOpen=btn.getAttribute('aria-expanded')!=='true';
+  details.forEach(d=>{d.open=shouldOpen;});
+  btn.setAttribute('aria-expanded',shouldOpen?'true':'false');
+  btn.textContent=shouldOpen?'Свернуть':'Развернуть';
+  btn.setAttribute('aria-label',shouldOpen?'Свернуть разделы':'Развернуть разделы');
+}
+</script>
 </head>
 <body>
 <div class="safe-area"><div class="container" id="app">
@@ -6942,7 +6984,7 @@ body{min-height:100dvh!important;background:var(--bg)!important;}
         <div id="progressContent"></div>
     </div>
     <div id="fscoreAnalyticsScreen" class="hidden">
-        <div class="screen-header fscore-screen-header"><button onclick="goHome()" class="gray fscore-back-btn" aria-label="Назад">← Назад</button><div class="title section-title fscore-title"><span class="section-title-icon">◎</span><span>Индекс динамики</span></div><span class="screen-header-spacer" aria-hidden="true"></span></div>
+        <div class="screen-header fscore-screen-header"><button onclick="goHome()" class="gray fscore-back-btn" aria-label="Назад">← Назад</button><div class="title section-title fscore-title"><span class="section-title-icon">◎</span><span>Индекс динамики</span></div><button type="button" class="fscore-collapse-btn" onclick="toggleFScoreSections(this)" aria-expanded="true" aria-label="Свернуть разделы">Свернуть</button></div>
         <div id="fscoreAnalyticsContent"></div>
     </div>
     <div id="bodyScreen" class="hidden">
@@ -7042,7 +7084,7 @@ body{min-height:100dvh!important;background:var(--bg)!important;}
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.37 от 04.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.38 от 05.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -7578,7 +7620,7 @@ body{min-height:100dvh!important;background:var(--bg)!important;}
 
 <script id="ftracker-app">
 /* ================================================================
-   FTracker v1.4.37
+   FTracker v1.4.38
    One centralized stack: only the top modal can scroll/interact.
    ================================================================ */
 const modalStack = [];
@@ -12976,7 +13018,7 @@ function showToast(msg) {
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=1.4.37', {updateViaCache:'none'})
+        navigator.serviceWorker.register('./sw.js?v=1.4.38', {updateViaCache:'none'})
             .then(reg => console.log('SW registered', reg.scope))
             .catch(err => console.log('SW failed', err));
     });
@@ -17894,7 +17936,7 @@ body.light-mode .toast{
 </style>
 
 <style id="ftracker-v1-4-36-final-override">
-/* v1.4.37 — authoritative final override; must remain last so legacy fixes cannot reintroduce the offset. */
+/* v1.4.38 — authoritative final override; must remain last so legacy fixes cannot reintroduce the offset. */
 .safe-area>.container,#app.container{
   padding-top:0!important;
 }
