@@ -6595,7 +6595,7 @@ body{
 </style>
 
 <style id="ftracker-global-window-audit-v1-4-31">
-/* v1.4.32 — targeted global window audit: visual consistency without changing the working Exercise Card architecture. */
+/* v1.4.33 — targeted global window audit: visual consistency without changing the working Exercise Card architecture. */
 :root{
   --window-surface:#1a1c20;
   --window-surface-2:#22252b;
@@ -6745,7 +6745,7 @@ body{
 
 
 <style id="ftracker-targeted-window-polish-v1-4-32">
-/* v1.4.32: targeted fixes only. Working exercise card remains untouched. */
+/* v1.4.33: targeted fixes only. Working exercise card remains untouched. */
 .unified-surface-header{display:flex!important;align-items:center!important;gap:10px!important;min-width:0!important;margin:0 0 16px!important;}
 .unified-surface-header .surface-back-btn{flex:0 0 auto!important;margin:0!important;min-height:40px!important;padding:0 12px!important;border-radius:12px!important;background:var(--window-surface-2)!important;border:1px solid var(--window-border)!important;color:var(--text)!important;font-size:15px!important;font-weight:750!important;line-height:1!important;box-shadow:none!important;}
 .unified-surface-header .surface-title,.unified-surface-header .chart-modal-title{min-width:0!important;margin:0!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;font-size:clamp(18px,5vw,22px)!important;line-height:1.15!important;font-weight:750!important;}
@@ -6932,7 +6932,7 @@ body{
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.32 от 04.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.33 от 04.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -7182,8 +7182,10 @@ body{
 </div>
 <div id="catalogEditModal" class="catalog-modal hidden" onclick="if(event.target === this) closeCatalogEdit()">
     <div class="catalog-modal-content">
-        <span class="close-btn" onclick="closeCatalogEdit()">&times;</span>
-        <div style="font-size:20px; font-weight:600; margin-bottom:16px;" id="catalogEditTitle">Продукт</div>
+        <div class="unified-surface-header">
+            <button class="surface-back-btn" type="button" onclick="closeCatalogEdit()">← Назад</button>
+            <div class="surface-title" id="catalogEditTitle">Продукт</div>
+        </div>
         <div style="margin-bottom:8px;">
             <label class="field-label">Тип продукта</label>
             <select id="catalogType" onchange="toggleCatalogTypeFields()">
@@ -7467,7 +7469,7 @@ body{
 
 <script id="ftracker-app">
 /* ================================================================
-   FTracker v1.4.32
+   FTracker v1.4.33
    One centralized stack: only the top modal can scroll/interact.
    ================================================================ */
 const modalStack = [];
@@ -12514,7 +12516,7 @@ function deleteCatalogProduct(index) {
 
 function openAddFoodModal() {
     editingFoodEntryIndex = null;
-    lockModalScroll(); document.getElementById('addFoodModal').classList.remove('hidden');
+    document.getElementById('addFoodModal').classList.remove('hidden');
     document.getElementById('foodName').value = '';
     document.getElementById('foodPortion').value = '';
     document.getElementById('foodCalories').value = '';
@@ -12536,7 +12538,7 @@ function editFoodEntry(index) {
     const entry = data.foodDiary.entries[index];
     if (!entry) return;
     editingFoodEntryIndex = index;
-    lockModalScroll(); document.getElementById('addFoodModal').classList.remove('hidden');
+    document.getElementById('addFoodModal').classList.remove('hidden');
     document.getElementById('foodName').value = entry.name;
     document.getElementById('foodPresetList').classList.add('hidden');
     document.getElementById('calcResult').textContent = '';
@@ -17647,6 +17649,19 @@ window.closeImportConfirm=function(){
 #importConfirmModal .import-confirm-copy{color:var(--subtext)!important;margin:0 0 18px!important;line-height:1.45!important;text-align:left!important;}
 #importConfirmModal .confirm-modal-content>div[style*="color:var(--subtext)"]{font-size:14px!important;line-height:1.5!important;margin-bottom:16px!important;}
 #importConfirmModal button{min-height:48px!important;margin:8px 0 0!important;width:100%!important;}
+</style>
+
+<style id="ftracker-targeted-source-fixes-v1-4-33">
+/* v1.4.33: fix the actual Catalog editor markup and keep chart header as one explicit row. */
+#catalogEditModal .catalog-modal-content > .close-btn{display:none!important;}
+#catalogEditModal .unified-surface-header{display:flex!important;align-items:center!important;gap:10px!important;margin:0 0 16px!important;min-width:0!important;}
+#catalogEditModal .unified-surface-header .surface-back-btn{flex:0 0 auto!important;margin:0!important;}
+#catalogEditModal .unified-surface-header .surface-title{flex:1 1 auto!important;min-width:0!important;margin:0!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;}
+/* Nutrition chart has one header row: framed Back at left and title immediately beside it. */
+#chartModal .chart-modal-header{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:flex-start!important;gap:10px!important;width:100%!important;margin:0 0 16px!important;padding:0!important;}
+#chartModal .chart-modal-header>.surface-back-btn{display:inline-flex!important;flex:0 0 auto!important;width:auto!important;margin:0!important;}
+#chartModal .chart-modal-header>.chart-modal-title{display:block!important;flex:1 1 auto!important;min-width:0!important;margin:0!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;}
+#chartModal>.chart-modal-content>.close-btn,#chartModal .chart-modal-header .close-btn{display:none!important;}
 </style>
 </body>
 </html>
