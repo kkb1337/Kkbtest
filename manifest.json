@@ -26,6 +26,6 @@
       "purpose": "any maskable"
     }
   ],
-  "_build": "ftracker-v1.4.26-exercise-card-stack-purged",
-  "version": "1.4.26"
+  "_build": "ftracker-v1.4.27-unified-fullscreen-modal-cleanup",
+  "version": "1.4.27"
 }
