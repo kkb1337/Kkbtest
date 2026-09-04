@@ -6659,7 +6659,7 @@ body{
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.17 от 04.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.19 от 04.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -12494,7 +12494,7 @@ function showToast(msg) {
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=1.4.18', {updateViaCache:'none'})
+        navigator.serviceWorker.register('./sw.js?v=1.4.19', {updateViaCache:'none'})
             .then(reg => console.log('SW registered', reg.scope))
             .catch(err => console.log('SW failed', err));
     });
@@ -17349,3 +17349,21 @@ window.closeImportConfirm=function(){
   };
 })();
 </script>
+
+
+<style id="ftracker-v1419-neutral-notifications">
+/* v1.4.19 — neutral system notifications, keeping the v1.4.18 safe-area architecture */
+.toast{
+  background:rgba(28,28,30,.98)!important;
+  color:#f5f5f7!important;
+  border:0!important;
+  border-bottom:1px solid rgba(255,255,255,.10)!important;
+  box-shadow:0 8px 24px rgba(0,0,0,.30)!important;
+}
+body.light-mode .toast{
+  background:rgba(255,255,255,.98)!important;
+  color:#1c1c1e!important;
+  border-bottom:1px solid rgba(0,0,0,.10)!important;
+  box-shadow:0 8px 24px rgba(0,0,0,.14)!important;
+}
+</style>
