@@ -6593,6 +6593,156 @@ body{
 .catalog-modal-content .surface-title,.chart-modal-title,.body-history-modal-title{letter-spacing:-.3px!important;}
 .catalog-modal-content .chart-modal-subtitle,.catalog-modal-content .measurement-modal-note{color:var(--subtext)!important;}
 </style>
+
+<style id="ftracker-global-window-audit-v1-4-31">
+/* v1.4.31 — targeted global window audit: visual consistency without changing the working Exercise Card architecture. */
+:root{
+  --window-surface:#1a1c20;
+  --window-surface-2:#22252b;
+  --window-surface-3:#2a2e35;
+  --window-border:rgba(255,255,255,.10);
+  --window-border-strong:rgba(255,255,255,.15);
+}
+/* One compact, single-line header system. */
+.screen-header{
+  grid-template-columns:auto minmax(0,1fr) auto!important;
+  align-items:center!important;
+  min-width:0!important;
+}
+.screen-header .title,.screen-header .title.section-title,.screen-header .section-title{
+  min-width:0!important;
+  max-width:100%!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  font-size:clamp(18px,5vw,22px)!important;
+  line-height:1.15!important;
+  font-weight:750!important;
+  letter-spacing:-.25px!important;
+}
+/* Back controls everywhere use the same quiet gray framed treatment. */
+.screen-header>button.gray,.surface-back-btn,.chart-back-btn,.back-btn,.modal-back-btn{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-height:40px!important;
+  height:40px!important;
+  width:auto!important;
+  min-width:40px!important;
+  padding:0 12px!important;
+  margin:0!important;
+  border-radius:12px!important;
+  border:1px solid var(--window-border-strong)!important;
+  background:var(--window-surface-2)!important;
+  color:var(--text)!important;
+  box-shadow:0 3px 12px rgba(0,0,0,.18)!important;
+  font-size:14px!important;
+  font-weight:750!important;
+  line-height:1!important;
+}
+.surface-back-btn{justify-self:start!important;white-space:nowrap!important;}
+/* Direct fullscreen measurement surfaces use the same proven viewport model as the working chart/card. */
+#measurementManagerModal,#measurementFieldModal,#newMeasurementModal,#editMeasurementModal{
+  position:fixed!important;
+  inset:0!important;
+  margin:0!important;
+  padding:0!important;
+  display:block!important;
+  overflow:hidden!important;
+  background:var(--bg)!important;
+  box-sizing:border-box!important;
+  z-index:7000!important;
+}
+#measurementManagerModal>.measurement-manager-modal-content,
+#measurementFieldModal>.measurement-manager-modal-content,
+#newMeasurementModal>.measurement-manager-modal-content,
+#editMeasurementModal>.measurement-manager-modal-content{
+  position:absolute!important;
+  inset:0!important;
+  margin:0!important;
+  max-width:none!important;
+  max-height:none!important;
+  border:0!important;
+  border-radius:0!important;
+  background:var(--bg)!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  -webkit-overflow-scrolling:touch!important;
+  overscroll-behavior:contain!important;
+  box-sizing:border-box!important;
+  padding:calc(env(safe-area-inset-top,0px) + 14px) calc(env(safe-area-inset-right,0px) + 16px) calc(env(safe-area-inset-bottom,0px) + 24px) calc(env(safe-area-inset-left,0px) + 16px)!important;
+}
+/* Measurement header stays on one line; title shrinks instead of wrapping. */
+#measurementManagerModal .measurement-manager-modal-content,
+#measurementFieldModal .measurement-manager-modal-content,
+#newMeasurementModal .measurement-manager-modal-content,
+#editMeasurementModal .measurement-manager-modal-content{
+  grid-template-columns:auto minmax(0,1fr)!important;
+  column-gap:10px!important;
+}
+#measurementManagerModal .surface-title,#measurementFieldModal .surface-title,#newMeasurementModal .surface-title,#editMeasurementModal .surface-title{
+  min-width:0!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  font-size:clamp(18px,5vw,21px)!important;
+  font-weight:750!important;
+}
+.measurement-manager-modal-content input,.measurement-manager-modal-content select{
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  box-sizing:border-box!important;
+}
+.measurement-manager-modal-content input[type="date"]{
+  font-size:14px!important;
+  letter-spacing:-.15px!important;
+  padding-left:12px!important;
+  padding-right:8px!important;
+}
+/* Confirmation dialogs must always be above direct fullscreen surfaces. */
+.confirm-modal{position:fixed!important;inset:0!important;z-index:12000!important;}
+#deleteConfirmModal,#measurementSaveConfirmModal,#finishWorkoutConfirmModal,#importConfirmModal{z-index:12050!important;}
+.confirm-modal-content{position:relative!important;z-index:1!important;background:linear-gradient(180deg,var(--window-surface-2),var(--window-surface))!important;border:1px solid var(--window-border-strong)!important;box-shadow:0 18px 48px rgba(0,0,0,.48)!important;}
+/* Remove decorative water directly under known section titles. */
+.chart-modal-subtitle,.measurement-modal-note,.progress-section-subtitle{display:none!important;}
+/* Chart header stays one horizontal row. */
+#chartModal .chart-modal-header{display:flex!important;align-items:center!important;gap:10px!important;min-width:0!important;}
+#chartModal .chart-modal-header .chart-modal-title{min-width:0!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;font-size:clamp(18px,5vw,22px)!important;font-weight:750!important;}
+#chartModal .chart-section-label{display:none!important;}
+/* Nutrition legend: full names, one line, responsive without clipping. */
+#chartModal .legend{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:3px!important;align-items:center!important;}
+#chartModal .legend-item{min-width:0!important;justify-content:center!important;white-space:nowrap!important;overflow:visible!important;text-overflow:unset!important;font-size:clamp(8.5px,2.45vw,12px)!important;letter-spacing:-.25px!important;}
+#chartModal .legend-dot{width:6px!important;height:6px!important;flex:0 0 6px!important;}
+/* Shared surface cards and controls. */
+.card,.catalog-choice,.measurement-manager-list>*,.workout-history-exercise{
+  background:linear-gradient(180deg,var(--window-surface-2),var(--window-surface))!important;
+  border:1px solid var(--window-border)!important;
+  border-radius:16px!important;
+}
+/* Workout history detail: replace plain text on black with structured cards. */
+#workoutDetailModal .workout-detail-content{background:var(--bg)!important;}
+#workoutDetailTitle{margin:0 0 14px!important;padding:12px 14px!important;background:linear-gradient(180deg,var(--window-surface-2),var(--window-surface))!important;border:1px solid var(--window-border)!important;border-radius:16px!important;}
+.workout-detail-title-main{font-size:20px!important;font-weight:760!important;line-height:1.2!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;}
+.workout-detail-title-date{margin-top:4px!important;font-size:13px!important;color:var(--subtext)!important;font-weight:600!important;}
+.workout-history-detail-list{display:grid!important;gap:10px!important;}
+.workout-history-exercise{padding:13px!important;box-shadow:0 6px 18px rgba(0,0,0,.16)!important;}
+.workout-history-exercise-name{font-size:16px!important;font-weight:760!important;margin-bottom:10px!important;}
+.workout-history-sets{display:grid!important;gap:7px!important;}
+.workout-history-set{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;padding:9px 10px!important;border-radius:11px!important;background:rgba(255,255,255,.035)!important;color:var(--subtext)!important;font-size:13px!important;}
+.workout-history-set b{color:var(--text)!important;font-size:14px!important;white-space:nowrap!important;}
+.workout-history-empty{color:var(--subtext)!important;font-size:13px!important;padding:8px 0!important;}
+/* Dynamic/progress surfaces: any legacy close icon aligns with the title line instead of floating into the safe area. */
+.fscore-screen-header .close-btn,.fscore-screen-header .modal-close-btn,.progress-screen .close-btn,.progress-screen .modal-close-btn{
+  position:static!important;
+  align-self:center!important;
+  margin:0!important;
+  width:40px!important;height:40px!important;min-width:40px!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  border:1px solid var(--window-border-strong)!important;border-radius:12px!important;background:var(--window-surface-2)!important;
+}
+</style>
+
 </head>
 <body>
 <div class="safe-area"><div class="container" id="app">
@@ -6752,7 +6902,7 @@ body{
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.30 от 04.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.31 от 04.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -7284,7 +7434,7 @@ body{
 
 <script id="ftracker-app">
 /* ================================================================
-   FTracker v1.4.30
+   FTracker v1.4.31
    One centralized stack: only the top modal can scroll/interact.
    ================================================================ */
 const modalStack = [];
@@ -11577,13 +11727,23 @@ function confirmDeleteEntry() {
 }
 function viewWorkout(index) {
     const entry = data.history[index];
-    document.getElementById('workoutDetailTitle').textContent = entry.program + ' — ' + new Date(entry.date).toLocaleDateString();
-    let html = '';
+    const dateLabel = new Date(entry.date).toLocaleDateString();
+    document.getElementById('workoutDetailTitle').innerHTML = `<div class="workout-detail-title-main">${escapeHtml(entry.program)}</div><div class="workout-detail-title-date">${dateLabel}</div>`;
+    let html = '<div class="workout-history-detail-list">';
     entry.exercises.forEach(ex => {
-        html += `<div style="font-weight:600;margin-top:12px;">${escapeHtml(ex.name)}</div>`;
-        if (!ex.sets || !ex.sets.length) html += '<div style="color:var(--subtext);">Нет данных</div>';
-        else ex.sets.forEach((s,i) => { if(s.weight) html+=`<div style="margin-left:12px;">Подход ${i+1}: ${s.weight} кг × ${s.reps}</div>`; else if(s.time) html+=`<div style="margin-left:12px;">Подход ${i+1}: ${s.time} мин × ${s.intensity}</div>`; else html+=`<div style="margin-left:12px;">Подход ${i+1}: ${s.reps} повт.</div>`; });
+        html += `<section class="workout-history-exercise"><div class="workout-history-exercise-name">${escapeHtml(ex.name)}</div>`;
+        if (!ex.sets || !ex.sets.length) html += '<div class="workout-history-empty">Нет данных</div>';
+        else {
+          html += '<div class="workout-history-sets">';
+          ex.sets.forEach((s,i) => {
+            const value = s.weight ? `${s.weight} кг × ${s.reps}` : s.time ? `${s.time} мин × ${s.intensity}` : `${s.reps} повт.`;
+            html += `<div class="workout-history-set"><span>Подход ${i+1}</span><b>${value}</b></div>`;
+          });
+          html += '</div>';
+        }
+        html += '</section>';
     });
+    html += '</div>';
     document.getElementById('workoutDetailContent').innerHTML = html;
     lockModalScroll(); document.getElementById('workoutDetailModal').classList.remove('hidden');
 }
