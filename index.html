@@ -6772,6 +6772,46 @@ body{
 .food-macro-card{min-width:0!important;text-align:center!important;padding:10px 6px!important;}
 .food-macro-card span,.food-macro-card strong,.food-macro-card small{white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;}
 @media(max-width:390px){#chartModal .period-selector{grid-template-columns:repeat(2,minmax(0,1fr))!important;}#chartModal .period-selector button{font-size:12px!important;}.food-macro-card strong{font-size:14px!important;}}
+
+/* FTracker v1.4.35 — cosmetic cleanup.
+   Keep the stable application logic intact; normalize only viewport geometry and redundant helper UI. */
+html,body{margin:0!important;padding:0!important;width:100%!important;min-height:100%!important;overflow-x:hidden!important;}
+body{min-height:100dvh!important;background:var(--bg)!important;}
+.safe-area{
+  width:100%!important;
+  min-height:100dvh!important;
+  padding:var(--safe-top) var(--safe-right) var(--safe-bottom) var(--safe-left)!important;
+  box-sizing:border-box!important;
+}
+.safe-area>.container,#app.container{
+  width:100%!important;
+  max-width:600px!important;
+  min-height:calc(100dvh - var(--safe-top) - var(--safe-bottom))!important;
+  margin:0 auto!important;
+  padding:0 16px 16px!important;
+  box-sizing:border-box!important;
+}
+/* The header begins exactly at the bottom edge of the iPhone safe area. */
+#app>.screen-header,.screen-header{
+  position:sticky!important;
+  top:0!important;
+  min-height:48px!important;
+  height:48px!important;
+  padding:4px 0!important;
+  margin:0 0 10px!important;
+  box-sizing:border-box!important;
+}
+#app>.screen-header{top:0!important;}
+/* Home has no separate header, so its title also starts immediately after safe-area padding. */
+#homeScreen>.title:first-child{margin-top:0!important;}
+/* Real search fields remain; explanatory copy underneath them does not. */
+#exerciseDirectoryScreen .directory-search-wrap + div{display:none!important;}
+/* Progress starts with its actual picker instead of a decorative magnifier card. */
+.progress-ex-empty-state{display:none!important;}
+/* A surface with an explicit Back control does not need an automatically injected X. */
+.catalog-modal-content:has(.surface-back-btn)>.modal-stack-auto-close,
+.food-modal-content:has(.surface-back-btn)>.modal-stack-auto-close,
+.modal-stack-content:has(.surface-back-btn)>.modal-stack-auto-close{display:none!important;}
 </style>
 </head>
 <body>
@@ -6875,7 +6915,6 @@ body{
         <div id="directoryActiveActions" style="display:flex;gap:8px;margin-bottom:10px;"><button type="button" onclick="openNewDirectoryExerciseModal()">＋ Новое упражнение</button></div>
         <div class="card" style="padding:12px;margin-bottom:12px;">
             <div class="directory-search-wrap"><span class="directory-search-icon">⌕</span><input id="directorySearch" class="directory-search" placeholder="Поиск упражнения" autocomplete="off" oninput="filterDirectorySearch(this.value)"><button id="directorySearchClear" type="button" class="directory-search-clear hidden" onclick="clearDirectorySearch()" aria-label="Очистить поиск">×</button></div>
-            <div style="font-size:12px;color:var(--subtext);">Все упражнения собраны в одном месте. Нажми на название — откроются выполнение, советы и мышцы.</div>
         </div>
         <div id="exerciseDirectoryContent"></div>
     </div>
@@ -6932,7 +6971,7 @@ body{
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.33 от 04.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.35 от 04.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -7313,7 +7352,6 @@ body{
   <div class="date-modal-content" style="max-height:86vh;display:flex;flex-direction:column;">
     <span class="close-btn" onclick="closeExercisePicker()">&times;</span>
     <div id="exercisePickerTitle" style="font-size:20px;font-weight:800;margin-bottom:5px;padding-right:30px;">Добавить упражнение</div>
-    <div style="font-size:13px;color:var(--subtext);margin-bottom:10px;">Выбери упражнение из справочника или воспользуйся поиском.</div>
     <input id="exercisePickerSearch" placeholder="🔎 Поиск упражнения" autocomplete="off" oninput="renderExercisePicker()">
     <div id="exercisePickerList" class="catalog-modal-list"></div>
   </div>
@@ -7322,7 +7360,6 @@ body{
   <div class="date-modal-content" style="max-height:82vh;display:flex;flex-direction:column;">
     <span class="close-btn" onclick="closeProgressExercisePicker()">&times;</span>
     <div style="font-size:20px;font-weight:700;margin-bottom:5px;">Упражнения с прогрессом</div>
-    <div style="font-size:13px;color:var(--subtext);margin-bottom:12px;">Выбери упражнение, по которому уже есть сохранённые данные.</div>
     <input id="progressExercisePickerSearch" placeholder="🔎 Поиск упражнения" autocomplete="off" oninput="renderProgressExercisePicker()">
     <div id="progressPickerList" class="progress-picker-list" style="margin-top:10px;"></div>
   </div>
@@ -7470,7 +7507,7 @@ body{
 
 <script id="ftracker-app">
 /* ================================================================
-   FTracker v1.4.34
+   FTracker v1.4.35
    One centralized stack: only the top modal can scroll/interact.
    ================================================================ */
 const modalStack = [];
@@ -7530,6 +7567,7 @@ function ensureModalCloseButton(modal) {
   const content = getModalContent(modal);
   if (!content) return;
   if (content.querySelector('.modal-close-btn, .close-btn')) return;
+  if (content.querySelector('.surface-back-btn, .chart-back-btn, .back-btn, .modal-back-btn')) return;
 
   const button = document.createElement('button');
   button.type = 'button';
@@ -12867,7 +12905,7 @@ function showToast(msg) {
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=1.4.23', {updateViaCache:'none'})
+        navigator.serviceWorker.register('./sw.js?v=1.4.35', {updateViaCache:'none'})
             .then(reg => console.log('SW registered', reg.scope))
             .catch(err => console.log('SW failed', err));
     });
@@ -13047,7 +13085,7 @@ function renderProgressDashboard(){
             <div class="progress-ex-picker-label">Упражнение</div>
             ${pickerButton}
         </div>
-        ${selected?`<div class="progress-ex-section"><div class="progress-ex-section-title">Сводка</div><div class="progress-ex-section-sub">${progressEsc(periodLabel)} · рекорды считаются за всё время.</div><div class="progress-ex-metrics">${metrics}</div>${changes?`<div class="progress-ex-change">${changes}</div>`:''}</div>`:`<div class="progress-ex-empty-state"><div class="progress-ex-empty-icon">⌕</div><div class="progress-ex-empty-title">Выбери упражнение</div><div class="progress-ex-empty-sub">Открой список и выбери упражнение, по которому уже есть сохранённые результаты.</div></div>`}
+        ${selected?`<div class="progress-ex-section"><div class="progress-ex-section-title">Сводка</div><div class="progress-ex-section-sub">${progressEsc(periodLabel)} · рекорды считаются за всё время.</div><div class="progress-ex-metrics">${metrics}</div>${changes?`<div class="progress-ex-change">${changes}</div>`:''}</div>`:''}
         ${chartBlock}
         ${selected?`<div class="progress-ex-section progress-history-section"><div class="progress-ex-section-head"><div><div class="progress-ex-section-title">История</div><div class="progress-ex-section-sub">Результаты по тренировкам за выбранный период.</div></div><span class="progress-section-chevron">⌄</span></div><div class="progress-ex-history">${historyHtml}</div></div>`:''}
     </div>`;
