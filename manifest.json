@@ -26,6 +26,6 @@
       "purpose": "any maskable"
     }
   ],
-  "_build": "ftracker-v1.4.23-authoritative-fullscreen-modal-screens",
-  "version": "1.4.23"
+  "_build": "ftracker-v1.4.24-authoritative-fullscreen-modal-screens",
+  "version": "1.4.24"
 }
