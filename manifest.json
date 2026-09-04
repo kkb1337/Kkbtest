@@ -26,6 +26,6 @@
       "purpose": "any maskable"
     }
   ],
-  "_build": "ftracker-v1.4.32-canonical-modal-viewport",
-  "version": "1.4.32"
+  "_build": "ftracker-v1.4.20-neutral-notifications",
+  "version": "1.4.20"
 }
