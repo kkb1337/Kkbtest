@@ -26,6 +26,6 @@
       "purpose": "any maskable"
     }
   ],
-  "_build": "ftracker-v1.4.27-unified-fullscreen-modal-cleanup",
+  "_build": "ftracker-v1.4.27-fullscreen-surfaces",
   "version": "1.4.27"
 }
