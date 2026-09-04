@@ -5461,9 +5461,9 @@ input[type="checkbox"],
   top:var(--safe-top);
   z-index:110;
   width:100%;
-  margin:calc(-1 * var(--safe-top)) 0 0 !important;
-  padding-top:calc(var(--safe-top) + 6px) !important;
-  padding-bottom:10px !important;
+  margin:0 !important;
+  padding-top:4px !important;
+  padding-bottom:8px !important;
 }
 
 #workoutScreen .exercise-strip{
@@ -6773,7 +6773,7 @@ body{
 .food-macro-card span,.food-macro-card strong,.food-macro-card small{white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;}
 @media(max-width:390px){#chartModal .period-selector{grid-template-columns:repeat(2,minmax(0,1fr))!important;}#chartModal .period-selector button{font-size:12px!important;}.food-macro-card strong{font-size:14px!important;}}
 
-/* FTracker v1.4.36 — cosmetic cleanup.
+/* FTracker v1.4.37 — cosmetic cleanup.
    Keep the stable application logic intact; normalize only viewport geometry and redundant helper UI. */
 html,body{margin:0!important;padding:0!important;width:100%!important;min-height:100%!important;overflow-x:hidden!important;}
 body{min-height:100dvh!important;background:var(--bg)!important;}
@@ -6814,8 +6814,8 @@ body{min-height:100dvh!important;background:var(--bg)!important;}
 .modal-stack-content:has(.surface-back-btn)>.modal-stack-auto-close{display:none!important;}
 </style>
 
-<style id="ftracker-v1-4-36-safe-area-final">
-/* v1.4.36 — final safe-area geometry pass.
+<style id="ftracker-v1-4-37-safe-area-final">
+/* v1.4.37 — final safe-area geometry pass.
    The app shell already lives below the iOS safe area, so no second top inset
    is allowed on the container or on full-screen content surfaces. */
 .safe-area>.container,#app.container{
@@ -6857,6 +6857,31 @@ body{min-height:100dvh!important;background:var(--bg)!important;}
   display:inline-flex!important;
   align-items:center!important;
   justify-content:center!important;
+}
+</style>
+<style id="ftracker-v1-4-37-authoritative-geometry">
+/* v1.4.37 — authoritative geometry fix.
+   .safe-area already consumes the iOS top inset. Ordinary screens and the workout
+   must never add that inset a second time. */
+.safe-area>.container,#app.container{padding-top:0!important;}
+#app>.screen-header{margin-top:0!important;padding-top:0!important;}
+#workoutScreen{margin:0!important;padding:0!important;}
+#workoutScreen .workout-topbar{
+  position:sticky!important;
+  top:var(--safe-top)!important;
+  margin:0!important;
+  padding-top:4px!important;
+  padding-bottom:8px!important;
+  box-sizing:border-box!important;
+}
+/* The dedicated workout header is already inside the safe-area shell. */
+#workoutScreen .workout-head{margin-top:0!important;}
+/* Exact same back-button geometry for the Index Dynamics screen. */
+#fscoreAnalyticsScreen .fscore-back-btn{
+  width:44px!important;min-width:44px!important;height:40px!important;min-height:40px!important;
+  margin:0!important;padding:7px 8px!important;border-radius:11px!important;
+  font-size:13px!important;line-height:1!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
 }
 </style>
 </head>
@@ -7017,7 +7042,7 @@ body{min-height:100dvh!important;background:var(--bg)!important;}
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.36 от 04.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.37 от 04.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -7553,7 +7578,7 @@ body{min-height:100dvh!important;background:var(--bg)!important;}
 
 <script id="ftracker-app">
 /* ================================================================
-   FTracker v1.4.36
+   FTracker v1.4.37
    One centralized stack: only the top modal can scroll/interact.
    ================================================================ */
 const modalStack = [];
@@ -12951,7 +12976,7 @@ function showToast(msg) {
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=1.4.36', {updateViaCache:'none'})
+        navigator.serviceWorker.register('./sw.js?v=1.4.37', {updateViaCache:'none'})
             .then(reg => console.log('SW registered', reg.scope))
             .catch(err => console.log('SW failed', err));
     });
@@ -17869,7 +17894,7 @@ body.light-mode .toast{
 </style>
 
 <style id="ftracker-v1-4-36-final-override">
-/* v1.4.36 — authoritative final override; must remain last so legacy fixes cannot reintroduce the offset. */
+/* v1.4.37 — authoritative final override; must remain last so legacy fixes cannot reintroduce the offset. */
 .safe-area>.container,#app.container{
   padding-top:0!important;
 }
