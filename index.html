@@ -6595,7 +6595,7 @@ body{
 </style>
 
 <style id="ftracker-global-window-audit-v1-4-31">
-/* v1.4.31 — targeted global window audit: visual consistency without changing the working Exercise Card architecture. */
+/* v1.4.32 — targeted global window audit: visual consistency without changing the working Exercise Card architecture. */
 :root{
   --window-surface:#1a1c20;
   --window-surface-2:#22252b;
@@ -6743,6 +6743,36 @@ body{
 }
 </style>
 
+
+<style id="ftracker-targeted-window-polish-v1-4-32">
+/* v1.4.32: targeted fixes only. Working exercise card remains untouched. */
+.unified-surface-header{display:flex!important;align-items:center!important;gap:10px!important;min-width:0!important;margin:0 0 16px!important;}
+.unified-surface-header .surface-back-btn{flex:0 0 auto!important;margin:0!important;min-height:40px!important;padding:0 12px!important;border-radius:12px!important;background:var(--window-surface-2)!important;border:1px solid var(--window-border)!important;color:var(--text)!important;font-size:15px!important;font-weight:750!important;line-height:1!important;box-shadow:none!important;}
+.unified-surface-header .surface-title,.unified-surface-header .chart-modal-title{min-width:0!important;margin:0!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;font-size:clamp(18px,5vw,22px)!important;line-height:1.15!important;font-weight:750!important;}
+/* Nutrition chart: back and title are one header line; custom period stays available. */
+#chartModal .chart-modal-header{display:flex!important;align-items:center!important;gap:10px!important;margin:0 0 16px!important;padding:0!important;}
+#chartModal .chart-modal-header>.surface-back-btn{flex:0 0 auto!important;margin:0!important;}
+#chartModal .chart-modal-title{flex:1 1 auto!important;}
+#chartModal .chart-modal-subtitle{display:none!important;}
+#chartModal .period-selector{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;overflow:visible!important;gap:6px!important;padding:4px!important;}
+#chartModal .period-selector button{min-width:0!important;width:auto!important;flex:auto!important;padding:9px 4px!important;font-size:12px!important;white-space:nowrap!important;}
+#chartModal .data-type-selector{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important;}
+#chartModal .data-type-selector button{min-width:0!important;white-space:nowrap!important;padding:9px 6px!important;font-size:13px!important;}
+#chartModal .legend{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:2px!important;}
+#chartModal .legend-item{font-size:clamp(8px,2.35vw,11px)!important;letter-spacing:-.3px!important;}
+/* Measurement parameters: keep any legacy close control on the same title line, never in the safe-area corner. */
+#measurementManagerModal .close-btn,#measurementFieldModal .close-btn,.fscore-screen-header .close-btn,.progress-screen .close-btn{top:auto!important;right:auto!important;bottom:auto!important;left:auto!important;position:static!important;transform:none!important;align-self:center!important;}
+/* Large food editors use the proven direct viewport model and are excluded from compact modal geometry. */
+#addFoodModal,#foodLimitModal{position:fixed!important;inset:0!important;width:auto!important;height:auto!important;min-height:0!important;max-height:none!important;margin:0!important;padding:0!important;display:block!important;overflow:hidden!important;background:var(--bg)!important;box-sizing:border-box!important;z-index:6000!important;}
+#addFoodModal>.food-modal-content,#foodLimitModal>.food-modal-content{position:absolute!important;inset:0!important;width:auto!important;height:auto!important;min-width:0!important;min-height:0!important;max-width:none!important;max-height:none!important;margin:0!important;border:0!important;border-radius:0!important;background:var(--bg)!important;box-sizing:border-box!important;overflow-y:auto!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior:contain!important;padding:calc(env(safe-area-inset-top,0px) + 16px) calc(env(safe-area-inset-right,0px) + 16px) calc(env(safe-area-inset-bottom,0px) + 24px) calc(env(safe-area-inset-left,0px) + 16px)!important;}
+#addFoodModal .close-btn,#foodLimitModal .close-btn{display:none!important;}
+#addFoodModal .food-modal-content input,#addFoodModal .food-modal-content select,#foodLimitModal .food-modal-content input{max-width:100%!important;width:100%!important;box-sizing:border-box!important;}
+/* Stats cards: compact, aligned values; prevent macro labels/values splitting awkwardly. */
+.food-macro-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:7px!important;}
+.food-macro-card{min-width:0!important;text-align:center!important;padding:10px 6px!important;}
+.food-macro-card span,.food-macro-card strong,.food-macro-card small{white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;}
+@media(max-width:390px){#chartModal .period-selector{grid-template-columns:repeat(2,minmax(0,1fr))!important;}#chartModal .period-selector button{font-size:12px!important;}.food-macro-card strong{font-size:14px!important;}}
+</style>
 </head>
 <body>
 <div class="safe-area"><div class="container" id="app">
@@ -6902,7 +6932,7 @@ body{
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.31 от 04.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.32 от 04.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -7075,8 +7105,10 @@ body{
 </div>
 <div id="addFoodModal" class="food-modal hidden" onclick="if(event.target === this) closeAddFoodModal()">
     <div class="food-modal-content">
-        <span class="close-btn" onclick="closeAddFoodModal()">&times;</span>
-        <div style="font-size:22px; font-weight:700; margin-bottom:16px;">Добавить продукт</div>
+        <div class="unified-surface-header">
+            <button class="surface-back-btn" type="button" onclick="closeAddFoodModal()">← Назад</button>
+            <div class="surface-title">Добавить продукт</div>
+        </div>
         <div style="position: relative;">
             <label class="field-label">Название продукта</label>
             <input type="text" id="foodName" placeholder="Начните вводить..." autocomplete="off" oninput="filterFoodPresets()" onfocus="filterFoodPresets()">
@@ -7120,8 +7152,10 @@ body{
 </div>
 <div id="foodLimitModal" class="food-modal hidden" onclick="if(event.target === this) closeFoodLimitModal()">
     <div class="food-modal-content">
-        <span class="close-btn" onclick="closeFoodLimitModal()">&times;</span>
-        <div style="font-size:22px; font-weight:700; margin-bottom:6px;">Лимиты КБЖУ</div><div style="font-size:12px;color:var(--subtext);margin-bottom:16px;">Автоматически рассчитываются по выбранной цели. Ручное сохранение переопределяет лимиты только для этого дня.</div>
+        <div class="unified-surface-header">
+            <button class="surface-back-btn" type="button" onclick="closeFoodLimitModal()">← Назад</button>
+            <div class="surface-title">Лимиты КБЖУ</div>
+        </div><div style="font-size:12px;color:var(--subtext);margin-bottom:16px;">Автоматически рассчитываются по выбранной цели. Ручное сохранение переопределяет лимиты только для этого дня.</div>
         <label class="field-label">Калории (ккал)</label>
         <input type="number" id="foodLimitCal" placeholder="0">
         <label class="field-label">Белки (г)</label>
@@ -7222,10 +7256,9 @@ body{
 
 <div id="chartModal" class="catalog-modal hidden" onclick="if(event.target === this) closeChartModal()">
     <div class="catalog-modal-content chart-modal-content">
-        <button class="surface-back-btn" type="button" onclick="closeChartModal()">← Назад</button>
-        <div class="chart-modal-header">
-            <div class="chart-modal-icon">📊</div>
-            <div><div class="chart-modal-title">График питания</div><div class="chart-modal-subtitle">Выберите период и показатель</div></div>
+        <div class="chart-modal-header unified-surface-header">
+            <button class="surface-back-btn" type="button" onclick="closeChartModal()">← Назад</button>
+            <div class="chart-modal-title">График питания</div>
         </div>
         <div class="chart-section-label">Период</div>
         <div class="period-selector">
@@ -7434,7 +7467,7 @@ body{
 
 <script id="ftracker-app">
 /* ================================================================
-   FTracker v1.4.31
+   FTracker v1.4.32
    One centralized stack: only the top modal can scroll/interact.
    ================================================================ */
 const modalStack = [];
@@ -7457,7 +7490,7 @@ function isFullscreenModalSurface(modal) {
 function isModalElement(el) {
   if (!(el instanceof Element)) return false;
   /* Exercise Card is a standalone full-screen surface, never a stack modal. */
-  if (['techniqueModal','chartModal','measurementManagerModal','measurementFieldModal','newMeasurementModal','editMeasurementModal'].includes(el.id)) return false;
+  if (['techniqueModal','chartModal','measurementManagerModal','measurementFieldModal','newMeasurementModal','editMeasurementModal','addFoodModal','foodLimitModal'].includes(el.id)) return false;
   if (el.id && /Modal$/i.test(el.id)) return true;
   const cls = typeof el.className === 'string' ? el.className : '';
   return /(?:^|\s)[\w-]*modal(?:\s|$)/i.test(cls);
@@ -7473,7 +7506,7 @@ function getModalRoots() {
     '.food-modal', '.catalog-modal'
   ].join(',');
   return Array.from(document.querySelectorAll(selectors))
-    .filter(el => !['techniqueModal','chartModal','measurementManagerModal','measurementFieldModal','newMeasurementModal','editMeasurementModal'].includes(el.id))
+    .filter(el => !['techniqueModal','chartModal','measurementManagerModal','measurementFieldModal','newMeasurementModal','editMeasurementModal','addFoodModal','foodLimitModal'].includes(el.id))
     .filter(isModalElement);
 }
 
