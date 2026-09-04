@@ -6694,7 +6694,7 @@ body{
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.20 от 04.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.21 от 04.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -7345,7 +7345,7 @@ function updateModalStackState() {
       content.style.overflowX = 'hidden';
       content.style.overscrollBehavior = 'contain';
       content.style.webkitOverflowScrolling = 'touch';
-      content.style.maxHeight = 'calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 28px)';
+      content.style.maxHeight = '100%';
       content.style.boxSizing = 'border-box';
     }
   });
@@ -12537,7 +12537,7 @@ function showToast(msg) {
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=1.4.20', {updateViaCache:'none'})
+        navigator.serviceWorker.register('./sw.js?v=1.4.21', {updateViaCache:'none'})
             .then(reg => console.log('SW registered', reg.scope))
             .catch(err => console.log('SW failed', err));
     });
@@ -17408,5 +17408,90 @@ body.light-mode .toast{
   color:#1c1c1e!important;
   border-bottom:1px solid rgba(0,0,0,.10)!important;
   box-shadow:0 8px 24px rgba(0,0,0,.14)!important;
+}
+</style>
+
+
+<style id="ftracker-v1421-authoritative-modal-geometry">
+/* v1.4.21 — authoritative modal geometry.
+   Legacy 82/86/88vh caps are intentionally overridden here.
+   The modal root owns the whole safe viewport; the content owns the only scroll surface. */
+.modal-stack-root{
+  position:fixed!important;
+  inset:0!important;
+  width:100%!important;
+  height:100dvh!important;
+  min-height:100dvh!important;
+  display:flex!important;
+  align-items:stretch!important;
+  justify-content:center!important;
+  padding-top:calc(env(safe-area-inset-top,0px) + 8px)!important;
+  padding-right:calc(env(safe-area-inset-right,0px) + 8px)!important;
+  padding-bottom:calc(env(safe-area-inset-bottom,0px) + 8px)!important;
+  padding-left:calc(env(safe-area-inset-left,0px) + 8px)!important;
+  box-sizing:border-box!important;
+  overflow:hidden!important;
+  overscroll-behavior:contain!important;
+  touch-action:none!important;
+}
+.modal-stack-root.hidden{display:none!important;}
+
+.modal-stack-root > .modal-stack-content,
+.modal-stack-root > .theme-modal-content,
+.modal-stack-root > .exercise-modal-content,
+.modal-stack-root > .date-modal-content,
+.modal-stack-root > .confirm-modal-content,
+.modal-stack-root > .workout-detail-content,
+.modal-stack-root > .manual-workout-content,
+.modal-stack-root > .achievements-content,
+.modal-stack-root > .food-modal-content,
+.modal-stack-root > .catalog-modal-content,
+.modal-stack-root > .measurement-modal-content,
+.modal-stack-root > .chart-modal-content,
+.modal-stack-root > .technique-modal-content,
+.modal-stack-root > .body-graph-modal-content,
+.modal-stack-root > .body-history-modal-content,
+.modal-stack-root > .measurement-manager-modal-content,
+.modal-stack-root > .workout-new-exercise-sheet,
+.modal-stack-root > .replace-exercise-sheet,
+.modal-stack-root > .exercise-card-unified,
+.modal-stack-root > .exercise-editor-unified,
+.modal-stack-root > .exercise-dup-sheet{
+  position:relative!important;
+  align-self:stretch!important;
+  width:100%!important;
+  max-width:760px!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:100%!important;
+  margin:0 auto!important;
+  box-sizing:border-box!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  -webkit-overflow-scrolling:touch!important;
+  overscroll-behavior:contain!important;
+  touch-action:pan-y!important;
+}
+
+/* Explicitly neutralize every old viewport cap, including inline legacy max-height values. */
+.modal-stack-root > [class*="modal"][class*="content"],
+.modal-stack-root > .workout-new-exercise-sheet,
+.modal-stack-root > .replace-exercise-sheet{
+  max-height:100%!important;
+}
+
+/* Only the top modal can receive input. Background modals are visually present but inert. */
+.modal-stack-root.is-stack-inactive,
+.modal-stack-root.is-stack-inactive *{pointer-events:none!important;}
+.modal-stack-root.is-stack-active{pointer-events:auto!important;}
+.modal-stack-root.is-stack-active > .modal-stack-content{pointer-events:auto!important;}
+
+/* Close controls stay inside the active scrolling surface. */
+.modal-stack-root.is-stack-active .modal-close-btn,
+.modal-stack-root.is-stack-active .close-btn{
+  position:absolute!important;
+  top:10px!important;
+  right:10px!important;
+  z-index:100!important;
 }
 </style>
