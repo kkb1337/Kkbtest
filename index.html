@@ -17620,7 +17620,7 @@ body.light-mode .toast{
 
 
 
-<!-- FTracker v1.4.30 — FINAL modal viewport architecture. This block intentionally replaces geometry, not touch handling. -->
+<!-- FTracker v1.4.31 — FINAL modal viewport architecture. This block intentionally replaces geometry, not touch handling. -->
 <style id="ftracker-v1430-final-modal-viewport">
 /*
    ONE viewport contract for every non-system fullscreen modal:
@@ -17777,6 +17777,105 @@ body.light-mode .toast{
         if(!(n instanceof HTMLElement)) return;
         normalize(n); normalizeAll(n);
       }));
+    }).observe(document.body,{childList:true,subtree:true});
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start,{once:true}); else start();
+})();
+</script>
+
+
+<!-- FTracker v1.4.31 — authoritative fullscreen modal viewport parity with main application shell -->
+<style id="ftracker-v1431-authoritative-modal-viewport">
+/*
+  v1.4.31: final authority is applied both by CSS and runtime inline geometry.
+  Reason: legacy #id selectors with !important were overriding class-only fullscreen rules.
+  The fullscreen modal root now uses the same edge-to-edge viewport contract as the app shell,
+  with the iOS standalone bottom inset added to the dynamic viewport height.
+*/
+:root{
+  --ft-v1431-safe-top:max(env(safe-area-inset-top,0px),64px);
+  --ft-v1431-safe-bottom:max(env(safe-area-inset-bottom,0px),24px);
+  --ft-v1431-safe-left:env(safe-area-inset-left,0px);
+  --ft-v1431-safe-right:env(safe-area-inset-right,0px);
+  --ft-v1431-modal-height:calc(100dvh + env(safe-area-inset-bottom,0px));
+}
+.ft-fullscreen-modal.ft-modal-fullscreen-root{
+  position:fixed!important;
+  top:0!important; right:0!important; bottom:auto!important; left:0!important;
+  width:100vw!important; min-width:100vw!important; max-width:none!important;
+  height:var(--ft-v1431-modal-height)!important; min-height:var(--ft-v1431-modal-height)!important; max-height:none!important;
+  margin:0!important; padding:0!important;
+  display:block!important; overflow:hidden!important; box-sizing:border-box!important;
+}
+.ft-fullscreen-modal.ft-modal-fullscreen-root>.ft-modal-fullscreen-content{
+  position:absolute!important; inset:0!important;
+  width:100%!important; min-width:100%!important; max-width:none!important;
+  height:100%!important; min-height:100%!important; max-height:none!important;
+  margin:0!important;
+  padding-top:calc(var(--ft-v1431-safe-top) + 12px)!important;
+  padding-right:calc(var(--ft-v1431-safe-right) + 16px)!important;
+  padding-bottom:calc(var(--ft-v1431-safe-bottom) + 24px)!important;
+  padding-left:calc(var(--ft-v1431-safe-left) + 16px)!important;
+  border-radius:0!important; box-sizing:border-box!important;
+  overflow-x:hidden!important; overflow-y:auto!important;
+  -webkit-overflow-scrolling:touch!important; overscroll-behavior:contain!important;
+  scroll-padding-top:calc(var(--ft-v1431-safe-top) + 12px)!important;
+  scroll-padding-bottom:calc(var(--ft-v1431-safe-bottom) + 24px)!important;
+}
+</style>
+<script id="ftracker-v1431-authoritative-modal-runtime">
+(function(){
+  'use strict';
+  const compactIds=new Set([
+    'autoBackupRestoreConfirmModal','confirmExitModal','finishWorkoutConfirmModal',
+    'deleteConfirmModal','importConfirmModal','foodCopyConfirmModal','measurementSaveConfirmModal'
+  ]);
+  const modalClasses=['theme-modal','exercise-modal','date-modal','catalog-modal','food-modal','workout-detail-modal','manual-workout-modal','achievements-modal','technique-modal'];
+  const imp=(el,prop,val)=>el.style.setProperty(prop,val,'important');
+  const isFullscreen=root=>root instanceof HTMLElement && !compactIds.has(root.id) && !root.classList.contains('confirm-modal') && modalClasses.some(c=>root.classList.contains(c));
+  function contentOf(root){
+    return Array.from(root.children).find(el=>el instanceof HTMLElement && !el.classList.contains('modal-close-btn') && !el.classList.contains('close-btn'))||null;
+  }
+  function apply(root){
+    if(!isFullscreen(root)) return;
+    const content=contentOf(root); if(!content) return;
+    root.classList.add('modal-stack-root','ft-fullscreen-modal','ft-modal-fullscreen-root');
+    content.classList.add('modal-stack-content','fullscreen-modal-content','ft-modal-fullscreen-content');
+
+    /* ROOT: exact application viewport, including the standalone iOS bottom inset. */
+    imp(root,'position','fixed'); imp(root,'top','0'); imp(root,'right','0'); imp(root,'bottom','auto'); imp(root,'left','0');
+    imp(root,'width','100vw'); imp(root,'min-width','100vw'); imp(root,'max-width','none');
+    imp(root,'height','calc(100dvh + env(safe-area-inset-bottom, 0px))');
+    imp(root,'min-height','calc(100dvh + env(safe-area-inset-bottom, 0px))'); imp(root,'max-height','none');
+    imp(root,'margin','0'); imp(root,'padding','0'); imp(root,'display','block'); imp(root,'overflow','hidden'); imp(root,'box-sizing','border-box');
+    imp(root,'align-items','initial'); imp(root,'justify-content','initial');
+
+    /* CONTENT: one and only one scroll surface; legacy ID rules cannot shrink it. */
+    imp(content,'position','absolute'); imp(content,'top','0'); imp(content,'right','0'); imp(content,'bottom','0'); imp(content,'left','0');
+    imp(content,'width','100%'); imp(content,'min-width','100%'); imp(content,'max-width','none');
+    imp(content,'height','100%'); imp(content,'min-height','100%'); imp(content,'max-height','none');
+    imp(content,'margin','0'); imp(content,'border-radius','0'); imp(content,'box-sizing','border-box');
+    imp(content,'overflow-x','hidden'); imp(content,'overflow-y','auto'); imp(content,'-webkit-overflow-scrolling','touch'); imp(content,'overscroll-behavior','contain');
+    imp(content,'padding-top','calc(max(env(safe-area-inset-top, 0px), 64px) + 12px)');
+    imp(content,'padding-right','calc(env(safe-area-inset-right, 0px) + 16px)');
+    imp(content,'padding-bottom','calc(max(env(safe-area-inset-bottom, 0px), 24px) + 24px)');
+    imp(content,'padding-left','calc(env(safe-area-inset-left, 0px) + 16px)');
+    imp(content,'scroll-padding-top','calc(max(env(safe-area-inset-top, 0px), 64px) + 12px)');
+    imp(content,'scroll-padding-bottom','calc(max(env(safe-area-inset-bottom, 0px), 24px) + 24px)');
+
+    root.querySelectorAll('.modal-close-btn,.close-btn').forEach(btn=>{
+      imp(btn,'position','fixed'); imp(btn,'top','calc(max(env(safe-area-inset-top, 0px), 64px) + 8px)');
+      imp(btn,'right','calc(env(safe-area-inset-right, 0px) + 10px)'); imp(btn,'z-index','2147483000');
+    });
+  }
+  function normalize(scope=document){
+    if(scope instanceof HTMLElement) apply(scope);
+    scope.querySelectorAll?.('.theme-modal,.exercise-modal,.date-modal,.catalog-modal,.food-modal,.workout-detail-modal,.manual-workout-modal,.achievements-modal,.technique-modal').forEach(apply);
+  }
+  function start(){
+    normalize(document);
+    new MutationObserver(records=>{
+      for(const r of records) for(const n of r.addedNodes){ if(n instanceof HTMLElement) normalize(n); }
     }).observe(document.body,{childList:true,subtree:true});
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start,{once:true}); else start();
