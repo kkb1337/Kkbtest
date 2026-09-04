@@ -6773,7 +6773,7 @@ body{
 .food-macro-card span,.food-macro-card strong,.food-macro-card small{white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;}
 @media(max-width:390px){#chartModal .period-selector{grid-template-columns:repeat(2,minmax(0,1fr))!important;}#chartModal .period-selector button{font-size:12px!important;}.food-macro-card strong{font-size:14px!important;}}
 
-/* FTracker v1.4.35 — cosmetic cleanup.
+/* FTracker v1.4.36 — cosmetic cleanup.
    Keep the stable application logic intact; normalize only viewport geometry and redundant helper UI. */
 html,body{margin:0!important;padding:0!important;width:100%!important;min-height:100%!important;overflow-x:hidden!important;}
 body{min-height:100dvh!important;background:var(--bg)!important;}
@@ -6812,6 +6812,52 @@ body{min-height:100dvh!important;background:var(--bg)!important;}
 .catalog-modal-content:has(.surface-back-btn)>.modal-stack-auto-close,
 .food-modal-content:has(.surface-back-btn)>.modal-stack-auto-close,
 .modal-stack-content:has(.surface-back-btn)>.modal-stack-auto-close{display:none!important;}
+</style>
+
+<style id="ftracker-v1-4-36-safe-area-final">
+/* v1.4.36 — final safe-area geometry pass.
+   The app shell already lives below the iOS safe area, so no second top inset
+   is allowed on the container or on full-screen content surfaces. */
+.safe-area>.container,#app.container{
+  padding:0 16px 16px!important;
+}
+/* Ordinary app screens: their first pixel of content starts at the safe-area edge. */
+#app>.screen-header{
+  margin-top:0!important;
+  padding-top:0!important;
+}
+/* Home has no header; its title must also start at the safe-area edge. */
+#homeScreen>.title:first-child{
+  margin-top:0!important;
+}
+/* Full-screen windows are fixed to the viewport, therefore they must account
+   for the safe area exactly once — with no extra 12/16/64px top spacer. */
+.modal-fullscreen-root>.modal-fullscreen-content,
+#chartModal>.chart-modal-content,
+#measurementManagerModal>.measurement-manager-modal-content,
+#measurementFieldModal>.measurement-manager-modal-content,
+#newMeasurementModal>.measurement-manager-modal-content,
+#editMeasurementModal>.measurement-manager-modal-content,
+#addFoodModal>.food-modal-content,
+#foodLimitModal>.food-modal-content{
+  padding-top:var(--safe-top)!important;
+}
+/* The Index Dynamics screen uses the exact same Back button as every other
+   ordinary screen. */
+#fscoreScreen .fscore-screen-header .fscore-back-btn{
+  width:auto!important;
+  min-width:40px!important;
+  height:40px!important;
+  min-height:40px!important;
+  padding:0 12px!important;
+  margin:0!important;
+  border-radius:12px!important;
+  font-size:14px!important;
+  line-height:1!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+}
 </style>
 </head>
 <body>
@@ -6871,7 +6917,7 @@ body{min-height:100dvh!important;background:var(--bg)!important;}
         <div id="progressContent"></div>
     </div>
     <div id="fscoreAnalyticsScreen" class="hidden">
-        <div class="screen-header fscore-screen-header"><button onclick="goHome()" class="gray fscore-back-btn" aria-label="Назад">←</button><div class="title section-title fscore-title"><span class="section-title-icon">◎</span><span>Индекс динамики</span></div><span class="screen-header-spacer" aria-hidden="true"></span></div>
+        <div class="screen-header fscore-screen-header"><button onclick="goHome()" class="gray fscore-back-btn" aria-label="Назад">← Назад</button><div class="title section-title fscore-title"><span class="section-title-icon">◎</span><span>Индекс динамики</span></div><span class="screen-header-spacer" aria-hidden="true"></span></div>
         <div id="fscoreAnalyticsContent"></div>
     </div>
     <div id="bodyScreen" class="hidden">
@@ -6971,7 +7017,7 @@ body{min-height:100dvh!important;background:var(--bg)!important;}
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.35 от 04.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.36 от 04.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -7507,7 +7553,7 @@ body{min-height:100dvh!important;background:var(--bg)!important;}
 
 <script id="ftracker-app">
 /* ================================================================
-   FTracker v1.4.35
+   FTracker v1.4.36
    One centralized stack: only the top modal can scroll/interact.
    ================================================================ */
 const modalStack = [];
@@ -12905,7 +12951,7 @@ function showToast(msg) {
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=1.4.35', {updateViaCache:'none'})
+        navigator.serviceWorker.register('./sw.js?v=1.4.36', {updateViaCache:'none'})
             .then(reg => console.log('SW registered', reg.scope))
             .catch(err => console.log('SW failed', err));
     });
@@ -17819,5 +17865,50 @@ body.light-mode .toast{
   color:#1c1c1e!important;
   border-bottom:1px solid rgba(0,0,0,.10)!important;
   box-shadow:0 8px 24px rgba(0,0,0,.14)!important;
+}
+</style>
+
+<style id="ftracker-v1-4-36-final-override">
+/* v1.4.36 — authoritative final override; must remain last so legacy fixes cannot reintroduce the offset. */
+.safe-area>.container,#app.container{
+  padding-top:0!important;
+}
+#app>.screen-header{
+  margin-top:0!important;
+  padding-top:0!important;
+}
+#homeScreen>.title:first-child{
+  margin-top:0!important;
+}
+/* All direct full-screen surfaces: safe area is applied exactly once. */
+.modal-fullscreen-root>.modal-fullscreen-content,
+#chartModal>.chart-modal-content,
+#measurementManagerModal>.measurement-manager-modal-content,
+#measurementFieldModal>.measurement-manager-modal-content,
+#newMeasurementModal>.measurement-manager-modal-content,
+#editMeasurementModal>.measurement-manager-modal-content,
+#addFoodModal>.food-modal-content,
+#foodLimitModal>.food-modal-content{
+  padding-top:var(--safe-top)!important;
+}
+/* Index Dynamics: identical Back control to the other section screens. */
+#fscoreAnalyticsScreen .fscore-screen-header .fscore-back-btn{
+  width:auto!important;
+  min-width:40px!important;
+  height:40px!important;
+  min-height:40px!important;
+  margin:0!important;
+  padding:0 12px!important;
+  border-radius:12px!important;
+  font-size:14px!important;
+  line-height:1!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+}
+#fscoreAnalyticsScreen .fscore-screen-header .screen-header-spacer{
+  width:auto!important;
+  min-width:40px!important;
+  height:40px!important;
 }
 </style>

@@ -26,6 +26,6 @@
       "purpose": "any maskable"
     }
   ],
-  "_build": "ftracker-v1.4.35-cosmetic-cleanup",
-  "version": "1.4.35"
+  "_build": "ftracker-v1.4.36-cosmetic-cleanup",
+  "version": "1.4.36"
 }
