@@ -26,6 +26,6 @@
       "purpose": "any maskable"
     }
   ],
-  "_build": "ftracker-v1.4.28-authoritative-fullscreen-modal-viewport",
-  "version": "1.4.28"
+  "_build": "ftracker-v1.4.30-final-modal-viewport",
+  "version": "1.4.30"
 }
