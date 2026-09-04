@@ -26,6 +26,6 @@
       "purpose": "any maskable"
     }
   ],
-  "_build": "ftracker-v1.4.24-exercise-card-ios-bottom-viewport-fixed",
-  "version": "1.4.24"
+  "_build": "ftracker-v1.4.25-exercise-card-body-lock-isolated",
+  "version": "1.4.25"
 }

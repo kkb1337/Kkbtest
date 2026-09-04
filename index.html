@@ -1123,6 +1123,10 @@ body { padding-top: env(safe-area-inset-top); }
      On iOS, height:100% can resolve against the layout viewport and leave a bottom strip. */
   position:fixed;
   inset:0;
+  width:100vw;
+  height:100dvh;
+  min-height:100dvh;
+  max-height:100dvh;
   margin:0;
   padding:0;
   box-sizing:border-box;
@@ -5196,8 +5200,7 @@ body {
 #app .manual-workout-modal:not(.hidden),
 #app .achievements-modal:not(.hidden),
 #app .food-modal:not(.hidden),
-#app .catalog-modal:not(.hidden),
-#app .technique-modal:not(.hidden) {
+#app .catalog-modal:not(.hidden) {
   height:100% !important;
   max-height:100% !important;
   box-sizing:border-box !important;
@@ -7168,7 +7171,7 @@ function getModalRoots() {
     '[id$="Modal"]',
     '.theme-modal', '.exercise-modal', '.date-modal', '.confirm-modal',
     '.workout-detail-modal', '.manual-workout-modal', '.achievements-modal',
-    '.food-modal', '.catalog-modal', '.technique-modal'
+    '.food-modal', '.catalog-modal'
   ].join(',');
   return Array.from(document.querySelectorAll(selectors)).filter(isModalElement);
 }
@@ -14192,6 +14195,8 @@ function closeTechniqueModal() {
     modal.scrollTop=0;
     const content=modal.querySelector('.technique-modal-content');
     if(content) content.scrollTop=0;
+    /* Technique card is not part of Modal Stack, but refresh any real modal state. */
+    updateModalStackState();
 }
 
 function switchTechniqueTab(tabId) {
@@ -14869,7 +14874,8 @@ function ensureTechniqueModal(){
   m.classList.remove('modal-stack-root','modal-stack-content');
   const existingContent = m.firstElementChild;
   existingContent?.classList.remove('modal-stack-content');
-  lockModalScroll(); m.classList.remove('hidden');
+  /* Exercise Card is intentionally outside Modal Stack: do not lock/fix <body>. */
+  m.classList.remove('hidden');
   m.style.pointerEvents='auto';
   m.setAttribute('aria-hidden','false');
   return m;
