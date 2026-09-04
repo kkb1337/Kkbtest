@@ -6499,6 +6499,81 @@ body{
 #importConfirmModal .import-confirm-copy{font-size:13px!important;line-height:1.35!important;margin:0 0 12px!important;color:var(--subtext)!important;}
 #importConfirmModal .confirm-modal-content>div:first-child{font-size:18px!important;margin-bottom:8px!important;}
 #importConfirmModal button{width:100%!important;margin-top:8px!important;min-height:44px!important;}
+
+/* ============================================================
+   FTracker v1.4.20 — ONE GEOMETRY FOR ALL NON-COMPACT APP WINDOWS
+   This is intentionally the final authority. Compact confirmation
+   dialogs do not receive .app-window/.app-window-root.
+   ============================================================ */
+.app-window-root.modal-stack-root {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  min-height: 100dvh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: block !important;
+  align-items: initial !important;
+  justify-content: initial !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+.app-window-root.modal-stack-root > .app-window.modal-stack-content {
+  position: absolute !important;
+  top: calc(12px + env(safe-area-inset-top, 0px)) !important;
+  bottom: calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+  left: 12px !important;
+  right: 12px !important;
+  width: auto !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-width: 1200px !important;
+  max-height: none !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  overscroll-behavior: contain !important;
+  box-sizing: border-box !important;
+  border-radius: 20px !important;
+}
+/* The actual existing content becomes the single scroll surface. */
+.app-window-root.modal-stack-root > .app-window.modal-stack-content {
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  touch-action: pan-y !important;
+}
+/* Neutralize every legacy geometry limit for windows that have entered
+   the unified architecture, including inline max-height/max-width. */
+.app-window-root > .app-window,
+.app-window-root > .app-window.theme-modal-content,
+.app-window-root > .app-window.exercise-modal-content,
+.app-window-root > .app-window.date-modal-content,
+.app-window-root > .app-window.catalog-modal-content,
+.app-window-root > .app-window.food-modal-content,
+.app-window-root > .app-window.workout-detail-content,
+.app-window-root > .app-window.manual-workout-content,
+.app-window-root > .app-window.achievements-content,
+.app-window-root > .app-window.measurement-modal-content,
+.app-window-root > .app-window.measurement-manager-modal-content,
+.app-window-root > .app-window.chart-modal-content,
+.app-window-root > .app-window.body-graph-modal-content,
+.app-window-root > .app-window.body-history-modal-content,
+.app-window-root > .app-window.technique-modal-content,
+.app-window-root > .app-window.replace-exercise-sheet,
+.app-window-root > .app-window.workout-new-exercise-sheet {
+  max-height: none !important;
+  max-width: 1200px !important;
+}
+.app-window-root > .app-window .modal-close-btn,
+.app-window-root > .app-window .close-btn {
+  position: sticky !important;
+  top: 0 !important;
+  margin-left: auto !important;
+  z-index: 30 !important;
+}
 </style>
 </head>
 <body>
@@ -7243,15 +7318,14 @@ function ensureModalCloseButton(modal) {
 
 function prepareModalRoot(modal) {
   if (!modal) return;
+  const compact = isConfirmationModal(modal);
   modal.classList.add('modal-stack-root');
+  modal.classList.toggle('app-window-root', !compact);
   modal.setAttribute('aria-modal', 'true');
   const content = getModalContent(modal);
   if (content) {
     content.classList.add('modal-stack-content');
-    if (!isConfirmationModal(modal)) {
-      content.classList.add('app-window', 'window-content');
-      modal.classList.add('app-window-root');
-    }
+    content.classList.toggle('app-window', !compact);
   }
   ensureModalCloseButton(modal);
 }
@@ -7306,12 +7380,7 @@ function updateModalStackState() {
       content.style.overflowX = 'hidden';
       content.style.overscrollBehavior = 'contain';
       content.style.webkitOverflowScrolling = 'touch';
-      if (!isConfirmationModal(modal)) {
-        content.style.maxHeight = 'none';
-        content.style.maxWidth = 'none';
-        content.style.height = '100%';
-        content.style.width = '100%';
-      }
+      content.style.maxHeight = 'calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 28px)';
       content.style.boxSizing = 'border-box';
     }
   });
@@ -17284,65 +17353,6 @@ window.closeImportConfirm=function(){
 #importConfirmModal .import-confirm-copy{color:var(--subtext)!important;margin:0 0 18px!important;line-height:1.45!important;text-align:left!important;}
 #importConfirmModal .confirm-modal-content>div[style*="color:var(--subtext)"]{font-size:14px!important;line-height:1.5!important;margin-bottom:16px!important;}
 #importConfirmModal button{min-height:48px!important;margin:8px 0 0!important;width:100%!important;}
-</style>
-
-<style id="ftracker-v1-4-20-unified-app-window-geometry">
-/* v1.4.20 — one geometry for every non-system app window.
-   Safe area belongs to the outer window bounds; the window itself is never
-   shortened by a second max-height calculation. */
-.modal-stack-root.app-window-root:not(.confirm-modal),
-.app-window-root:not(.confirm-modal) {
-  position: fixed !important;
-  top: calc(12px + env(safe-area-inset-top, 0px)) !important;
-  right: 12px !important;
-  bottom: calc(12px + env(safe-area-inset-bottom, 0px)) !important;
-  left: 12px !important;
-  width: auto !important;
-  height: auto !important;
-  min-height: 0 !important;
-  max-width: 1200px !important;
-  max-height: none !important;
-  margin: 0 auto !important;
-  padding: 0 !important;
-  display: block !important;
-  box-sizing: border-box !important;
-  overflow: hidden !important;
-  overscroll-behavior: contain !important;
-}
-
-.modal-stack-root.app-window-root:not(.confirm-modal) > .app-window,
-.app-window-root:not(.confirm-modal) > .app-window {
-  position: relative !important;
-  inset: auto !important;
-  width: 100% !important;
-  height: 100% !important;
-  min-width: 0 !important;
-  min-height: 0 !important;
-  max-width: none !important;
-  max-height: none !important;
-  margin: 0 !important;
-  padding: 16px !important;
-  border-radius: 20px !important;
-  box-sizing: border-box !important;
-  overflow-x: hidden !important;
-  overflow-y: auto !important;
-  overscroll-behavior: contain !important;
-  -webkit-overflow-scrolling: touch !important;
-}
-
-/* One internal scrolling surface for all app windows. */
-.app-window.window-content {
-  flex: none !important;
-  min-height: 0 !important;
-  overflow-y: auto !important;
-}
-
-/* Existing compact/system confirmation windows deliberately keep their old geometry. */
-.confirm-modal,
-.confirm-modal-content,
-.modal-stack-root.confirm-modal {
-  /* excluded from the unified fullscreen app-window architecture */
-}
 </style>
 </body>
 </html>
