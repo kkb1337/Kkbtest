@@ -6659,7 +6659,7 @@ body{
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.19 от 04.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.20 от 04.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -7189,58 +7189,9 @@ body{
 
 
 
-
-/* ================================================================
-   FTracker v1.4.20 — canonical fullscreen modal architecture
-   Fullscreen modals use the same viewport model as application screens.
-   Compact confirmation dialogs are explicitly excluded by .ft-compact-modal.
-   ================================================================ */
-.modal-stack-root.ft-fullscreen-modal{
-  position:fixed!important;
-  inset:0!important;
-  width:100%!important;
-  height:100dvh!important;
-  min-height:100dvh!important;
-  max-height:none!important;
-  margin:0!important;
-  padding:0!important;
-  display:block!important;
-  overflow:hidden!important;
-  box-sizing:border-box!important;
-  overscroll-behavior:none!important;
-  transform:none!important;
-}
-.modal-stack-root.ft-fullscreen-modal > .modal-stack-content.ft-fullscreen-modal-content{
-  position:absolute!important;
-  inset:0!important;
-  width:100%!important;
-  height:100%!important;
-  min-height:100%!important;
-  max-width:none!important;
-  max-height:none!important;
-  margin:0!important;
-  border-radius:0!important;
-  box-sizing:border-box!important;
-  overflow-x:hidden!important;
-  overflow-y:auto!important;
-  -webkit-overflow-scrolling:touch!important;
-  overscroll-behavior-y:contain!important;
-  padding-top:calc(env(safe-area-inset-top, 0px) + 16px)!important;
-  padding-right:calc(env(safe-area-inset-right, 0px) + 16px)!important;
-  padding-bottom:calc(env(safe-area-inset-bottom, 0px) + 24px)!important;
-  padding-left:calc(env(safe-area-inset-left, 0px) + 16px)!important;
-}
-.modal-stack-root.ft-fullscreen-modal > .modal-stack-content.ft-fullscreen-modal-content > .modal-close-btn,
-.modal-stack-root.ft-fullscreen-modal > .modal-stack-content.ft-fullscreen-modal-content > .close-btn{
-  top:calc(env(safe-area-inset-top, 0px) + 8px)!important;
-  right:calc(env(safe-area-inset-right, 0px) + 8px)!important;
-}
-.modal-stack-root.ft-fullscreen-modal.is-stack-inactive{pointer-events:none!important;}
-.modal-stack-root.ft-fullscreen-modal.is-stack-active{pointer-events:auto!important;}
-
 <script id="ftracker-app">
 /* ================================================================
-   FTracker v1.4.20
+   FTracker v1.0.14
    One centralized stack: only the top modal can scroll/interact.
    ================================================================ */
 const modalStack = [];
@@ -7293,14 +7244,14 @@ function ensureModalCloseButton(modal) {
 function prepareModalRoot(modal) {
   if (!modal) return;
   modal.classList.add('modal-stack-root');
-  const fullscreen = !isConfirmationModal(modal);
-  modal.classList.toggle('ft-fullscreen-modal', fullscreen);
-  modal.classList.toggle('ft-compact-modal', !fullscreen);
   modal.setAttribute('aria-modal', 'true');
   const content = getModalContent(modal);
   if (content) {
     content.classList.add('modal-stack-content');
-    content.classList.toggle('ft-fullscreen-modal-content', fullscreen);
+    if (!isConfirmationModal(modal)) {
+      content.classList.add('app-window', 'window-content');
+      modal.classList.add('app-window-root');
+    }
   }
   ensureModalCloseButton(modal);
 }
@@ -7355,6 +7306,12 @@ function updateModalStackState() {
       content.style.overflowX = 'hidden';
       content.style.overscrollBehavior = 'contain';
       content.style.webkitOverflowScrolling = 'touch';
+      if (!isConfirmationModal(modal)) {
+        content.style.maxHeight = 'none';
+        content.style.maxWidth = 'none';
+        content.style.height = '100%';
+        content.style.width = '100%';
+      }
       content.style.boxSizing = 'border-box';
     }
   });
@@ -12546,7 +12503,7 @@ function showToast(msg) {
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=1.4.19', {updateViaCache:'none'})
+        navigator.serviceWorker.register('./sw.js?v=1.4.20', {updateViaCache:'none'})
             .then(reg => console.log('SW registered', reg.scope))
             .catch(err => console.log('SW failed', err));
     });
@@ -17328,6 +17285,65 @@ window.closeImportConfirm=function(){
 #importConfirmModal .confirm-modal-content>div[style*="color:var(--subtext)"]{font-size:14px!important;line-height:1.5!important;margin-bottom:16px!important;}
 #importConfirmModal button{min-height:48px!important;margin:8px 0 0!important;width:100%!important;}
 </style>
+
+<style id="ftracker-v1-4-20-unified-app-window-geometry">
+/* v1.4.20 — one geometry for every non-system app window.
+   Safe area belongs to the outer window bounds; the window itself is never
+   shortened by a second max-height calculation. */
+.modal-stack-root.app-window-root:not(.confirm-modal),
+.app-window-root:not(.confirm-modal) {
+  position: fixed !important;
+  top: calc(12px + env(safe-area-inset-top, 0px)) !important;
+  right: 12px !important;
+  bottom: calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+  left: 12px !important;
+  width: auto !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-width: 1200px !important;
+  max-height: none !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  display: block !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+  overscroll-behavior: contain !important;
+}
+
+.modal-stack-root.app-window-root:not(.confirm-modal) > .app-window,
+.app-window-root:not(.confirm-modal) > .app-window {
+  position: relative !important;
+  inset: auto !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: none !important;
+  max-height: none !important;
+  margin: 0 !important;
+  padding: 16px !important;
+  border-radius: 20px !important;
+  box-sizing: border-box !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+/* One internal scrolling surface for all app windows. */
+.app-window.window-content {
+  flex: none !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+}
+
+/* Existing compact/system confirmation windows deliberately keep their old geometry. */
+.confirm-modal,
+.confirm-modal-content,
+.modal-stack-root.confirm-modal {
+  /* excluded from the unified fullscreen app-window architecture */
+}
+</style>
 </body>
 </html>
 
@@ -17404,7 +17420,7 @@ window.closeImportConfirm=function(){
 
 
 <style id="ftracker-v1419-neutral-notifications">
-/* v1.4.19 — neutral system notifications, keeping the v1.4.18 safe-area architecture */
+/* v1.4.20 — neutral system notifications, keeping the v1.4.18 safe-area architecture */
 .toast{
   background:rgba(28,28,30,.98)!important;
   color:#f5f5f7!important;
