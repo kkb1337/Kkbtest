@@ -6694,7 +6694,7 @@ body{
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.26 от 04.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.28 от 04.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -17577,46 +17577,215 @@ body.light-mode .toast{
 .ft-modal-compact-root { position: fixed !important; inset: 0 !important; }
 </style>
 
-<script id="ftracker-v1427-modal-runtime">
-/* v1.4.27 — TOUCH-SAFE modal runtime. Only real modal roots are normalized. */
+
+
+<!-- FTracker v1.4.28 — authoritative modal viewport architecture -->
+<style id="ftracker-v1428-authoritative-modal-viewport">
+/*
+  SINGLE SOURCE OF TRUTH FOR FULLSCREEN CONTENT MODALS.
+  Old modal CSS remains only for visual component styling; it must not control
+  viewport geometry, safe-area placement or scrolling.
+*/
+:root{
+  --ftm-safe-top:env(safe-area-inset-top,0px);
+  --ftm-safe-right:env(safe-area-inset-right,0px);
+  --ftm-safe-bottom:env(safe-area-inset-bottom,0px);
+  --ftm-safe-left:env(safe-area-inset-left,0px);
+}
+
+.ftm-root{
+  position:fixed!important;
+  inset:0!important;
+  width:100vw!important;
+  min-width:100vw!important;
+  height:100dvh!important;
+  min-height:100dvh!important;
+  max-width:none!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:0!important;
+  display:block!important;
+  overflow:hidden!important;
+  overscroll-behavior:none!important;
+  box-sizing:border-box!important;
+  isolation:isolate!important;
+}
+.ftm-root.hidden{display:none!important;}
+
+/* Exactly one viewport-sized scrolling surface per fullscreen modal. */
+.ftm-root>.ftm-content{
+  position:fixed!important;
+  inset:0!important;
+  width:100vw!important;
+  min-width:100vw!important;
+  height:100dvh!important;
+  min-height:100dvh!important;
+  max-width:none!important;
+  max-height:none!important;
+  margin:0!important;
+  border-radius:0!important;
+  box-sizing:border-box!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  -webkit-overflow-scrolling:touch!important;
+  overscroll-behavior-y:contain!important;
+  touch-action:pan-y!important;
+  padding-top:calc(var(--ftm-safe-top) + 18px)!important;
+  padding-right:calc(var(--ftm-safe-right) + 16px)!important;
+  padding-bottom:calc(var(--ftm-safe-bottom) + 32px)!important;
+  padding-left:calc(var(--ftm-safe-left) + 16px)!important;
+  scroll-padding-top:calc(var(--ftm-safe-top) + 18px)!important;
+  scroll-padding-bottom:calc(var(--ftm-safe-bottom) + 32px)!important;
+}
+
+/* Historical component rules are never allowed to reintroduce a card viewport. */
+.ftm-root>.ftm-content,
+.ftm-root>.ftm-content.exercise-modal-content,
+.ftm-root>.ftm-content.catalog-modal-content,
+.ftm-root>.ftm-content.date-modal-content,
+.ftm-root>.ftm-content.theme-modal-content,
+.ftm-root>.ftm-content.food-modal-content,
+.ftm-root>.ftm-content.workout-detail-content,
+.ftm-root>.ftm-content.manual-workout-content,
+.ftm-root>.ftm-content.achievements-content,
+.ftm-root>.ftm-content.chart-modal-content,
+.ftm-root>.ftm-content.technique-modal-content,
+.ftm-root>.ftm-content.measurement-manager-modal-content,
+.ftm-root>.ftm-content.body-history-modal-content,
+.ftm-root>.ftm-content.body-graph-modal-content,
+.ftm-root>.ftm-content.workout-new-exercise-sheet,
+.ftm-root>.ftm-content.replace-exercise-sheet,
+.ftm-root>.ftm-content.exercise-card-unified{
+  width:100vw!important;
+  height:100dvh!important;
+  min-height:100dvh!important;
+  max-width:none!important;
+  max-height:none!important;
+}
+
+/* Close controls are anchored to the physical viewport and always below the unsafe top area. */
+.ftm-root .modal-close-btn,
+.ftm-root .close-btn,
+.ftm-root .exercise-card-close{
+  position:fixed!important;
+  top:calc(var(--ftm-safe-top) + 10px)!important;
+  right:calc(var(--ftm-safe-right) + 12px)!important;
+  z-index:2147483000!important;
+}
+
+/* Prevent legacy negative/absolute header offsets from putting first content under Dynamic Island. */
+.ftm-root>.ftm-content>:first-child{
+  scroll-margin-top:calc(var(--ftm-safe-top) + 18px)!important;
+}
+
+.ftm-root.is-stack-inactive{pointer-events:none!important;}
+.ftm-root.is-stack-active{pointer-events:auto!important;}
+</style>
+
+<script id="ftracker-v1428-authoritative-modal-runtime">
 (function(){
   'use strict';
-  const compactIds=new Set(['autoBackupRestoreConfirmModal','confirmExitModal','finishWorkoutConfirmModal','deleteConfirmModal','importConfirmModal','foodCopyConfirmModal','measurementSaveConfirmModal']);
-  function isRealModalRoot(el){
+
+  /* Only compact system confirmations stay compact. Everything else that is a
+     custom content modal becomes a real fullscreen screen. */
+  const compactIds=new Set([
+    'autoBackupRestoreConfirmModal','confirmExitModal','finishWorkoutConfirmModal',
+    'deleteConfirmModal','importConfirmModal','foodCopyConfirmModal','measurementSaveConfirmModal'
+  ]);
+  const modalClasses=[
+    'theme-modal','exercise-modal','date-modal','catalog-modal','food-modal',
+    'workout-detail-modal','manual-workout-modal','achievements-modal','technique-modal'
+  ];
+  const contentClasses=[
+    'theme-modal-content','exercise-modal-content','date-modal-content','catalog-modal-content',
+    'food-modal-content','workout-detail-content','manual-workout-content','achievements-content',
+    'chart-modal-content','technique-modal-content','measurement-manager-modal-content',
+    'measurement-modal-content','body-history-modal-content','body-graph-modal-content',
+    'workout-new-exercise-sheet','replace-exercise-sheet','exercise-card-unified','modal-content'
+  ];
+
+  function isModalRoot(el){
     if(!(el instanceof HTMLElement)) return false;
-    const id=el.id||'';
-    if(/Modal$/i.test(id)) return true;
-    return ['theme-modal','exercise-modal','date-modal','catalog-modal','food-modal','workout-detail-modal','manual-workout-modal','achievements-modal','technique-modal'].some(cls=>el.classList.contains(cls));
+    if(el.matches('div[id$="Modal"]')) return true;
+    return modalClasses.some(c=>el.classList.contains(c));
   }
-  function isCompact(root){return compactIds.has(root.id)||root.classList.contains('confirm-modal');}
-  function getDirectContent(root){return Array.from(root.children).find(child=>child instanceof HTMLElement&&!child.classList.contains('modal-close-btn')&&!child.classList.contains('close-btn'))||null;}
-  function normalizeRoot(root){
-    if(!isRealModalRoot(root)||isCompact(root)) return;
-    const content=getDirectContent(root); if(!content) return;
-    root.classList.add('modal-stack-root','ft-modal-fullscreen-root');
-    content.classList.add('modal-stack-content','fullscreen-modal-content','ft-modal-fullscreen-content');
-    root.style.removeProperty('max-height'); root.style.removeProperty('max-width');
-    content.style.removeProperty('max-height'); content.style.removeProperty('max-width');
+  function isCompact(el){return compactIds.has(el.id)||el.classList.contains('confirm-modal');}
+  function findContent(root){
+    for(const child of root.children){
+      if(!(child instanceof HTMLElement)) continue;
+      if(child.classList.contains('modal-close-btn')||child.classList.contains('close-btn')) continue;
+      if(contentClasses.some(c=>child.classList.contains(c)) || /content|sheet/i.test(child.className||'')) return child;
+    }
+    for(const child of root.children){
+      if(child instanceof HTMLElement && !child.classList.contains('modal-close-btn') && !child.classList.contains('close-btn')) return child;
+    }
+    return null;
   }
-  function normalizeExisting(){
-    document.querySelectorAll('div[id$="Modal"]').forEach(normalizeRoot);
-    document.querySelectorAll('.theme-modal,.exercise-modal,.date-modal,.catalog-modal,.food-modal,.workout-detail-modal,.manual-workout-modal,.achievements-modal,.technique-modal').forEach(normalizeRoot);
+  function clearLegacyGeometry(el){
+    if(!el) return;
+    ['maxHeight','maxWidth','height','minHeight','width','minWidth','margin','top','right','bottom','left','inset','position','display','alignItems','justifyContent','overflow','overflowY','overflowX','borderRadius','paddingTop','paddingRight','paddingBottom','paddingLeft'].forEach(k=>el.style.removeProperty(k.replace(/[A-Z]/g,m=>'-'+m.toLowerCase())));
   }
-  function watchNewModals(){
-    const observer=new MutationObserver(records=>{
-      for(const record of records) for(const node of record.addedNodes){
-        if(!(node instanceof HTMLElement)) continue;
-        if(isRealModalRoot(node)) normalizeRoot(node);
-        node.querySelectorAll?.('div[id$="Modal"],.theme-modal,.exercise-modal,.date-modal,.catalog-modal,.food-modal,.workout-detail-modal,.manual-workout-modal,.achievements-modal,.technique-modal').forEach(normalizeRoot);
-      }
+  function normalize(root){
+    if(!isModalRoot(root)||isCompact(root)) return false;
+    const content=findContent(root);
+    if(!content) return false;
+
+    root.classList.add('ftm-root','modal-stack-root');
+    content.classList.add('ftm-content','fullscreen-modal-content','modal-stack-content');
+
+    /* Inline geometry deliberately wins over every historical selector. */
+    Object.assign(root.style,{
+      position:'fixed',inset:'0',top:'0',right:'0',bottom:'0',left:'0',
+      width:'100vw',minWidth:'100vw',height:'100dvh',minHeight:'100dvh',
+      maxWidth:'none',maxHeight:'none',margin:'0',padding:'0',display:'block',
+      overflow:'hidden',boxSizing:'border-box',borderRadius:'0'
     });
-    observer.observe(document.body,{childList:true,subtree:true});
+    Object.assign(content.style,{
+      position:'fixed',inset:'0',top:'0',right:'0',bottom:'0',left:'0',
+      width:'100vw',minWidth:'100vw',height:'100dvh',minHeight:'100dvh',
+      maxWidth:'none',maxHeight:'none',margin:'0',borderRadius:'0',
+      boxSizing:'border-box',overflowX:'hidden',overflowY:'auto',
+      WebkitOverflowScrolling:'touch',overscrollBehavior:'contain',touchAction:'pan-y',
+      paddingTop:'calc(env(safe-area-inset-top, 0px) + 18px)',
+      paddingRight:'calc(env(safe-area-inset-right, 0px) + 16px)',
+      paddingBottom:'calc(env(safe-area-inset-bottom, 0px) + 32px)',
+      paddingLeft:'calc(env(safe-area-inset-left, 0px) + 16px)'
+    });
+    return true;
   }
-  function start(){normalizeExisting();watchNewModals();}
+  function normalizeAll(scope=document){
+    scope.querySelectorAll?.('div[id$="Modal"],.theme-modal,.exercise-modal,.date-modal,.catalog-modal,.food-modal,.workout-detail-modal,.manual-workout-modal,.achievements-modal,.technique-modal').forEach(normalize);
+  }
+  function refreshStack(){
+    /* Reuse the existing stack controller when it exists; do not replace it. */
+    if(typeof window.updateModalStackState==='function') window.updateModalStackState();
+  }
+
+  function start(){
+    normalizeAll();
+    const observer=new MutationObserver(records=>{
+      let changed=false;
+      for(const record of records){
+        if(record.type==='childList'){
+          const parent=record.target instanceof HTMLElement ? record.target.closest?.('div[id$="Modal"],.theme-modal,.exercise-modal,.date-modal,.catalog-modal,.food-modal,.workout-detail-modal,.manual-workout-modal,.achievements-modal,.technique-modal') : null;
+          if(parent && normalize(parent)) changed=true;
+          for(const node of record.addedNodes){
+            if(!(node instanceof HTMLElement)) continue;
+            if(isModalRoot(node) && normalize(node)) changed=true;
+            normalizeAll(node);
+          }
+        }else if(record.type==='attributes' && record.target instanceof HTMLElement){
+          if(normalize(record.target)) changed=true;
+        }
+      }
+      if(changed) requestAnimationFrame(refreshStack);
+    });
+    observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
+  }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start,{once:true}); else start();
 })();
 </script>
-<!-- build: ftracker-v1.4.27-touch-safe-modal-runtime -->
+<!-- build: ftracker-v1.4.28-authoritative-fullscreen-modal-viewport -->
 
 </body>
 </html>
