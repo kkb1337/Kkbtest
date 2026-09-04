@@ -1117,9 +1117,47 @@ body { padding-top: env(safe-area-inset-top); }
 
 
 /* ===== Мышцы и техника v3: модальная карточка, статичные фазы ===== */
-.technique-modal{position:fixed;inset:0;padding:calc(env(safe-area-inset-top,0px) + 12px) 12px calc(env(safe-area-inset-bottom,0px) + 12px);box-sizing:border-box;background:var(--app-bg);z-index:6000;}
+/* Exercise card is a real full-screen app surface, matching the working directory screen. */
+.technique-modal{
+  position:fixed;
+  inset:0;
+  width:100%;
+  height:100%;
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  background:var(--bg);
+  color:var(--text);
+  z-index:6000;
+  overflow:hidden;
+  overscroll-behavior:none;
+  touch-action:pan-y;
+}
 .technique-modal.hidden{display:none;}
-.technique-modal-content{background:var(--card-bg);border-radius:20px;padding:20px;position:relative;-webkit-overflow-scrolling:touch;box-sizing:border-box;}
+.technique-modal-content{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  min-height:100%;
+  max-height:none;
+  margin:0;
+  padding:
+    calc(env(safe-area-inset-top,0px) + 12px)
+    16px
+    calc(env(safe-area-inset-bottom,0px) + 24px);
+  box-sizing:border-box;
+  overflow-y:auto;
+  overflow-x:hidden;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+  background:var(--bg);
+  color:var(--text);
+  border:0;
+  border-radius:0;
+  box-shadow:none;
+  touch-action:pan-y;
+}
 .technique-modal-sub{font-size:13px;font-weight:700;color:var(--button-green);margin:-12px 0 14px;}
 /* Кликабельное название упражнения в тренировке */
 .workout-exercise-title{cursor:pointer;}
@@ -1890,7 +1928,7 @@ body.light-mode{
 .screen-header .title.section-title{min-width:0!important;width:100%!important;}
 /* All large sheets start near the safe top and scroll inside their own content. */
 .exercise-modal,.catalog-modal,.food-modal,.confirm-modal,.date-modal,.workout-detail-modal,.manual-workout-modal,.achievements-modal{align-items:flex-start!important;padding-top:calc(env(safe-area-inset-top,0px) + 10px)!important;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 10px)!important;}
-.technique-modal-content,.exercise-modal-content,.catalog-modal-content,.food-modal-content,.confirm-modal-content,.date-modal-content,.workout-detail-content,.manual-workout-content,.achievements-content{margin-top:0!important;}
+.exercise-modal-content,.catalog-modal-content,.food-modal-content,.confirm-modal-content,.date-modal-content,.workout-detail-content,.manual-workout-content,.achievements-content{margin-top:0!important;}
 /* Compact, elegant confirmation/event sheets. */
 .confirm-modal-content{width:min(92%,360px)!important;max-width:360px!important;padding:18px!important;border-radius:18px!important;}
 .confirm-modal-content button{min-height:44px!important;margin-top:7px!important;border-radius:13px!important;}
@@ -2241,14 +2279,6 @@ body.light-mode{
   display:flex!important;
 }
 
-/* Keep the modal itself scrollable; Save remains visible at the bottom while scrolling. */
-#techniqueModal .technique-modal-content.exercise-editor-unified{
-  max-height:calc(100vh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 24px)!important;
-  overflow-y:auto!important;
-  overscroll-behavior:contain!important;
-  -webkit-overflow-scrolling:touch!important;
-  padding-bottom:20px!important;
-}
 
 /* v67 header alignment only: safe area + stable header layout */
 .screen-header {
@@ -2462,9 +2492,7 @@ body.light-mode{
 #workoutScreen .workout-time{display:block!important;color:var(--text)!important;font-size:16px!important;font-weight:800!important;min-width:48px!important;text-align:right!important;}
 #workoutScreen #workoutTitle{font-size:clamp(18px,5vw,22px)!important;font-weight:850!important;}
 
-/* Manual exercise cards use the same card shell as built-in exercises. */
-#techniqueModal{z-index:6000!important;}
-#techniqueModal .technique-modal-content{width:100%;height:100%;max-height:none;overflow-y:auto;overflow-x:hidden;background:var(--card-bg);color:var(--text);border:1px solid var(--border);border-radius:24px;padding:20px;box-sizing:border-box;box-shadow:0 24px 80px rgba(0,0,0,.42);}
+/* Exercise-card content geometry is defined once in the source technique-modal rule above. */
 #techniqueModal .technique-title{font-size:23px!important;font-weight:900!important;line-height:1.12!important;padding-right:38px!important;overflow-wrap:anywhere!important;margin:0!important;}
 #techniqueModal .technique-group{margin-top:5px!important;color:var(--button-green)!important;font-size:15px!important;font-weight:850!important;}
 #techniqueModal .technique-tabs{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:7px!important;padding:4px!important;background:var(--input-bg)!important;border-radius:16px!important;margin:16px 0!important;}
@@ -2492,7 +2520,6 @@ body.light-mode{
 @media(max-width:430px){
   #workoutScreen .workout-progress-caption span:first-child{font-size:12.5px!important;}
   #workoutScreen .workout-time{font-size:15px!important;min-width:46px!important;}
-  #techniqueModal .technique-modal-content{padding:17px!important;border-radius:22px!important;}
 }
 
 /* ===== V52.1 final visual consistency fixes ===== */
@@ -2913,7 +2940,6 @@ body.light-mode{
 
 
 
-#techniqueModal .exercise-card-unified,#techniqueModal .exercise-editor-unified{max-}
 #techniqueModal .exercise-unified-media,#techniqueModal .exercise-media-gallery{display:grid;gap:10px;margin-bottom:14px}
 #techniqueModal .exercise-media-item{position:relative;border-radius:16px;overflow:hidden;background:var(--input-bg);border:1px solid var(--border)}
 #techniqueModal .exercise-media-view{width:100%;max-height:360px;display:block;object-fit:contain;background:var(--input-bg)}
@@ -3087,48 +3113,7 @@ body.light-mode{
 
 
 
-/* =========================================================
-   v93 — one scroll container, stable editor geometry
-   ========================================================= */
-
-/* The backdrop must NOT scroll. On iOS nested scrolling was causing
-   the editor to stop at the media section. */
-#techniqueModal{
-  position:fixed!important;
-  inset:0!important;
-  width:100%!important;
-  height:100%!important;
-  max-height:none!important;
-  padding:
-    max(12px, env(safe-area-inset-top, 0px))
-    12px
-    max(12px, env(safe-area-inset-bottom, 0px))
-    12px!important;
-  box-sizing:border-box!important;
-  display:flex!important;
-  align-items:flex-start!important;
-  justify-content:center!important;
-  overflow:hidden!important;
-  overscroll-behavior:none!important;
-  -webkit-overflow-scrolling:auto!important;
-}
-
-/* Exactly ONE scrolling element. */
-#techniqueModal .technique-modal-content.exercise-editor-unified{
-  position:relative!important;
-  max-
-  height:calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 24px)!important;
-  max-height:none!important;
-  min-height:0!important;
-  margin:0 auto!important;
-  padding:18px 16px calc(84px + env(safe-area-inset-bottom, 0px))!important;
-  box-sizing:border-box!important;
-  overflow-x:hidden!important;
-  overflow-y:auto!important;
-  overscroll-behavior:contain!important;
-  -webkit-overflow-scrolling:touch!important;
-  scroll-behavior:auto!important;
-}
+/* Exercise-card fullscreen geometry is defined once at .technique-modal / .technique-modal-content. */
 
 /* Prevent late-loading media from changing the editor's geometry. */
 #techniqueModal .exercise-editor-built-list{
@@ -3274,15 +3259,6 @@ body.light-mode{
 }
 
 @media (max-width:430px){
-  #techniqueModal{
-    padding-left:8px!important;
-    padding-right:8px!important;
-  }
-  #techniqueModal .technique-modal-content.exercise-editor-unified{
-    border-radius:20px!important;
-    padding-left:14px!important;
-    padding-right:14px!important;
-  }
   #techniqueModal .exercise-editor-built-list{
     grid-template-columns:repeat(2,minmax(0,1fr))!important;
   }
@@ -3302,47 +3278,9 @@ body.light-mode{
 
 
 
-/* v94: the modal itself is never scrollable; only its content is. */
-#techniqueModal{
-  position:fixed!important;
-  inset:0!important;
-  width:100%!important;
-  height:100%!important;
-  max-height:none!important;
-  padding:max(12px,env(safe-area-inset-top,0px)) 12px max(12px,env(safe-area-inset-bottom,0px)) 12px!important;
-  box-sizing:border-box!important;
-  align-items:flex-start!important;
-  justify-content:center!important;
-  overflow:hidden!important;
-  overscroll-behavior:none!important;
-}
-
-/* CRITICAL: restore the application's .hidden contract.
-   v93 used display:flex!important on the modal, which defeated .hidden,
-   so after Save/Close the invisible modal could remain over the whole app. */
-#techniqueModal.hidden{
-  display:none!important;
-  pointer-events:none!important;
-}
-#techniqueModal:not(.hidden){
-  display:flex!important;
-  pointer-events:auto!important;
-}
-
-/* One scroll container. */
-#techniqueModal .technique-modal-content.exercise-editor-unified{
-  position:relative!important;
-  height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 24px)!important;
-  max-height:none!important;
-  min-height:0!important;
-  margin:0 auto!important;
-  padding:18px 16px 22px!important;
-  box-sizing:border-box!important;
-  overflow-x:hidden!important;
-  overflow-y:auto!important;
-  overscroll-behavior:contain!important;
-  -webkit-overflow-scrolling:touch!important;
-}
+/* Technique modal visibility contract: the fullscreen geometry is defined once above. */
+#techniqueModal.hidden{display:none!important;pointer-events:none!important;}
+#techniqueModal:not(.hidden){display:block!important;pointer-events:auto!important;}
 
 /* Save button is NORMAL document flow. No sticky/fixed positioning. */
 #techniqueModal .exercise-editor-unified > .exercise-save-btn{
@@ -6682,7 +6620,7 @@ body{
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.21 от 04.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.22 от 04.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -12525,7 +12463,7 @@ function showToast(msg) {
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=1.4.21', {updateViaCache:'none'})
+        navigator.serviceWorker.register('./sw.js?v=1.4.22', {updateViaCache:'none'})
             .then(reg => console.log('SW registered', reg.scope))
             .catch(err => console.log('SW failed', err));
     });
