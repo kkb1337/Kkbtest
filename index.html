@@ -6562,6 +6562,37 @@ body{
 #measurementManagerModal>.measurement-manager-modal-content,#measurementFieldModal>.measurement-manager-modal-content,#newMeasurementModal>.measurement-manager-modal-content,#editMeasurementModal>.measurement-manager-modal-content{position:absolute!important;inset:0!important;width:auto!important;height:auto!important;min-width:0!important;min-height:0!important;max-width:none!important;max-height:none!important;margin:0!important;border-radius:0!important;border:none!important;background:var(--bg)!important;box-sizing:border-box!important;overflow-y:auto!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior:contain!important;padding:calc(env(safe-area-inset-top,0px) + 16px) calc(env(safe-area-inset-right,0px) + 16px) calc(env(safe-area-inset-bottom,0px) + 24px) calc(env(safe-area-inset-left,0px) + 16px)!important;}
 #measurementManagerModal .close-btn,#measurementFieldModal .close-btn,#newMeasurementModal .close-btn,#editMeasurementModal .close-btn{display:none!important;}
 </style>
+
+<style id="ftracker-unified-window-design-v1-4-30">
+/* Unified visual language. Geometry and touch logic are intentionally untouched. */
+:root{--window-surface:#1a1c20;--window-surface-2:#22252b;--window-border:rgba(255,255,255,.10);--window-shadow:0 10px 30px rgba(0,0,0,.28);}
+/* Main section headers: back control and title share one horizontal line. */
+.screen-header{display:grid!important;grid-template-columns:auto minmax(0,1fr) auto!important;align-items:center!important;gap:10px!important;}
+.screen-header>button.gray,.screen-header>button:not(.theme-toggle-btn){justify-self:start!important;white-space:nowrap!important;}
+.screen-header .title{align-self:center!important;text-align:left!important;}
+.screen-header-spacer{display:block!important;min-width:40px!important;}
+/* Fullscreen surface headers: Back sits directly left of the title. */
+#measurementManagerModal>.measurement-manager-modal-content,#measurementFieldModal>.measurement-manager-modal-content,#newMeasurementModal>.measurement-manager-modal-content,#editMeasurementModal>.measurement-manager-modal-content{display:grid!important;grid-template-columns:auto minmax(0,1fr)!important;column-gap:12px!important;align-content:start!important;}
+#measurementManagerModal>.measurement-manager-modal-content>.surface-back-btn,#measurementFieldModal>.measurement-manager-modal-content>.surface-back-btn,#newMeasurementModal>.measurement-manager-modal-content>.surface-back-btn,#editMeasurementModal>.measurement-manager-modal-content>.surface-back-btn{grid-column:1!important;grid-row:1!important;align-self:center!important;margin:0!important;min-height:42px!important;padding:0 2px!important;color:var(--text)!important;font-size:16px!important;}
+#measurementManagerModal>.measurement-manager-modal-content>.surface-title,#measurementFieldModal>.measurement-manager-modal-content>.surface-title,#newMeasurementModal>.measurement-manager-modal-content>.surface-title,#editMeasurementModal>.measurement-manager-modal-content>.surface-title{grid-column:2!important;grid-row:1!important;align-self:center!important;margin:0!important;min-width:0!important;font-size:22px!important;line-height:1.15!important;letter-spacing:-.25px!important;}
+#measurementManagerModal>.measurement-manager-modal-content> :not(.surface-back-btn):not(.surface-title),#measurementFieldModal>.measurement-manager-modal-content> :not(.surface-back-btn):not(.surface-title),#newMeasurementModal>.measurement-manager-modal-content> :not(.surface-back-btn):not(.surface-title),#editMeasurementModal>.measurement-manager-modal-content> :not(.surface-back-btn):not(.surface-title){grid-column:1 / -1!important;}
+/* Measurement form: compact typography and controls that never exceed the viewport. */
+.measurement-manager-modal-content .measurement-modal-note{background:var(--window-surface-2)!important;border:1px solid var(--window-border)!important;border-radius:16px!important;padding:12px 14px!important;margin:16px 0 10px!important;line-height:1.45!important;font-size:13px!important;color:var(--subtext)!important;box-shadow:var(--window-shadow)!important;}
+.measurement-manager-modal-content .field-label{font-size:13px!important;font-weight:800!important;letter-spacing:.1px!important;margin:12px 0 6px!important;color:var(--text)!important;}
+.measurement-manager-modal-content input{width:100%!important;min-width:0!important;max-width:100%!important;height:48px!important;padding:0 14px!important;border-radius:14px!important;box-sizing:border-box!important;background:var(--window-surface-2)!important;border:1px solid var(--window-border)!important;color:var(--text)!important;font-size:16px!important;box-shadow:none!important;}
+.measurement-manager-modal-content input[type="date"]{font-size:15px!important;letter-spacing:0!important;-webkit-appearance:none!important;appearance:none!important;}
+.measurement-manager-modal-content button:not(.surface-back-btn){min-height:48px!important;border-radius:15px!important;margin-top:14px!important;font-weight:800!important;}
+/* Common visual treatment for large window cards without changing their dimensions. */
+.catalog-modal-content,.theme-modal-content,.exercise-modal-content,.food-modal-content,.workout-detail-content,.manual-workout-content,.achievements-content{background:linear-gradient(180deg,var(--window-surface),var(--card-bg))!important;border-color:var(--window-border)!important;box-shadow:var(--window-shadow)!important;}
+/* Nutrition chart: full legend names in one row, with responsive text instead of abbreviations. */
+#chartModal .legend{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;align-items:center!important;gap:5px!important;overflow:visible!important;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 8px)!important;}
+#chartModal .legend-item{min-width:0!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:4px!important;white-space:nowrap!important;font-size:clamp(10px,2.8vw,12px)!important;overflow:hidden!important;text-overflow:clip!important;}
+#chartModal .legend-dot{flex:0 0 7px!important;width:7px!important;height:7px!important;}
+@media(max-width:390px){#chartModal .legend{gap:3px!important;}#chartModal .legend-item{gap:2px!important;font-size:10px!important;letter-spacing:-.25px!important;}#chartModal .legend-dot{flex-basis:6px!important;width:6px!important;height:6px!important;}}
+/* Shared refined window typography. */
+.catalog-modal-content .surface-title,.chart-modal-title,.body-history-modal-title{letter-spacing:-.3px!important;}
+.catalog-modal-content .chart-modal-subtitle,.catalog-modal-content .measurement-modal-note{color:var(--subtext)!important;}
+</style>
 </head>
 <body>
 <div class="safe-area"><div class="container" id="app">
@@ -6721,7 +6752,7 @@ body{
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.29 от 04.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.30 от 04.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -7253,7 +7284,7 @@ body{
 
 <script id="ftracker-app">
 /* ================================================================
-   FTracker v1.4.29
+   FTracker v1.4.30
    One centralized stack: only the top modal can scroll/interact.
    ================================================================ */
 const modalStack = [];
@@ -12067,7 +12098,7 @@ function renderChart() {
 
     const legendContainer = document.getElementById('chartLegend');
     if (legendContainer) {
-        const compactLegend = { calories: 'Ккал', protein: 'Б', fat: 'Ж', carbs: 'У' };
+        const compactLegend = { calories: 'Калории', protein: 'Белки', fat: 'Жиры', carbs: 'Углеводы' };
         legendContainer.innerHTML = typesToShow.map(type => `
             <div class="legend-item">
                 <span class="legend-dot" style="background:${CHART_COLORS[type]}"></span>
