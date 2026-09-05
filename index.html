@@ -6773,7 +6773,7 @@ body{
 .food-macro-card span,.food-macro-card strong,.food-macro-card small{white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;}
 @media(max-width:390px){#chartModal .period-selector{grid-template-columns:repeat(2,minmax(0,1fr))!important;}#chartModal .period-selector button{font-size:12px!important;}.food-macro-card strong{font-size:14px!important;}}
 
-/* FTracker v1.4.39 — cosmetic cleanup.
+/* FTracker v1.4.40 — cosmetic cleanup.
    Keep the stable application logic intact; normalize only viewport geometry and redundant helper UI. */
 html,body{margin:0!important;padding:0!important;width:100%!important;min-height:100%!important;overflow-x:hidden!important;}
 body{min-height:100dvh!important;background:var(--bg)!important;}
@@ -6815,7 +6815,7 @@ body{min-height:100dvh!important;background:var(--bg)!important;}
 </style>
 
 <style id="ftracker-v1-4-37-safe-area-final">
-/* v1.4.39 — final safe-area geometry pass.
+/* v1.4.40 — final safe-area geometry pass.
    The app shell already lives below the iOS safe area, so no second top inset
    is allowed on the container or on full-screen content surfaces. */
 .safe-area>.container,#app.container{
@@ -6860,7 +6860,7 @@ body{min-height:100dvh!important;background:var(--bg)!important;}
 }
 </style>
 <style id="ftracker-v1-4-37-authoritative-geometry">
-/* v1.4.39 — authoritative geometry fix.
+/* v1.4.40 — authoritative geometry fix.
    .safe-area already consumes the iOS top inset. Ordinary screens and the workout
    must never add that inset a second time. */
 .safe-area>.container,#app.container{padding-top:0!important;}
@@ -6885,7 +6885,7 @@ body{min-height:100dvh!important;background:var(--bg)!important;}
 }
 </style>
 <style id="ftracker-v1-4-39-home-refined">
-/* v1.4.39 — preserve the original home composition; only tighten dimensions. */
+/* v1.4.40 — preserve the original home composition; only tighten dimensions. */
 #homeScreen{box-sizing:border-box!important;}
 #homeScreen>.title:first-child{margin-bottom:6px!important;}
 #programList{display:grid!important;gap:8px!important;}
@@ -6923,6 +6923,48 @@ body{min-height:100dvh!important;background:var(--bg)!important;}
  .nav-buttons{gap:6px!important;margin-top:7px!important;}
  .nav-buttons button{min-height:47px!important;padding:8px 5px!important;font-size:13px!important;border-radius:13px!important;}
 }
+</style>
+
+<style id="ftracker-v1-4-40-fscore-how">
+.fscore-how-summary{display:flex!important;align-items:center!important;gap:11px!important;padding:13px 14px!important;list-style:none!important;cursor:pointer!important;}
+.fscore-how-summary::-webkit-details-marker,.fscore-how-item summary::-webkit-details-marker{display:none!important;}
+.fscore-how-summary-icon{width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;border-radius:11px;background:var(--input-bg);font-size:18px;flex:0 0 34px;}
+.fscore-how-summary-copy{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1;}
+.fscore-how-summary-copy b{font-size:14px;line-height:1.2;}
+.fscore-how-summary-copy small{font-size:11px;color:var(--subtext);font-weight:500;line-height:1.25;}
+.fscore-how-summary-chevron{font-size:19px;color:var(--subtext);transition:transform .18s ease;}
+.fscore-how-card[open] .fscore-how-summary-chevron{transform:rotate(180deg);}
+.fscore-how-card .fscore-how-inner{padding-top:0!important;}
+.fscore-how-intro{padding:13px;border:1px solid var(--border);border-radius:15px;background:var(--input-bg);}
+.fscore-how-intro-title{font-size:17px;font-weight:850;margin-bottom:3px;}
+.fscore-how-intro-text{font-size:12px;line-height:1.4;color:var(--subtext);margin-bottom:11px;}
+.fscore-how-intro .fscore-formula-flow{padding:9px;background:transparent;border:1px solid var(--border);justify-content:center;}
+.fscore-how-rule{display:flex;gap:10px;align-items:flex-start;padding:11px 12px;border-radius:13px;background:rgba(52,199,89,.09);border:1px solid rgba(52,199,89,.18);}
+.fscore-how-rule>span{font-weight:900;font-size:16px;line-height:1.2;}
+.fscore-how-rule div{display:flex;flex-direction:column;gap:2px;}
+.fscore-how-rule b{font-size:12px;}
+.fscore-how-rule small{font-size:11px;line-height:1.4;color:var(--subtext);}
+.fscore-how-accordions{display:flex;flex-direction:column;gap:7px;}
+.fscore-how-item{border:1px solid var(--border);border-radius:14px;background:var(--input-bg);overflow:hidden;}
+.fscore-how-item>summary{display:grid!important;grid-template-columns:34px minmax(0,1fr) 18px;align-items:center;gap:9px;padding:11px 12px!important;list-style:none!important;cursor:pointer;}
+.fscore-how-item-icon{width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.045);display:flex;align-items:center;justify-content:center;font-size:17px;}
+.fscore-how-item summary>span:nth-child(2){display:flex;flex-direction:column;gap:2px;min-width:0;}
+.fscore-how-item summary b{font-size:13px;line-height:1.2;}
+.fscore-how-item summary small{font-size:10.5px;color:var(--subtext);line-height:1.25;}
+.fscore-how-item summary>i{font-style:normal;color:var(--subtext);font-size:17px;transition:transform .18s ease;text-align:center;}
+.fscore-how-item[open] summary>i{transform:rotate(180deg);}
+.fscore-how-content{padding:0 12px 12px 55px;}
+.fscore-how-content p{margin:7px 0 0!important;color:var(--subtext);font-size:12px;line-height:1.48;}
+.fscore-how-content strong{color:var(--text);}
+.fscore-how-content ul{margin:7px 0 0;padding-left:17px;color:var(--subtext);font-size:11.5px;line-height:1.5;}
+.fscore-how-note{margin-top:8px;padding:8px 9px;border-radius:10px;background:rgba(255,255,255,.04);font-size:11px;line-height:1.4;color:var(--subtext);}
+.fscore-how-note b{color:var(--text);}
+.fscore-goal-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:9px;}
+.fscore-goal-grid>div{padding:8px 6px;border:1px solid var(--border);border-radius:10px;text-align:center;}
+.fscore-goal-grid b{display:block;font-size:10.5px;line-height:1.25;}
+.fscore-goal-grid small{display:block;margin-top:2px;font-size:9.5px;color:var(--subtext);line-height:1.2;}
+.fscore-how-content .fscore-mini-formula{margin-top:9px;font-size:11px;text-align:center;}
+@media(max-width:430px){.fscore-how-summary{padding:12px!important}.fscore-how-intro .fscore-formula-flow{gap:4px;font-size:11px}.fscore-how-intro .fscore-formula-flow span{padding:6px 5px}.fscore-how-content{padding-left:55px}.fscore-goal-grid b{font-size:10px}.fscore-goal-grid small{font-size:9px;}}
 </style>
 </head>
 <body>
@@ -7082,7 +7124,7 @@ body{min-height:100dvh!important;background:var(--bg)!important;}
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.39 от 04.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.40 от 04.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -7618,7 +7660,7 @@ body{min-height:100dvh!important;background:var(--bg)!important;}
 
 <script id="ftracker-app">
 /* ================================================================
-   FTracker v1.4.39
+   FTracker v1.4.40
    One centralized stack: only the top modal can scroll/interact.
    ================================================================ */
 const modalStack = [];
@@ -9024,18 +9066,48 @@ function renderFScoreAnalytics(){
       <section class="fscore-next-step"><div class="fscore-next-step-title">💡 Что улучшить сейчас</div><p>${escapeHtml(nextStep)}</p></section>
 
       <details class="analytics-card fscore-v149-card fscore-how-card">
-        <summary>🧮 Как считается индекс</summary>
+        <summary class="fscore-how-summary">
+          <span class="fscore-how-summary-icon">🧮</span>
+          <span class="fscore-how-summary-copy"><b>Как считается индекс</b><small>Что влияет на результат и почему</small></span>
+          <span class="fscore-how-summary-chevron" aria-hidden="true">⌄</span>
+        </summary>
         <div class="analytics-inner fscore-v149-inner fscore-how-inner">
-          <div class="fscore-formula-flow"><span>📏 Тело</span><i>+</i><span>🏋️ Тренировки</span><i>+</i><span>🍽️ Питание</span><b>→</b><strong>📈 Индекс 0–100</strong></div>
-          <p class="analytics-note"><b>Главное правило:</b> отсутствующие данные не считаются плохим результатом. Недоступный блок исключается, а вес расчёта перераспределяется между доступными.</p>
+          <div class="fscore-how-intro">
+            <div class="fscore-how-intro-title">Индекс 0–100</div>
+            <div class="fscore-how-intro-text">Итог показывает, насколько текущая динамика соответствует выбранной цели.</div>
+            <div class="fscore-formula-flow"><span>📏 Тело</span><i>+</i><span>🏋️ Тренировки</span><i>+</i><span>🍽️ Питание</span><b>→</b><strong>📈 0–100</strong></div>
+          </div>
 
-          <div class="fscore-how-section"><b>🎯 1. Цель задаёт смысл результата</b><p><strong>Набор:</strong> оценивается качественный рост массы и объёмов без поощрения слишком быстрого набора. <strong>Сушка:</strong> важны снижение веса и талии при сохранении мышечных объёмов и тренировочной формы. <strong>Поддержание:</strong> поощряется стабильность веса, замеров, питания и тренировок.</p></div>
-          <div class="fscore-how-section"><b>📏 2. Замеры тела</b><p>Участвуют все доступные показатели: вес, талия, грудь, плечи, бицепс, предплечье, бедро и другие сохранённые замеры. Для оценки используется не один замер, а подтверждённая динамика.</p><ul><li>случайные небольшие колебания считаются шумом;</li><li>резкий скачок проверяется следующими точками;</li><li>устойчивый тренд получает больший вес, чем разовое изменение;</li><li>отсутствующий показатель не уменьшает балл.</li></ul></div>
-          <div class="fscore-how-section"><b>🏋️ 3. Тренировки</b><p>Оцениваются регулярность, прогресс рабочих весов, повторений и объёма, а также отсутствие устойчивой деградации. <strong>15 тренировок — ориентир за период, а не жёсткий минимум:</strong> пропуск из-за болезни, отдыха или плохого самочувствия не должен автоматически обрушивать индекс.</p><p>В анализ попадают только реально завершённые упражнения и только подходы с заполненными результатами.</p></div>
-          <div class="fscore-how-section"><b>🍽️ 4. Питание и КБЖУ</b><p>Лимиты рассчитываются относительно персонального поддержания, веса и фактической тренировочной активности. Для <strong>набора</strong> добавляется умеренный профицит, для <strong>сушки</strong> — умеренный дефицит, для <strong>поддержания</strong> используется базовый уровень.</p><p>Оцениваются калории, белок, жиры и углеводы относительно выбранной цели. Поэтому один и тот же рацион может улучшать оценку на наборе и ухудшать её на сушке.</p></div>
-          <div class="fscore-how-section"><b>📊 5. Как формируется итог</b><p>Каждый доступный блок получает собственную оценку 0–100. Затем используются только активные блоки, их веса нормализуются до 100%, и получается итоговый индекс.</p><div class="fscore-mini-formula">INDEX = Σ(оценка блока × нормализованный вес)</div><p>Чем больше подтверждённых данных, тем выше точность анализа — но отсутствие данных само по себе не является штрафом.</p></div>
+          <div class="fscore-how-rule"><span>✓</span><div><b>Главное правило</b><small>Отсутствие данных не является плохим результатом. Недоступный блок просто исключается, а его вес распределяется между доступными.</small></div></div>
+
+          <div class="fscore-how-accordions">
+            <details class="fscore-how-item">
+              <summary><span class="fscore-how-item-icon">🎯</span><span><b>1. Цель</b><small>Меняет смысл оценки</small></span><i>⌄</i></summary>
+              <div class="fscore-how-content"><p><strong>Набор:</strong> оценивается качественный рост массы и объёмов без поощрения слишком быстрого набора.</p><p><strong>Сушка:</strong> важны снижение веса и талии при сохранении мышечных объёмов и тренировочной формы.</p><p><strong>Поддержание:</strong> поощряется стабильность веса, замеров, питания и тренировок.</p></div>
+            </details>
+
+            <details class="fscore-how-item">
+              <summary><span class="fscore-how-item-icon">📏</span><span><b>2. Замеры тела</b><small>Смотрим на подтверждённую динамику</small></span><i>⌄</i></summary>
+              <div class="fscore-how-content"><p>Участвуют все доступные показатели: вес, талия, грудь, плечи, бицепс, предплечье, бедро и другие сохранённые замеры.</p><ul><li>небольшие случайные колебания считаются шумом;</li><li>резкий скачок проверяется следующими точками;</li><li>устойчивый тренд важнее разового изменения;</li><li>отсутствующий показатель не уменьшает балл.</li></ul></div>
+            </details>
+
+            <details class="fscore-how-item">
+              <summary><span class="fscore-how-item-icon">🏋️</span><span><b>3. Тренировки</b><small>Регулярность и реальный прогресс</small></span><i>⌄</i></summary>
+              <div class="fscore-how-content"><p>Оцениваются регулярность, рабочие веса, повторения и объём, а также отсутствие устойчивой деградации.</p><div class="fscore-how-note"><b>15 тренировок</b> — ориентир за период, а не жёсткий минимум. Пропуск или пауза не обрушивают индекс.</div><p>В анализ попадают только завершённые упражнения и подходы с заполненными результатами.</p></div>
+            </details>
+
+            <details class="fscore-how-item">
+              <summary><span class="fscore-how-item-icon">🍽️</span><span><b>4. Питание и КБЖУ</b><small>Оценка зависит от выбранной цели</small></span><i>⌄</i></summary>
+              <div class="fscore-how-content"><p>Лимиты рассчитываются относительно персонального поддержания, веса и фактической тренировочной активности.</p><div class="fscore-goal-grid"><div><b>💪 Набор</b><small>умеренный профицит</small></div><div><b>🔥 Сушка</b><small>умеренный дефицит</small></div><div><b>⚖️ Поддержание</b><small>базовый уровень</small></div></div><p>Калории, белок, жиры и углеводы оцениваются относительно выбранной цели. Поэтому одинаковый рацион может оцениваться по-разному.</p></div>
+            </details>
+
+            <details class="fscore-how-item">
+              <summary><span class="fscore-how-item-icon">📊</span><span><b>5. Итоговый расчёт</b><small>Как получается финальный балл</small></span><i>⌄</i></summary>
+              <div class="fscore-how-content"><p>Каждый доступный блок получает собственную оценку от 0 до 100. Затем учитываются только доступные блоки, а их веса нормализуются до 100%.</p><div class="fscore-mini-formula">INDEX = Σ(оценка блока × нормализованный вес)</div><p>Чем больше подтверждённых данных, тем выше точность анализа. Само отсутствие данных штрафом не является.</p></div>
+            </details>
+          </div>
         </div>
-      </details>
+      </details>>
     `;
 }
 function showProgress() {
@@ -17943,7 +18015,7 @@ body.light-mode .toast{
 </style>
 
 <style id="ftracker-v1-4-36-final-override">
-/* v1.4.39 — authoritative final override; must remain last so legacy fixes cannot reintroduce the offset. */
+/* v1.4.40 — authoritative final override; must remain last so legacy fixes cannot reintroduce the offset. */
 .safe-area>.container,#app.container{
   padding-top:0!important;
 }
