@@ -7165,7 +7165,7 @@ body{min-height:100dvh!important;background:var(--bg)!important;}
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.56 от 05.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.57 от 05.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -8679,11 +8679,10 @@ function selectFScoreCustomGoal(id){
     const list=getFScoreCustomGoals(); const c=list.find(x=>x.id===id); if(!c)return;
     data.fscoreActiveCustomGoalId=c.id;
     data.fscoreCustomGoal=JSON.parse(JSON.stringify(c));
-    data.fscoreGoal='custom';
     persistFScoreCustomGoals(list);
-    try{localStorage.setItem('ftracker_fscore_goal','custom');}catch(e){}
-    renderFScoreAnalytics();
-    renderFScoreHomeWidget();
+    // A saved custom goal is a full-fledged goal: switching to it must run the
+    // same recalculation pipeline as Gain / Cut / Maintain.
+    setFScoreGoal('custom');
 }
 function deleteFScoreCustomGoal(id){
     const list=getFScoreCustomGoals(); if(list.length<=1){showToast('Должна остаться хотя бы одна своя цель');return;}
@@ -8691,7 +8690,13 @@ function deleteFScoreCustomGoal(id){
     data.fscoreCustomGoal=next[0]; persistFScoreCustomGoals(next); renderFScoreAnalytics(); renderFScoreHomeWidget(); showToast('Цель удалена');
 }
 function addFScoreCustomGoal(){
-    const base=getFScoreCustomConfig(); const copy=JSON.parse(JSON.stringify(base)); copy.id=makeFScoreCustomId(); copy.name='Новая цель'; saveFScoreCustomConfig(copy,copy.id); openFScoreCustomEditor();
+    const base=getFScoreCustomConfig(); const copy=JSON.parse(JSON.stringify(base));
+    copy.id=makeFScoreCustomId(); copy.name='Новая цель';
+    saveFScoreCustomConfig(copy,copy.id);
+    // New goal becomes the active goal immediately and gets the same recalculation
+    // treatment as any other goal switch.
+    setFScoreGoal('custom');
+    openFScoreCustomEditor();
 }
 function fscoreCustomModeInfo(mode){
     const map={
@@ -9281,12 +9286,13 @@ function renderFScoreAnalytics(){
       <section class="fscore-goal-picker fscore-v149-goals">
         <div class="fscore-goal-picker-label">🎯 Цель</div>
         <div class="fscore-goal-picker-hint">Выбранная цель меняет оценку динамики тела и питания.</div>
-        <div class="analytics-period">
+        <div class="analytics-period fscore-all-goals">
           <button type="button" class="${x.goal==='gain'?'active':''}" aria-pressed="${x.goal==='gain'}" onclick="setFScoreGoal('gain')">💪 Набор</button>
           <button type="button" class="${x.goal==='cut'?'active':''}" aria-pressed="${x.goal==='cut'}" onclick="setFScoreGoal('cut')">🔥 Сушка</button>
           <button type="button" class="${x.goal==='maintain'?'active':''}" aria-pressed="${x.goal==='maintain'}" onclick="setFScoreGoal('maintain')">⚖️ Поддержание</button>
+          ${(()=>{const goals=getFScoreCustomGoals(); const active=getFScoreCustomConfig(); return goals.map(g=>`<div class="fscore-custom-goal-entry ${x.goal==='custom'&&g.id===active.id?'active':''}"><button type="button" class="fscore-custom-goal-main" onclick="selectFScoreCustomGoal('${escapeHtml(g.id)}');openFScoreCustomEditor();" aria-pressed="${x.goal==='custom'&&g.id===active.id?'true':'false'}">🎯 ${escapeHtml(g.name)}</button><button type="button" class="fscore-custom-goal-remove" onclick="event.stopPropagation();deleteFScoreCustomGoal('${escapeHtml(g.id)}')" aria-label="Удалить цель «${escapeHtml(g.name)}»">×</button></div>`).join('');})()}
         </div>
-        ${(()=>{const goals=getFScoreCustomGoals(); const active=getFScoreCustomConfig(); return `<div class="fscore-custom-goals-block"><div class="fscore-custom-goals-heading"><b>🎯 Мои цели</b><small>Сохранённые цели</small></div><div class="fscore-custom-goals-row">${goals.map(g=>`<button type="button" class="fscore-custom-goal-chip ${x.goal==='custom'&&g.id===active.id?'active':''}" onclick="selectFScoreCustomGoal('${escapeHtml(g.id)}');openFScoreCustomEditor();" aria-pressed="${x.goal==='custom'&&g.id===active.id?'true':'false'}">🎯 ${escapeHtml(g.name)}</button>`).join('')}</div><button type="button" class="fscore-custom-goal-create" onclick="addFScoreCustomGoal()">＋ Создать свою цель</button></div>`;})()}
+        <button type="button" class="fscore-custom-goal-create" onclick="addFScoreCustomGoal()">＋ Создать свою цель</button>
         <div id="fscoreCustomEditor" class="fscore-custom-editor ${x.goal==='custom'?'':'hidden'}">
           ${(()=>{const c=getFScoreCustomConfig(); const goals=getFScoreCustomGoals(); const fields=getMeasurementFields(); const addedFields=fields.filter(f=>!!c.targets?.[f.key]); const availableFields=fields.filter(f=>!c.targets?.[f.key]); return `<div class="fscore-custom-title fscore-my-goal-title">🎯 Моя цель</div>
           <div class="fscore-goals-list">${goals.map(g=>`<div class="fscore-goal-item ${g.id===c.id?'active':''}"><button type="button" class="fscore-goal-select" onclick="selectFScoreCustomGoal('${escapeHtml(g.id)}')"><b>${escapeHtml(g.name)}</b><small>${g.mode==='gain'?'Рост / набор':g.mode==='cut'?'Снижение':'Стабильность'} · ${g.evaluationDays} дней</small></button><button type="button" class="fscore-goal-delete" aria-label="Удалить цель" onclick="deleteFScoreCustomGoal('${escapeHtml(g.id)}')">⋮</button></div>`).join('')}</div>
@@ -18635,6 +18641,137 @@ body.light-mode .toast{
   background:transparent!important;
   color:var(--positive)!important;
   font-weight:800!important;
+}
+</style>
+
+
+<style id="ftracker-v1-4-57-unified-goals-workout-history">
+/* v1.4.57 — one unified goal switcher + full safe-area workout history */
+.fscore-goal-picker .analytics-period.fscore-all-goals{
+  display:flex!important;
+  flex-wrap:wrap!important;
+  grid-template-columns:none!important;
+  gap:8px!important;
+  margin-top:10px!important;
+}
+.fscore-goal-picker .analytics-period.fscore-all-goals>button,
+.fscore-custom-goal-entry{
+  flex:1 1 145px!important;
+  min-width:0!important;
+}
+.fscore-goal-picker .analytics-period.fscore-all-goals>button{
+  width:auto!important;
+}
+.fscore-custom-goal-entry{
+  display:flex!important;
+  align-items:stretch!important;
+  min-height:48px!important;
+  border:1px solid var(--border)!important;
+  border-radius:14px!important;
+  overflow:hidden!important;
+  background:var(--input-bg)!important;
+  box-sizing:border-box!important;
+}
+.fscore-custom-goal-entry.active{
+  border-color:var(--accent)!important;
+  box-shadow:0 0 0 3px rgba(212,255,79,.18)!important;
+}
+.fscore-custom-goal-main{
+  flex:1 1 auto!important;
+  min-width:0!important;
+  margin:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  color:var(--text)!important;
+  padding:10px 8px 10px 12px!important;
+  min-height:48px!important;
+  font-size:12px!important;
+  font-weight:800!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  box-shadow:none!important;
+}
+.fscore-custom-goal-entry.active .fscore-custom-goal-main{
+  background:var(--accent)!important;
+  color:#111!important;
+}
+.fscore-custom-goal-remove{
+  flex:0 0 40px!important;
+  width:40px!important;
+  min-width:40px!important;
+  min-height:48px!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  border-left:1px solid var(--border)!important;
+  border-radius:0!important;
+  background:rgba(255,255,255,.035)!important;
+  color:var(--subtext)!important;
+  font-size:24px!important;
+  line-height:1!important;
+  box-shadow:none!important;
+}
+.fscore-custom-goal-entry.active .fscore-custom-goal-remove{
+  color:#111!important;
+  background:rgba(0,0,0,.08)!important;
+}
+.fscore-custom-goal-create{
+  width:100%!important;
+  min-height:44px!important;
+  margin-top:10px!important;
+  padding:0 14px!important;
+  border:1px dashed rgba(103,201,112,.55)!important;
+  border-radius:13px!important;
+  background:transparent!important;
+  color:var(--positive)!important;
+  font-weight:800!important;
+}
+.fscore-custom-goals-block{display:none!important;}
+
+/* Workout history detail: one full-height surface inside the safe area.
+   The header stays inside the card and the exercise list scrolls inside it. */
+#workoutDetailModal.workout-detail-modal{
+  position:fixed!important;
+  inset:0!important;
+  width:100%!important;
+  height:100dvh!important;
+  padding:
+    calc(env(safe-area-inset-top,0px) + 10px)
+    12px
+    calc(env(safe-area-inset-bottom,0px) + 10px)!important;
+  box-sizing:border-box!important;
+  display:flex!important;
+  align-items:stretch!important;
+  justify-content:stretch!important;
+  overflow:hidden!important;
+}
+#workoutDetailModal .workout-detail-content{
+  width:100%!important;
+  max-width:760px!important;
+  height:100%!important;
+  max-height:none!important;
+  min-height:0!important;
+  margin:0 auto!important;
+  padding:18px!important;
+  box-sizing:border-box!important;
+  display:flex!important;
+  flex-direction:column!important;
+  overflow:hidden!important;
+}
+#workoutDetailModal .workout-detail-title-wrap{
+  flex:0 0 auto!important;
+  margin:0 0 14px!important;
+}
+#workoutDetailModal #workoutDetailContent{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  -webkit-overflow-scrolling:touch!important;
+  overscroll-behavior:contain!important;
+  padding-bottom:8px!important;
 }
 </style>
 
