@@ -7165,7 +7165,7 @@ body{min-height:100dvh!important;background:var(--bg)!important;}
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.55 от 05.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.56 от 05.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -8703,7 +8703,8 @@ function fscoreCustomModeInfo(mode){
 function openFScoreCustomEditor(){
     const box=document.getElementById('fscoreCustomEditor');
     if(box){
-        box.classList.toggle('hidden');
+        // The editor is opened explicitly; never toggle it closed after a goal switch/re-render.
+        box.classList.remove('hidden');
         setTimeout(initFScoreTargetRows,0);
     }
 }
@@ -9285,7 +9286,7 @@ function renderFScoreAnalytics(){
           <button type="button" class="${x.goal==='cut'?'active':''}" aria-pressed="${x.goal==='cut'}" onclick="setFScoreGoal('cut')">🔥 Сушка</button>
           <button type="button" class="${x.goal==='maintain'?'active':''}" aria-pressed="${x.goal==='maintain'}" onclick="setFScoreGoal('maintain')">⚖️ Поддержание</button>
         </div>
-        ${(()=>{const goals=getFScoreCustomGoals(); const active=getFScoreCustomConfig(); return `<div class="fscore-custom-goals-row">${goals.map(g=>`<button type="button" class="fscore-custom-goal-chip ${x.goal==='custom'&&g.id===active.id?'active':''}" onclick="selectFScoreCustomGoal('${escapeHtml(g.id)}');openFScoreCustomEditor();" aria-pressed="${x.goal==='custom'&&g.id===active.id?'true':'false'}">🎯 ${escapeHtml(g.name)}</button>`).join('')}<button type="button" class="fscore-custom-goal-create" onclick="addFScoreCustomGoal()">＋ Своя цель</button></div>`;})()}
+        ${(()=>{const goals=getFScoreCustomGoals(); const active=getFScoreCustomConfig(); return `<div class="fscore-custom-goals-block"><div class="fscore-custom-goals-heading"><b>🎯 Мои цели</b><small>Сохранённые цели</small></div><div class="fscore-custom-goals-row">${goals.map(g=>`<button type="button" class="fscore-custom-goal-chip ${x.goal==='custom'&&g.id===active.id?'active':''}" onclick="selectFScoreCustomGoal('${escapeHtml(g.id)}');openFScoreCustomEditor();" aria-pressed="${x.goal==='custom'&&g.id===active.id?'true':'false'}">🎯 ${escapeHtml(g.name)}</button>`).join('')}</div><button type="button" class="fscore-custom-goal-create" onclick="addFScoreCustomGoal()">＋ Создать свою цель</button></div>`;})()}
         <div id="fscoreCustomEditor" class="fscore-custom-editor ${x.goal==='custom'?'':'hidden'}">
           ${(()=>{const c=getFScoreCustomConfig(); const goals=getFScoreCustomGoals(); const fields=getMeasurementFields(); const addedFields=fields.filter(f=>!!c.targets?.[f.key]); const availableFields=fields.filter(f=>!c.targets?.[f.key]); return `<div class="fscore-custom-title fscore-my-goal-title">🎯 Моя цель</div>
           <div class="fscore-goals-list">${goals.map(g=>`<div class="fscore-goal-item ${g.id===c.id?'active':''}"><button type="button" class="fscore-goal-select" onclick="selectFScoreCustomGoal('${escapeHtml(g.id)}')"><b>${escapeHtml(g.name)}</b><small>${g.mode==='gain'?'Рост / набор':g.mode==='cut'?'Снижение':'Стабильность'} · ${g.evaluationDays} дней</small></button><button type="button" class="fscore-goal-delete" aria-label="Удалить цель" onclick="deleteFScoreCustomGoal('${escapeHtml(g.id)}')">⋮</button></div>`).join('')}</div>
@@ -18547,5 +18548,95 @@ body.light-mode .toast{
 .fscore-custom-goal-create{min-height:42px!important;width:auto!important;flex:0 1 auto!important;padding:0 13px!important;border:1px dashed rgba(103,201,112,.55)!important;border-radius:12px!important;background:transparent!important;color:var(--positive)!important;font-weight:800!important;}
 #fscoreCustomEditor .fscore-goals-list,#fscoreCustomEditor .fscore-add-goal{display:none!important;}
 </style>
+
+<style id="ftracker-v1-4-56-history-and-custom-goals">
+/* v1.4.56 — measurement history geometry + reliable custom-goal editor opening */
+
+/* Measurement history is a full safe-area surface. This intentionally overrides the
+   generic centered catalog-modal rules that were clipping this particular long view. */
+#measurementHistoryModal.catalog-modal{
+  position:fixed!important;
+  inset:0!important;
+  width:100%!important;
+  height:100dvh!important;
+  padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)!important;
+  box-sizing:border-box!important;
+  display:flex!important;
+  align-items:stretch!important;
+  justify-content:stretch!important;
+  overflow:hidden!important;
+}
+#measurementHistoryModal.catalog-modal.hidden{display:none!important;}
+#measurementHistoryModal>.body-history-modal-content{
+  width:100%!important;
+  max-width:none!important;
+  height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))!important;
+  max-height:none!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:14px 16px 20px!important;
+  border-radius:0!important;
+  box-sizing:border-box!important;
+  display:flex!important;
+  flex-direction:column!important;
+  overflow:hidden!important;
+}
+#measurementHistoryModal .body-history-modal-head{flex:0 0 auto!important;}
+#measurementHistoryModal #measurementHistory{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  -webkit-overflow-scrolling:touch!important;
+  overscroll-behavior:contain!important;
+  padding-bottom:12px!important;
+}
+
+/* Standard and saved goals are visually separate. Saved goals are neutral until active. */
+.fscore-custom-goals-block{
+  margin-top:14px!important;
+  padding-top:12px!important;
+  border-top:1px solid var(--border)!important;
+}
+.fscore-custom-goals-heading{
+  display:flex!important;
+  align-items:baseline!important;
+  justify-content:space-between!important;
+  gap:10px!important;
+  margin-bottom:8px!important;
+}
+.fscore-custom-goals-heading b{font-size:15px!important;font-weight:850!important;}
+.fscore-custom-goals-heading small{font-size:11px!important;color:var(--subtext)!important;}
+.fscore-custom-goals-row{display:flex!important;flex-wrap:wrap!important;gap:8px!important;margin:0!important;}
+.fscore-custom-goal-chip{
+  flex:1 1 140px!important;
+  min-height:44px!important;
+  width:auto!important;
+  padding:0 12px!important;
+  border-radius:13px!important;
+  background:var(--input-bg)!important;
+  color:var(--text)!important;
+  border:1px solid var(--border)!important;
+  box-shadow:none!important;
+}
+.fscore-custom-goal-chip.active{
+  background:rgba(103,201,112,.14)!important;
+  color:#a8e5aa!important;
+  border-color:rgba(103,201,112,.72)!important;
+  box-shadow:inset 0 0 0 1px rgba(103,201,112,.18)!important;
+}
+.fscore-custom-goal-create{
+  width:100%!important;
+  min-height:42px!important;
+  margin-top:9px!important;
+  padding:0 13px!important;
+  border:1px dashed rgba(103,201,112,.55)!important;
+  border-radius:13px!important;
+  background:transparent!important;
+  color:var(--positive)!important;
+  font-weight:800!important;
+}
+</style>
+
 </body>
 </html>

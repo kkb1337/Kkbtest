@@ -26,6 +26,6 @@
       "purpose": "any maskable"
     }
   ],
-  "_build": "ftracker-v1.4.55-goals-safearea-fixed",
-  "version": "1.4.55"
+  "_build": "ftracker-v1.4.56-history-custom-goals-fixed",
+  "version": "1.4.56"
 }
