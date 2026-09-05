@@ -6773,7 +6773,7 @@ body{
 .food-macro-card span,.food-macro-card strong,.food-macro-card small{white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;}
 @media(max-width:390px){#chartModal .period-selector{grid-template-columns:repeat(2,minmax(0,1fr))!important;}#chartModal .period-selector button{font-size:12px!important;}.food-macro-card strong{font-size:14px!important;}}
 
-/* FTracker v1.4.40 — cosmetic cleanup.
+/* FTracker v1.4.41 — cosmetic cleanup.
    Keep the stable application logic intact; normalize only viewport geometry and redundant helper UI. */
 html,body{margin:0!important;padding:0!important;width:100%!important;min-height:100%!important;overflow-x:hidden!important;}
 body{min-height:100dvh!important;background:var(--bg)!important;}
@@ -6815,7 +6815,7 @@ body{min-height:100dvh!important;background:var(--bg)!important;}
 </style>
 
 <style id="ftracker-v1-4-37-safe-area-final">
-/* v1.4.40 — final safe-area geometry pass.
+/* v1.4.41 — final safe-area geometry pass.
    The app shell already lives below the iOS safe area, so no second top inset
    is allowed on the container or on full-screen content surfaces. */
 .safe-area>.container,#app.container{
@@ -6860,7 +6860,7 @@ body{min-height:100dvh!important;background:var(--bg)!important;}
 }
 </style>
 <style id="ftracker-v1-4-37-authoritative-geometry">
-/* v1.4.40 — authoritative geometry fix.
+/* v1.4.41 — authoritative geometry fix.
    .safe-area already consumes the iOS top inset. Ordinary screens and the workout
    must never add that inset a second time. */
 .safe-area>.container,#app.container{padding-top:0!important;}
@@ -6885,7 +6885,7 @@ body{min-height:100dvh!important;background:var(--bg)!important;}
 }
 </style>
 <style id="ftracker-v1-4-39-home-refined">
-/* v1.4.40 — preserve the original home composition; only tighten dimensions. */
+/* v1.4.41 — preserve the original home composition; only tighten dimensions. */
 #homeScreen{box-sizing:border-box!important;}
 #homeScreen>.title:first-child{margin-bottom:6px!important;}
 #programList{display:grid!important;gap:8px!important;}
@@ -7124,7 +7124,7 @@ body{min-height:100dvh!important;background:var(--bg)!important;}
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.40 от 04.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.41 от 05.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -7660,7 +7660,7 @@ body{min-height:100dvh!important;background:var(--bg)!important;}
 
 <script id="ftracker-app">
 /* ================================================================
-   FTracker v1.4.40
+   FTracker v1.4.41
    One centralized stack: only the top modal can scroll/interact.
    ================================================================ */
 const modalStack = [];
@@ -8148,7 +8148,7 @@ function migrateFTrackerState(state){
     if(!state.programAliases || typeof state.programAliases!=='object') state.programAliases={};
     if(!Array.isArray(state._importedBackupFingerprints)) state._importedBackupFingerprints=[];
     if(!Array.isArray(state._backupConflicts)) state._backupConflicts=[];
-    if(!['cut','gain','maintain'].includes(state.fscoreGoal)){
+    if(!['cut','gain','maintain','custom'].includes(state.fscoreGoal)){
         try{ state.fscoreGoal=localStorage.getItem('ftracker_fscore_goal')||'cut'; }catch(e){ state.fscoreGoal='cut'; }
     }
     if(!state.foodDiary) state.foodDiary={limits:{},entries:[]};
@@ -8573,14 +8573,75 @@ function renderHome() {
 
 function getFScoreGoal(){
     try{
-        const goal=(data&&['cut','gain','maintain'].includes(data.fscoreGoal))?data.fscoreGoal:null;
+        const goal=(data&&['cut','gain','maintain','custom'].includes(data.fscoreGoal))?data.fscoreGoal:null;
         if(goal) return goal;
         const legacy=localStorage.getItem('ftracker_fscore_goal');
-        return ['cut','gain','maintain'].includes(legacy)?legacy:'cut';
+        return ['cut','gain','maintain','custom'].includes(legacy)?legacy:'cut';
     }catch(e){return 'cut';}
 }
+function getFScoreCustomConfig(){
+    const fallback={name:'Моя цель',mode:'maintain',metrics:['weight','waist'],blockWeights:{body:40,training:30,nutrition:30}};
+    try{
+        const raw=(data&&data.fscoreCustomGoal)||JSON.parse(localStorage.getItem('ftracker_fscore_custom_goal')||'null');
+        const c=raw&&typeof raw==='object'?raw:{};
+        const metrics=Array.isArray(c.metrics)?c.metrics.map(String).filter(Boolean):fallback.metrics;
+        const bw=c.blockWeights&&typeof c.blockWeights==='object'?c.blockWeights:{};
+        const nums={body:Number(bw.body),training:Number(bw.training),nutrition:Number(bw.nutrition)};
+        const valid=Object.values(nums).every(Number.isFinite)&&Object.values(nums).every(v=>v>=0)&&Object.values(nums).some(v=>v>0);
+        return {name:String(c.name||fallback.name).trim()||fallback.name,mode:['gain','cut','maintain'].includes(c.mode)?c.mode:fallback.mode,metrics:metrics.length?metrics:fallback.metrics,blockWeights:valid?nums:fallback.blockWeights};
+    }catch(e){return fallback;}
+}
+function saveFScoreCustomConfig(cfg){
+    const clean={name:String(cfg.name||'Моя цель').trim().slice(0,40)||'Моя цель',mode:['gain','cut','maintain'].includes(cfg.mode)?cfg.mode:'maintain',metrics:Array.isArray(cfg.metrics)&&cfg.metrics.length?cfg.metrics:['weight','waist'],blockWeights:cfg.blockWeights||{body:40,training:30,nutrition:30}};
+    const sum=Object.values(clean.blockWeights).reduce((a,b)=>a+(Number(b)||0),0)||1;
+    clean.blockWeights=Object.fromEntries(Object.entries(clean.blockWeights).map(([k,v])=>[k,Math.round((Number(v)||0)/sum*100)]));
+    data.fscoreCustomGoal=clean;
+    try{localStorage.setItem('ftracker_fscore_custom_goal',JSON.stringify(clean));}catch(e){}
+    data.fscoreGoal='custom';
+    try{localStorage.setItem('ftracker_fscore_goal','custom');}catch(e){}
+    renderFScoreAnalytics();
+    renderFScoreHomeWidget();
+}
+function openFScoreCustomEditor(){
+    const box=document.getElementById('fscoreCustomEditor'); if(box) box.classList.toggle('hidden');
+}
+function saveFScoreCustomFromUI(){
+    const name=document.getElementById('fscoreCustomName')?.value||'Моя цель';
+    const mode=document.getElementById('fscoreCustomMode')?.value||'maintain';
+    const metrics=[...document.querySelectorAll('#fscoreCustomMetrics input[type="checkbox"]:checked')].map(x=>x.value);
+    const body=Number(document.getElementById('fscoreCustomBodyWeight')?.value)||0;
+    const training=Number(document.getElementById('fscoreCustomTrainingWeight')?.value)||0;
+    const nutrition=Number(document.getElementById('fscoreCustomNutritionWeight')?.value)||0;
+    if(!metrics.length){showToast('Выберите хотя бы один параметр тела');return;}
+    if(body+training+nutrition<=0){showToast('Укажите вес хотя бы для одного блока');return;}
+    saveFScoreCustomConfig({name,mode,metrics,blockWeights:{body,training,nutrition}});
+    showToast('Своя цель сохранена');
+}
+function fScoreCustomBody(cfg){
+    const metrics=(cfg?.metrics||[]).filter(Boolean);
+    const parts=[];
+    metrics.forEach(key=>{
+        const t=fScoreMeasurementTrend(key); if(!t)return;
+        let score;
+        if(key==='weight') score=fScoreRateScore(cfg.mode,t.speed);
+        else if(key==='waist'){
+            if(cfg.mode==='cut') score=t.change<0?100:t.change===0?78:fScoreClamp(78-t.change*18);
+            else if(cfg.mode==='gain') score=100;
+            else score=Math.abs(t.speed)<=.3?100:fScoreClamp(100-(Math.abs(t.speed)-.3)*80);
+        } else {
+            const c=t.change;
+            if(cfg.mode==='gain') score=c>0?fScoreClamp(78+c*16):fScoreClamp(82+c*18);
+            else if(cfg.mode==='cut') score=c>=-1?100:fScoreClamp(100-(Math.abs(c)-1)*32);
+            else score=Math.abs(c)<=1?100:fScoreClamp(100-(Math.abs(c)-1)*30);
+        }
+        if(Number.isFinite(score))parts.push(score);
+    });
+    if(!parts.length)return {score:null,available:false,parts:[]};
+    return {score:parts.reduce((a,b)=>a+b,0)/parts.length,available:true,parts};
+}
 function setFScoreGoal(goal){
-    if(!['cut','gain','maintain'].includes(goal)) return;
+    if(!['cut','gain','maintain','custom'].includes(goal)) return;
+    if(goal==='custom' && !data.fscoreCustomGoal){ openFScoreCustomEditor(); return; }
     const previousGoal=getFScoreGoal();
     data.fscoreGoal=goal;
     try{localStorage.setItem('ftracker_fscore_goal',goal);}catch(e){}
@@ -8858,8 +8919,11 @@ function fScoreNutrition(goal){
 function fScoreData(){
     const h=(data.history||[]).filter(e=>e&&e.date).slice().sort((a,b)=>new Date(a.date)-new Date(b.date));
     const recent=fScoreRecent(h,30),prev=fScoreRecent(h,60,30),goal=getFScoreGoal();
-    const body=fScoreBody(goal),training=fScoreTraining(recent,prev,h,goal),nutrition=fScoreNutrition(goal);
-    const blocks=[{name:'Замеры тела',score:body.score,weight:40},{name:'Тренировки',score:training.score,weight:30},{name:'Питание',score:nutrition.score,weight:30}].filter(x=>Number.isFinite(x.score));
+    const custom=goal==='custom'?getFScoreCustomConfig():null;
+    const engineGoal=custom?.mode||goal;
+    const body=custom?fScoreCustomBody(custom):fScoreBody(engineGoal),training=fScoreTraining(recent,prev,h,engineGoal),nutrition=fScoreNutrition(engineGoal);
+    const weights=custom?.blockWeights||{body:40,training:30,nutrition:30};
+    const blocks=[{name:'Замеры тела',score:body.score,weight:Number(weights.body)||0},{name:'Тренировки',score:training.score,weight:Number(weights.training)||0},{name:'Питание',score:nutrition.score,weight:Number(weights.nutrition)||0}].filter(x=>Number.isFinite(x.score)&&x.weight>0);
     const totalWeight=blocks.reduce((a,b)=>a+b.weight,0),score=totalWeight?Math.round(blocks.reduce((a,b)=>a+b.score*b.weight,0)/totalWeight):0;
     const measurements=(data.measurements||[]).slice().sort((a,b)=>new Date(a.date)-new Date(b.date));
     const measureCount=measurements.length,first=measurements[0],last=measurements[measurements.length-1];
@@ -8918,7 +8982,7 @@ function renderFScoreHomeWidget(){
     try{
         const x=fScoreData();
         el.className=`fscore-widget fscore-widget-${x.statusLevel}`;
-        const goalName={cut:'Сушка',gain:'Набор',maintain:'Поддержание'}[x.goal]||'Поддержание';
+        const goalName=x.goal==='custom'?getFScoreCustomConfig().name:({cut:'Сушка',gain:'Набор',maintain:'Поддержание'}[x.goal]||'Поддержание');
         const displayStatus=x.phase==='calibration'?'Собираем данные':x.status;
         el.innerHTML=`<span class="fscore-home-top"><span><span class="fscore-home-title">Индекс динамики</span><span class="fscore-home-goal">Цель: ${goalName}</span></span><span class="fscore-home-actions"><span class="fscore-home-action">Подробнее <span aria-hidden="true">›</span></span><button type="button" class="fscore-home-collapse" onclick="event.stopPropagation();toggleHomeFScoreCollapse(this)" aria-expanded="true" aria-label="Свернуть индекс">⌃</button></span></span><span class="fscore-home-middle"><span class="fscore-home-number-wrap"><span class="fscore-home-number">${x.availableCount?x.score:'—'}</span><span class="fscore-home-scale">/ 100</span></span><span class="fscore-home-status"><span class="fscore-home-dot" aria-hidden="true"></span><span class="fscore-home-status-text">${escapeHtml(displayStatus)}</span></span></span><span class="fscore-home-progress" aria-hidden="true"><span class="fscore-home-progress-fill" style="width:${x.availableCount?Math.max(0,Math.min(100,x.score)):0}%"></span></span><span class="fscore-home-hint">${x.phase==='calibration'?'Сейчас считаются тренировки и питание. История замеров подключит полноценный анализ тела.':x.availableCount?'Результат рассчитан только по доступным данным.':'Добавьте любые данные для начала анализа'}</span>`;
     }catch(err){
@@ -8978,7 +9042,7 @@ function getFScoreNextStep(x,bodyItems){
 function renderFScoreAnalytics(){
     const root=document.getElementById('fscoreAnalyticsContent');if(!root)return;
     const x=fScoreData();
-    const goalName={cut:'Сушка',gain:'Набор',maintain:'Поддержание'}[x.goal]||'Поддержание';
+    const goalName=x.goal==='custom'?getFScoreCustomConfig().name:({cut:'Сушка',gain:'Набор',maintain:'Поддержание'}[x.goal]||'Поддержание');
     const scoreText=x.availableCount?`${x.score}`:'—';
     const metric=v=>Number.isFinite(v)?`${Math.round(v)} / 100`:'—';
     const bodyItems=getFScoreBodyDisplayItems(x.measures||[]);
@@ -9012,6 +9076,10 @@ function renderFScoreAnalytics(){
           <button type="button" class="${x.goal==='gain'?'active':''}" aria-pressed="${x.goal==='gain'}" onclick="setFScoreGoal('gain')">💪 Набор</button>
           <button type="button" class="${x.goal==='cut'?'active':''}" aria-pressed="${x.goal==='cut'}" onclick="setFScoreGoal('cut')">🔥 Сушка</button>
           <button type="button" class="${x.goal==='maintain'?'active':''}" aria-pressed="${x.goal==='maintain'}" onclick="setFScoreGoal('maintain')">⚖️ Поддержание</button>
+          <button type="button" class="${x.goal==='custom'?'active':''}" aria-pressed="${x.goal==='custom'}" onclick="openFScoreCustomEditor()">⚙️ Своя цель</button>
+        </div>
+        <div id="fscoreCustomEditor" class="fscore-custom-editor ${x.goal==='custom'?'':'hidden'}">
+          ${(()=>{const c=getFScoreCustomConfig(); const fields=getMeasurementFields(); return `<div class="fscore-custom-title">Своя цель</div><div class="fscore-custom-grid"><label>Название<input id="fscoreCustomName" value="${escapeHtml(c.name)}" maxlength="40"></label><label>Базовая логика<select id="fscoreCustomMode"><option value="gain" ${c.mode==='gain'?'selected':''}>Рост</option><option value="cut" ${c.mode==='cut'?'selected':''}>Снижение</option><option value="maintain" ${c.mode==='maintain'?'selected':''}>Стабильность</option></select></label></div><div class="fscore-custom-label">Какие замеры учитывать</div><div id="fscoreCustomMetrics" class="fscore-custom-metrics">${fields.map(f=>`<label><input type="checkbox" value="${escapeHtml(f.key)}" ${c.metrics.includes(f.key)?'checked':''}><span>${escapeHtml(f.label)}</span></label>`).join('')}</div><div class="fscore-custom-label">Вес блоков в итоговом индексе</div><div class="fscore-custom-weights"><label>Тело <input id="fscoreCustomBodyWeight" type="number" min="0" max="100" value="${c.blockWeights.body}"></label><label>Тренировки <input id="fscoreCustomTrainingWeight" type="number" min="0" max="100" value="${c.blockWeights.training}"></label><label>Питание <input id="fscoreCustomNutritionWeight" type="number" min="0" max="100" value="${c.blockWeights.nutrition}"></label></div><small class="fscore-custom-hint">Проценты автоматически нормализуются до 100%. Для выбранных замеров используется выбранная базовая логика: рост, снижение или стабильность.</small><button type="button" class="fscore-custom-save" onclick="saveFScoreCustomFromUI()">Сохранить свою цель</button>`;})()}
         </div>
       </section>
 
@@ -10042,7 +10110,7 @@ function ensureMeasurementHistoryModal() {
     modal.onclick = function(e){ if(e.target === modal) closeBodyHistory(); };
     modal.innerHTML = `
         <div class="catalog-modal-content body-history-modal-content">
-            <span class="close-btn" onclick="closeBodyHistory()">&times;</span>
+            <button type="button" class="surface-back-btn" onclick="closeBodyHistory()">← Назад</button>
             <div class="body-history-modal-head">
                 <div><div class="body-history-modal-title">История замеров</div><div class="body-history-modal-sub">Все сохранённые измерения</div></div>
             </div>
@@ -17922,7 +17990,7 @@ window.closeImportConfirm=function(){
 .nutrition-macro b{font-size:14px;max-width:100%;overflow:hidden;text-overflow:ellipsis;}
 @media(max-width:390px){.nutrition-macro{padding:10px 8px}.nutrition-macro span{font-size:11px}.nutrition-macro b{font-size:13px}.nutrition-stat{padding:10px 12px}}
 </style>
-</body>
+\n<style id="ftracker-v1-4-41-fscore-polish">\n/* v1.4.41: formula must always fit narrow iPhone widths. */\n.fscore-how-content .fscore-mini-formula{white-space:normal!important;overflow:visible!important;overflow-wrap:anywhere!important;word-break:break-word!important;text-align:center!important;font-size:11px!important;line-height:1.35!important;padding:9px 10px!important;}\n.fscore-how-item>summary::marker,.fscore-how-card>summary::marker{content:""!important;}\n.fscore-how-item>summary::-webkit-details-marker,.fscore-how-card>summary::-webkit-details-marker{display:none!important;}\n/* Measurement history follows the same Back pattern as the other surfaces. */\n#measurementHistoryModal .body-history-modal-content{position:relative!important;padding:16px 16px 20px!important;}\n#measurementHistoryModal .body-history-modal-content>.surface-back-btn{display:inline-flex!important;align-items:center!important;min-height:40px!important;padding:0 12px!important;margin:0 0 12px!important;border-radius:12px!important;background:var(--window-surface-2)!important;border:1px solid var(--window-border)!important;color:var(--text)!important;font-size:15px!important;font-weight:750!important;line-height:1!important;}\n#measurementHistoryModal .body-history-modal-head{padding-right:0!important;margin-bottom:12px!important;}\n.fscore-custom-editor{margin-top:10px;padding:12px;border:1px solid var(--border);border-radius:14px;background:var(--input-bg);}\n.fscore-custom-editor.hidden{display:none!important;}\n.fscore-custom-title{font-size:15px;font-weight:850;margin-bottom:9px;}\n.fscore-custom-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:8px;}\n.fscore-custom-grid label,.fscore-custom-weights label{display:flex;flex-direction:column;gap:5px;font-size:11px;color:var(--subtext);font-weight:750;}\n.fscore-custom-grid input,.fscore-custom-grid select,.fscore-custom-weights input{width:100%;box-sizing:border-box;margin:0;padding:9px 10px;border:1px solid var(--border);border-radius:10px;background:var(--card-bg);color:var(--text);font:inherit;}\n.fscore-custom-label{margin:11px 0 6px;font-size:11px;color:var(--subtext);font-weight:800;}\n.fscore-custom-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;}\n.fscore-custom-metrics label{display:flex;align-items:center;gap:7px;min-width:0;padding:8px 9px;border:1px solid var(--border);border-radius:10px;background:rgba(255,255,255,.035);font-size:12px;}\n.fscore-custom-metrics input{margin:0;accent-color:var(--accent);}\n.fscore-custom-metrics span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}\n.fscore-custom-weights{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;}\n.fscore-custom-weights input{padding:8px 7px;text-align:center;}\n.fscore-custom-hint{display:block;margin-top:8px;color:var(--subtext);font-size:10.5px;line-height:1.35;}\n.fscore-custom-save{width:100%;margin-top:10px;min-height:42px;border:0;border-radius:11px;background:var(--accent-gradient);color:#fff;font-weight:850;}\n@media(max-width:430px){.fscore-custom-grid{grid-template-columns:1fr}.fscore-custom-metrics{grid-template-columns:1fr 1fr}.fscore-custom-weights{grid-template-columns:repeat(3,minmax(0,1fr));}.fscore-custom-weights label{font-size:10px}}\n</style>\n</body>
 </html>
 
 <style id="ftracker-v1416-final-ui">
@@ -18015,7 +18083,7 @@ body.light-mode .toast{
 </style>
 
 <style id="ftracker-v1-4-36-final-override">
-/* v1.4.40 — authoritative final override; must remain last so legacy fixes cannot reintroduce the offset. */
+/* v1.4.41 — authoritative final override; must remain last so legacy fixes cannot reintroduce the offset. */
 .safe-area>.container,#app.container{
   padding-top:0!important;
 }

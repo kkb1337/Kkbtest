@@ -26,6 +26,6 @@
       "purpose": "any maskable"
     }
   ],
-  "_build": "ftracker-v1.4.40-fscore-how",
-  "version": "1.4.40"
+  "_build": "ftracker-v1.4.41-fscore-custom",
+  "version": "1.4.41"
 }
