@@ -6775,7 +6775,7 @@ body{
 .food-macro-card span,.food-macro-card strong,.food-macro-card small{white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;}
 @media(max-width:390px){#chartModal .period-selector{grid-template-columns:repeat(2,minmax(0,1fr))!important;}#chartModal .period-selector button{font-size:12px!important;}.food-macro-card strong{font-size:14px!important;}}
 
-/* FTracker v1.4.43 — cosmetic cleanup.
+/* FTracker v1.4.44 — cosmetic cleanup.
    Keep the stable application logic intact; normalize only viewport geometry and redundant helper UI. */
 html,body{margin:0!important;padding:0!important;width:100%!important;min-height:100%!important;overflow-x:hidden!important;}
 body{min-height:100dvh!important;background:var(--bg)!important;}
@@ -6817,7 +6817,7 @@ body{min-height:100dvh!important;background:var(--bg)!important;}
 </style>
 
 <style id="ftracker-v1-4-37-safe-area-final">
-/* v1.4.43 — final safe-area geometry pass.
+/* v1.4.44 — final safe-area geometry pass.
    The app shell already lives below the iOS safe area, so no second top inset
    is allowed on the container or on full-screen content surfaces. */
 .safe-area>.container,#app.container{
@@ -6862,7 +6862,7 @@ body{min-height:100dvh!important;background:var(--bg)!important;}
 }
 </style>
 <style id="ftracker-v1-4-37-authoritative-geometry">
-/* v1.4.43 — authoritative geometry fix.
+/* v1.4.44 — authoritative geometry fix.
    .safe-area already consumes the iOS top inset. Ordinary screens and the workout
    must never add that inset a second time. */
 .safe-area>.container,#app.container{padding-top:0!important;}
@@ -6887,7 +6887,7 @@ body{min-height:100dvh!important;background:var(--bg)!important;}
 }
 </style>
 <style id="ftracker-v1-4-39-home-refined">
-/* v1.4.43 — preserve the original home composition; only tighten dimensions. */
+/* v1.4.44 — preserve the original home composition; only tighten dimensions. */
 #homeScreen{box-sizing:border-box!important;}
 #homeScreen>.title:first-child{margin-bottom:6px!important;}
 #programList{display:grid!important;gap:8px!important;}
@@ -7126,7 +7126,7 @@ body{min-height:100dvh!important;background:var(--bg)!important;}
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.43 от 05.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.44 от 05.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -7662,7 +7662,7 @@ body{min-height:100dvh!important;background:var(--bg)!important;}
 
 <script id="ftracker-app">
 /* ================================================================
-   FTracker v1.4.43
+   FTracker v1.4.44
    One centralized stack: only the top modal can scroll/interact.
    ================================================================ */
 const modalStack = [];
@@ -8610,7 +8610,7 @@ function getFScoreCustomGoals(){
             const nums={body:Number(bw.body),training:Number(bw.training),nutrition:Number(bw.nutrition)};
             const valid=Object.values(nums).every(Number.isFinite)&&Object.values(nums).every(v=>v>=0)&&Object.values(nums).some(v=>v>0);
             const tr=c.training&&typeof c.training==='object'?c.training:{}; const nu=c.nutrition&&typeof c.nutrition==='object'?c.nutrition:{};
-            return {id:String(c.id||('cg_legacy_'+i)),name:String(c.name||'Моя цель').trim().slice(0,40)||'Моя цель',mode:['gain','cut','maintain'].includes(c.mode)?c.mode:'maintain',evaluationDays:[30,60,90,180].includes(Number(c.evaluationDays))?Number(c.evaluationDays):90,targets,training:{target:Math.max(1,Number(tr.target)||15),period:['30','60','90'].includes(String(tr.period))?String(tr.period):'30'},nutrition:{auto:nu.auto!==false,calories:Math.max(0,Number(nu.calories)||0),protein:Math.max(0,Number(nu.protein)||0),fat:Math.max(0,Number(nu.fat)||0),carbs:Math.max(0,Number(nu.carbs)||0),toleranceCalories:Math.max(0,Number(nu.toleranceCalories)||100),toleranceProtein:Math.max(0,Number(nu.toleranceProtein)||10),toleranceFat:Math.max(0,Number(nu.toleranceFat)||10),toleranceCarbs:Math.max(0,Number(nu.toleranceCarbs)||15)},blockWeights:valid?nums:fallback.blockWeights};
+            return {id:String(c.id||('cg_legacy_'+i)),name:String(c.name||'Моя цель').trim().slice(0,40)||'Моя цель',mode:['gain','cut','maintain'].includes(c.mode)?c.mode:'maintain',evaluationDays:[30,60,90,180].includes(Number(c.evaluationDays))?Number(c.evaluationDays):90,targets,training:{target:Math.max(1,Number(tr.target)||15),period:['30','60','90'].includes(String(tr.period))?String(tr.period):'30'},nutrition:{auto:nu.auto!==false,calories:Math.max(0,Number(nu.calories)||0),protein:Math.max(0,Number(nu.protein)||0),fat:Math.max(0,Number(nu.fat)||0),carbs:Math.max(0,Number(nu.carbs)||0),toleranceCalories:Math.max(0,Number.isFinite(Number(nu.toleranceCalories))?Number(nu.toleranceCalories):100),toleranceProtein:Math.max(0,Number.isFinite(Number(nu.toleranceProtein))?Number(nu.toleranceProtein):10),toleranceFat:Math.max(0,Number.isFinite(Number(nu.toleranceFat))?Number(nu.toleranceFat):10),toleranceCarbs:Math.max(0,Number.isFinite(Number(nu.toleranceCarbs))?Number(nu.toleranceCarbs):15)},blockWeights:valid?nums:fallback.blockWeights};
         });
         if(!list.length)return [fallback];
         return list;
@@ -8652,9 +8652,9 @@ function addFScoreCustomGoal(){
 }
 function fscoreCustomModeInfo(mode){
     const map={
-      gain:{title:'Набор',text:'Общий фон цели для тренировок и автоматического питания. Направление каждого замера тела задаётся отдельно.'},
+      gain:{title:'Рост / набор',text:'Определяет общий режим для тренировок и автоматического питания. Для тела направление выбирается отдельно для каждого параметра.'},
       cut:{title:'Снижение',text:'Общий фон цели для тренировок и автоматического питания. Например, вес и талия могут уменьшаться, а бицепс — одновременно расти.'},
-      maintain:{title:'Поддержание',text:'Общий фон цели для тренировок и автоматического питания. Для тела отдельно выбирается: увеличить, уменьшить или стабилизировать.'}
+      maintain:{title:'Стабильность',text:'Определяет общий режим для тренировок и автоматического питания. Для тела отдельно выбирается: увеличить, уменьшить или стабилизировать.'}
     }; return map[mode]||map.maintain;
 }
 function openFScoreCustomEditor(){
@@ -8672,7 +8672,7 @@ function updateFScoreTargetRow(el){
     const tol=row.querySelector('.fscore-target-tolerance-wrap');
     if(tol)tol.classList.toggle('hidden',direction!=='maintain');
     const hint=row.querySelector('.fscore-target-explain');
-    if(hint)hint.textContent=direction==='gain'?'Цель должна быть выше текущего значения. Оценка смотрит долгосрочный прогресс и недавнюю динамику.':direction==='cut'?'Цель должна быть ниже текущего значения. Оценка смотрит снижение относительно исходного значения.':'Задайте целевое значение и допустимое отклонение. Внутри коридора показатель получает полный балл.';
+    if(hint)hint.textContent=direction==='gain'?'↑ Увеличить: задайте долгосрочную цель. Замеры могут временно стоять на месте — это не провал.':direction==='cut'?'↓ Уменьшить: задайте долгосрочную цель. Оценивается фактическое движение вниз за выбранный период.':'→ Стабилизировать: задайте целевое значение и допуск. Внутри коридора показатель получает полный балл.';
 }
 function initFScoreTargetRows(){document.querySelectorAll('#fscoreCustomTargets .fscore-target-card').forEach(r=>updateFScoreTargetRow(r.querySelector('.fscore-target-enabled')));updateFScoreCustomModeInfo();toggleFScoreNutritionMode();}
 function toggleFScoreNutritionMode(){
@@ -8690,7 +8690,7 @@ function saveFScoreCustomFromUI(){
     if(!Object.keys(targets).length){showToast('Добавьте хотя бы один параметр тела');return;}
     const body=Number(document.getElementById('fscoreCustomBodyWeight')?.value)||0,training=Number(document.getElementById('fscoreCustomTrainingWeight')?.value)||0,nutritionWeight=Number(document.getElementById('fscoreCustomNutritionWeight')?.value)||0;
     const trainingTarget=Math.max(1,Number(document.getElementById('fscoreCustomTrainingTarget')?.value)||15),trainingPeriod=document.getElementById('fscoreCustomTrainingPeriod')?.value||'30',evaluationDays=Number(document.getElementById('fscoreCustomEvaluationDays')?.value)||90;
-    const nutrition={auto:document.getElementById('fscoreCustomNutritionAuto')?.value!=='manual',calories:Math.max(0,Number(document.getElementById('fscoreCustomCalories')?.value)||0),protein:Math.max(0,Number(document.getElementById('fscoreCustomProtein')?.value)||0),fat:Math.max(0,Number(document.getElementById('fscoreCustomFat')?.value)||0),carbs:Math.max(0,Number(document.getElementById('fscoreCustomCarbs')?.value)||0),toleranceCalories:Math.max(0,Number(document.getElementById('fscoreCustomCalTol')?.value)||100),toleranceProtein:Math.max(0,Number(document.getElementById('fscoreCustomProteinTol')?.value)||10),toleranceFat:Math.max(0,Number(document.getElementById('fscoreCustomFatTol')?.value)||10),toleranceCarbs:Math.max(0,Number(document.getElementById('fscoreCustomCarbsTol')?.value)||15)};
+    const nutrition={auto:document.getElementById('fscoreCustomNutritionAuto')?.value!=='manual',calories:Math.max(0,Number(document.getElementById('fscoreCustomCalories')?.value)||0),protein:Math.max(0,Number(document.getElementById('fscoreCustomProtein')?.value)||0),fat:Math.max(0,Number(document.getElementById('fscoreCustomFat')?.value)||0),carbs:Math.max(0,Number(document.getElementById('fscoreCustomCarbs')?.value)||0),toleranceCalories:Math.max(0,Number(document.getElementById('fscoreCustomCalTol')?.value)||0),toleranceProtein:Math.max(0,Number(document.getElementById('fscoreCustomProteinTol')?.value)||0),toleranceFat:Math.max(0,Number(document.getElementById('fscoreCustomFatTol')?.value)||0),toleranceCarbs:Math.max(0,Number(document.getElementById('fscoreCustomCarbsTol')?.value)||0)};
     if(body+training+nutritionWeight<=0){showToast('Укажите вес хотя бы для одного блока');return;}
     saveFScoreCustomConfig({id:current.id,name,mode,evaluationDays,targets,training:{target:trainingTarget,period:trainingPeriod},nutrition,blockWeights:{body,training,nutrition:nutritionWeight}},current.id);
     showToast('Своя цель сохранена');
@@ -9225,7 +9225,7 @@ function renderFScoreAnalytics(){
           <div class="fscore-goals-list">${goals.map(g=>`<div class="fscore-goal-item ${g.id===c.id?'active':''}"><button type="button" class="fscore-goal-select" onclick="selectFScoreCustomGoal('${escapeHtml(g.id)}')"><b>${escapeHtml(g.name)}</b><small>${g.mode==='gain'?'Рост':g.mode==='cut'?'Снижение':'Стабильность'} · ${g.evaluationDays} дней</small></button><button type="button" class="fscore-goal-delete" aria-label="Удалить цель" onclick="deleteFScoreCustomGoal('${escapeHtml(g.id)}')">×</button></div>`).join('')}</div>
           <button type="button" class="fscore-add-goal" onclick="addFScoreCustomGoal()">＋ Добавить свою цель</button>
           <div class="fscore-custom-title" style="margin-top:14px">⚙️ Настройка выбранной цели</div>
-          <div class="fscore-custom-grid"><label>Название цели<input id="fscoreCustomName" value="${escapeHtml(c.name)}" maxlength="40"></label><label>Общий тип цели<select id="fscoreCustomMode" onchange="updateFScoreCustomModeInfo()"><option value="gain" ${c.mode==='gain'?'selected':''}>💪 Набор</option><option value="cut" ${c.mode==='cut'?'selected':''}>🔥 Снижение</option><option value="maintain" ${c.mode==='maintain'?'selected':''}>⚖️ Поддержание</option></select></label></div>
+          <div class="fscore-custom-grid"><label>Название цели<input id="fscoreCustomName" value="${escapeHtml(c.name)}" maxlength="40"></label><label>Общая стратегия<select id="fscoreCustomMode" onchange="updateFScoreCustomModeInfo()"><option value="gain" ${c.mode==='gain'?'selected':''}>💪 Рост / набор</option><option value="cut" ${c.mode==='cut'?'selected':''}>🔥 Снижение</option><option value="maintain" ${c.mode==='maintain'?'selected':''}>⚖️ Стабильность</option></select></label></div>
           <div id="fscoreCustomModeInfo" class="fscore-mode-info"></div>
           <label class="fscore-evaluation-field">Период оценки динамики<select id="fscoreCustomEvaluationDays"><option value="30" ${c.evaluationDays===30?'selected':''}>30 дней</option><option value="60" ${c.evaluationDays===60?'selected':''}>60 дней</option><option value="90" ${c.evaluationDays===90?'selected':''}>90 дней</option><option value="180" ${c.evaluationDays===180?'selected':''}>180 дней</option></select><small>Для роста мышц приложение смотрит реальную динамику за этот период. Плато само по себе не считается провалом.</small></label>
           <details class="fscore-custom-section" open><summary>🧍 Параметры тела <span>Что учитывать</span></summary><div class="fscore-body-help"><b>Сейчас</b> берётся автоматически из последнего замера. Для каждого параметра отдельно выберите направление и задайте цель. Ненужный параметр просто выключите.</div><div id="fscoreCustomTargets" class="fscore-custom-targets">${fields.map(f=>{const latest=(data.measurements||[]).filter(m=>Number(m[f.key])>0).sort((a,b)=>String(a.date).localeCompare(String(b.date)));const current=latest.length?Number(latest[latest.length-1][f.key]):'';const t=c.targets[f.key]||{direction:c.mode,target:current!==''?current:'',tolerance:f.key==='weight'?1:1};const enabled=!!c.targets[f.key];return `<div class="fscore-target-card ${enabled?'enabled':''}" data-key="${escapeHtml(f.key)}"><div class="fscore-target-head"><div class="fscore-target-name"><b>${escapeHtml(f.label)}</b><small>Сейчас: ${current!==''?escapeHtml(String(current)):'нет данных'}</small></div><label class="fscore-target-toggle"><input class="fscore-target-enabled" type="checkbox" ${enabled?'checked':''} onchange="updateFScoreTargetRow(this)"><span>Учитывать</span></label></div><div class="fscore-target-fields"><label>Цель<input class="fscore-target-value" type="number" step="0.1" value="${t.target||''}" placeholder="Например, ${current!==''?escapeHtml(String(current)):'значение'}"></label><label>Направление<select class="fscore-target-direction" onchange="updateFScoreTargetRow(this)"><option value="gain" ${t.direction==='gain'?'selected':''}>↑ Увеличить</option><option value="cut" ${t.direction==='cut'?'selected':''}>↓ Уменьшить</option><option value="maintain" ${t.direction==='maintain'?'selected':''}>→ Стабилизировать</option></select></label><label class="fscore-target-tolerance-wrap ${t.direction==='maintain'?'':'hidden'}">Допуск<input class="fscore-target-tolerance" type="number" step="0.1" min="0.1" value="${t.tolerance||1}"></label></div><small class="fscore-target-explain"></small></div>`}).join('')}</div><small class="fscore-section-hint">Например, бицепс 40 → 45 см: 45 см — долгосрочная цель. Если замеры идут 40 → 40,5 → 40,5 → 41, приложение видит положительную динамику, а плато не обнуляет достигнутый прогресс. Для «Уменьшить» логика зеркальная: например, талия 96 → 90 см.</small></details>
@@ -13330,7 +13330,7 @@ function showToast(msg) {
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=1.4.37', {updateViaCache:'none'})
+        navigator.serviceWorker.register('./sw.js?v=1.4.44', {updateViaCache:'none'})
             .then(reg => console.log('SW registered', reg.scope))
             .catch(err => console.log('SW failed', err));
     });
@@ -18156,7 +18156,7 @@ window.closeImportConfirm=function(){
 @media(max-width:390px){.nutrition-macro{padding:10px 8px}.nutrition-macro span{font-size:11px}.nutrition-macro b{font-size:13px}.nutrition-stat{padding:10px 12px}}
 </style>
 <style id="ftracker-v1-4-41-fscore-polish">
-/* v1.4.43: formula must always fit narrow iPhone widths. */
+/* v1.4.44: formula must always fit narrow iPhone widths. */
 .fscore-how-content .fscore-mini-formula{white-space:normal!important;overflow:visible!important;overflow-wrap:anywhere!important;word-break:break-word!important;text-align:center!important;font-size:11px!important;line-height:1.35!important;padding:9px 10px!important;}
 .fscore-how-item>summary::marker,.fscore-how-card>summary::marker{content:""!important;}
 .fscore-how-item>summary::-webkit-details-marker,.fscore-how-card>summary::-webkit-details-marker{display:none!important;}
@@ -18182,7 +18182,7 @@ window.closeImportConfirm=function(){
 @media(max-width:430px){.fscore-custom-grid{grid-template-columns:1fr}.fscore-custom-metrics{grid-template-columns:1fr 1fr}.fscore-custom-weights{grid-template-columns:repeat(3,minmax(0,1fr));}.fscore-custom-weights label{font-size:10px}}
 </style>
 <style id="ftracker-v1-4-42-custom-goal">
-/* v1.4.43: history header and full custom-goal constructor. */
+/* v1.4.44: history header and full custom-goal constructor. */
 #measurementHistoryModal .body-history-modal-content{padding:12px 16px 20px!important;}
 #measurementHistoryModal .body-history-modal-head{display:grid!important;grid-template-columns:auto 1fr!important;grid-template-rows:auto auto!important;column-gap:10px!important;align-items:center!important;padding:0!important;margin:0 0 12px!important;}
 #measurementHistoryModal .body-history-modal-head .surface-back-btn{grid-column:1;grid-row:1 / span 2!important;margin:0!important;min-height:36px!important;padding:0 9px!important;background:transparent!important;border:0!important;font-size:15px!important;font-weight:800!important;}
@@ -18204,23 +18204,29 @@ window.closeImportConfirm=function(){
 .fscore-custom-section>*:not(summary){margin-left:12px;margin-right:12px;}
 .fscore-body-help{padding:11px 0 4px;color:var(--subtext);font-size:12px;line-height:1.4;}
 .fscore-body-help b{color:var(--text);}
-.fscore-custom-targets{display:flex;flex-direction:column;gap:8px;padding-top:9px;}
-.fscore-target-card{padding:11px;border:1px solid var(--border);border-radius:13px;background:var(--input-bg);opacity:.68;}
+.fscore-custom-targets{display:flex;flex-direction:column;gap:9px;padding-top:9px;}
+.fscore-target-card{padding:12px;border:1px solid var(--border);border-radius:14px;background:var(--input-bg);opacity:.68;}
 .fscore-target-card.enabled{opacity:1;border-color:rgba(103,201,112,.45);}
-.fscore-target-head{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.fscore-target-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
 .fscore-target-name{display:flex;flex-direction:column;min-width:0;}
-.fscore-target-name b{font-size:14px;}
-.fscore-target-name small{font-size:11px;color:var(--subtext);margin-top:2px;}
+.fscore-target-name b{font-size:15px;line-height:1.2;}
+.fscore-target-name small{font-size:11px;color:var(--subtext);margin-top:4px;}
 .fscore-target-toggle{display:flex;align-items:center;gap:6px;flex:0 0 auto;color:var(--subtext);font-size:11px;font-weight:800;}
 .fscore-target-toggle input{width:18px!important;height:18px!important;margin:0!important;accent-color:var(--accent);}
-.fscore-target-fields{display:grid;grid-template-columns:1fr 1.25fr .7fr;gap:7px;margin-top:9px;}
-.fscore-target-fields label{display:flex;flex-direction:column;gap:4px;color:var(--subtext);font-size:10px;font-weight:750;}
-.fscore-target-fields input,.fscore-target-fields select{width:100%;box-sizing:border-box;padding:9px 8px;border:1px solid var(--border);border-radius:10px;background:var(--card-bg);color:var(--text);font:inherit;font-size:12px;min-width:0;}
+.fscore-target-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;}
+.fscore-target-fields label{display:flex;flex-direction:column;gap:5px;color:var(--subtext);font-size:11px;font-weight:750;}
+.fscore-target-fields input,.fscore-target-fields select{width:100%;box-sizing:border-box;padding:10px;border:1px solid var(--border);border-radius:11px;background:var(--card-bg);color:var(--text);font:inherit;font-size:13px;min-width:0;}
+.fscore-target-fields .fscore-target-tolerance-wrap{grid-column:1/-1;max-width:50%;}
 .fscore-target-fields .hidden{display:none!important;}
-.fscore-target-explain{display:block;margin-top:7px;color:var(--subtext);font-size:10px;line-height:1.3;min-height:13px;}
+.fscore-target-explain{display:block;margin-top:8px;color:var(--subtext);font-size:11px;line-height:1.35;min-height:0;}
 .fscore-section-hint{display:block;padding:8px 0 10px;color:var(--subtext);font-size:11px;line-height:1.4;}
-@media(max-width:430px){.fscore-target-fields{grid-template-columns:1fr 1.35fr .72fr}.fscore-target-fields input,.fscore-target-fields select{font-size:11px;padding:9px 6px;}}
-@media(max-width:370px){.fscore-target-fields{grid-template-columns:1fr 1.25fr}.fscore-target-tolerance-wrap{grid-column:1/-1}.fscore-target-fields input,.fscore-target-fields select{font-size:12px;}}
+.fscore-target-card:not(.enabled) .fscore-target-fields{opacity:.45;pointer-events:none;}
+@media(max-width:430px){.fscore-target-fields{grid-template-columns:1fr 1fr}.fscore-target-fields input,.fscore-target-fields select{font-size:12px;padding:10px;}}
+@media(max-width:370px){.fscore-target-fields{grid-template-columns:1fr}.fscore-target-fields .fscore-target-tolerance-wrap{grid-column:auto;max-width:none;}}
+/* Never allow browser details markers to become visible UI glyphs on iOS. */
+details>summary{list-style:none!important;}
+details>summary::marker{content:none!important;font-size:0!important;}
+details>summary::-webkit-details-marker{display:none!important;width:0!important;height:0!important;}
 </style>
 
 <style id="ftracker-v1416-final-ui">
