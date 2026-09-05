@@ -26,6 +26,6 @@
       "purpose": "any maskable"
     }
   ],
-  "_build": "ftracker-v1.4.38-home-compact",
-  "version": "1.4.38"
+  "_build": "ftracker-v1.4.39-home-refined",
+  "version": "1.4.39"
 }
