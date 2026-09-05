@@ -1,4 +1,4 @@
-const CACHE_VERSION='ftracker-v1.4.69-canonical-screen-alignment';
+const CACHE_VERSION='ftracker-v1.4.70-history-visualviewport-fix';
 const CACHE_NAME=CACHE_VERSION;
 const APP_SHELL=['./','./index.html','./manifest.json','./icon-192.png','./icon-512.png'];
 self.addEventListener('install',event=>event.waitUntil((async()=>{const c=await caches.open(CACHE_NAME);await c.addAll(APP_SHELL);await self.skipWaiting();})()));

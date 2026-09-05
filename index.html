@@ -6979,40 +6979,6 @@ body{min-height:100dvh!important;background:var(--bg)!important;}
 @media(max-width:360px){.fscore-period-presets{grid-template-columns:repeat(3,minmax(0,1fr))!important;}.fscore-target-corridor-editor{grid-template-columns:1fr!important;}.fscore-target-corridor{grid-column:auto!important;}}
 </style>
 
-<style id="ftracker-v1-4-69-history-detail-geometry">
-/* v1.4.69 — surgical repair.
-   Do not change global safe-area ownership or ordinary screen headers. */
-#workoutDetailModal{
-  position:fixed!important;
-  top:0!important; right:0!important; bottom:0!important; left:0!important;
-  inset:0!important;
-  width:auto!important;
-  min-width:0!important;
-  height:auto!important;
-  min-height:0!important;
-  max-height:none!important;
-  margin:0!important;
-  padding:0!important;
-  display:flex!important;
-  align-items:stretch!important;
-  justify-content:stretch!important;
-  overflow:hidden!important;
-}
-#workoutDetailModal>.workout-detail-content{
-  width:100%!important;
-  height:100%!important;
-  min-height:0!important;
-  max-height:none!important;
-  flex:1 1 auto!important;
-}
-#workoutDetailModal #workoutDetailContent{
-  flex:1 1 0!important;
-  min-height:0!important;
-  height:auto!important;
-  max-height:none!important;
-  overflow-y:auto!important;
-}
-</style>
 </head>
 <body>
 <div class="safe-area"><div class="container" id="app">
@@ -18564,29 +18530,98 @@ body.light-mode .toast{
 }
 </style>
 
-<style id="ftracker-v1-4-66-layout-cleanup">
-/* v1.4.66 — canonical ownership. No parallel fullscreen/modal geometry. */
-/* Workout detail uses the same overlay model as the application's modal screens. */
-#workoutDetailModal{position:fixed!important;inset:0!important;z-index:9000!important;display:flex!important;align-items:stretch!important;justify-content:stretch!important;width:100%!important;height:100dvh!important;margin:0!important;padding:0!important;background:var(--bg)!important;overflow:hidden!important;box-sizing:border-box!important;}
+
+<style id="ftracker-v1-4-70-workout-detail-ios-viewport">
+/* v1.4.70 — isolated iOS PWA repair for History → workout detail.
+   No ordinary screen, safe-area shell or global header geometry is touched. */
+#workoutDetailModal{
+  position:fixed!important;
+  top:0!important;
+  right:0!important;
+  left:0!important;
+  bottom:auto!important;
+  width:100%!important;
+  height:var(--ftracker-workout-detail-vv-height, 100%)!important;
+  min-height:0!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:0!important;
+  display:block!important;
+  overflow:hidden!important;
+  background:var(--bg)!important;
+}
 #workoutDetailModal.hidden{display:none!important;}
-#workoutDetailModal>.workout-detail-content{position:relative!important;display:flex!important;flex-direction:column!important;width:100%!important;height:100%!important;min-height:0!important;max-width:none!important;max-height:none!important;margin:0!important;padding:calc(env(safe-area-inset-top,0px) + 12px) 16px calc(env(safe-area-inset-bottom,0px) + 16px)!important;box-sizing:border-box!important;border:0!important;border-radius:0!important;background:var(--bg)!important;overflow:hidden!important;}
-#workoutDetailModal .workout-detail-title-wrap{position:relative!important;flex:0 0 auto!important;margin:0 0 12px!important;padding:0!important;}
-#workoutDetailModal #workoutDetailTitle{margin:0!important;padding:16px 56px 16px 16px!important;border:1px solid var(--border)!important;border-radius:18px!important;background:var(--card-bg)!important;box-sizing:border-box!important;}
-#workoutDetailModal .workout-detail-close{position:absolute!important;top:50%!important;right:10px!important;transform:translateY(-50%)!important;width:40px!important;height:40px!important;margin:0!important;padding:0!important;z-index:2!important;}
-#workoutDetailModal #workoutDetailContent{flex:1 1 auto!important;min-height:0!important;margin:0!important;padding:0 2px!important;overflow-y:auto!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior:contain!important;}
-/* Fix inactive toggle: the class applied by JS must actually hide rows. */
-#fscoreCustomTargets.fscore-hide-inactive .fscore-target-card.fscore-inactive-hidden{display:none!important;}
-/* Custom goal is rendered as the same button primitive as built-in goals; deletion belongs in settings. */
-.fscore-custom-goal-entry{display:contents!important;}
-.fscore-custom-goal-main{width:auto!important;min-width:0!important;min-height:48px!important;margin:0!important;padding:10px 12px!important;border-radius:14px!important;border:1px solid var(--border)!important;background:var(--input-bg)!important;color:var(--text)!important;font-size:14px!important;font-weight:800!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;text-align:center!important;box-shadow:none!important;}
-.fscore-custom-goal-main[aria-pressed="true"]{border-color:var(--accent)!important;background:var(--accent)!important;color:#111!important;}
-.fscore-custom-goal-remove{display:none!important;}
-.fscore-custom-delete-goal{width:100%!important;min-height:44px!important;margin-top:10px!important;border:1px solid rgba(255,80,80,.35)!important;border-radius:13px!important;background:transparent!important;color:#ff6b6b!important;font-weight:800!important;}
-/* Analytics header stays in the existing screen safe-area; do not add a second inset. */
-#fscoreAnalyticsScreen .fscore-screen-header{display:grid!important;grid-template-columns:max-content minmax(0,1fr)!important;align-items:center!important;gap:10px!important;min-height:48px!important;height:auto!important;padding:0!important;margin:0 0 10px!important;box-sizing:border-box!important;}
-#fscoreAnalyticsScreen .fscore-screen-header .screen-header-spacer{display:none!important;}
-#fscoreAnalyticsScreen .fscore-screen-header .fscore-title{min-width:0!important;margin:0!important;text-align:left!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;}
+#workoutDetailModal>.workout-detail-content{
+  position:absolute!important;
+  inset:0!important;
+  width:auto!important;
+  height:auto!important;
+  min-height:0!important;
+  max-width:none!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:
+    calc(env(safe-area-inset-top, 0px) + 12px)
+    16px
+    calc(env(safe-area-inset-bottom, 0px) + 16px)!important;
+  display:flex!important;
+  flex-direction:column!important;
+  overflow:hidden!important;
+  box-sizing:border-box!important;
+  border:0!important;
+  border-radius:0!important;
+  background:var(--bg)!important;
+}
+#workoutDetailModal .workout-detail-title-wrap{
+  flex:0 0 auto!important;
+  position:relative!important;
+  margin:0 0 12px!important;
+  padding:0!important;
+}
+#workoutDetailModal #workoutDetailTitle{
+  margin:0!important;
+  padding:16px 56px 16px 16px!important;
+  box-sizing:border-box!important;
+}
+#workoutDetailModal .workout-detail-close{
+  position:absolute!important;
+  top:50%!important;
+  right:10px!important;
+  transform:translateY(-50%)!important;
+}
+#workoutDetailModal #workoutDetailContent{
+  flex:1 1 0!important;
+  min-height:0!important;
+  height:auto!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:0 2px!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  -webkit-overflow-scrolling:touch!important;
+  overscroll-behavior:contain!important;
+}
+/* Keep the Index screen on its existing ordinary-screen geometry. */
+#fscoreAnalyticsScreen{justify-content:flex-start!important;align-content:start!important;}
+#fscoreAnalyticsScreen>.fscore-screen-header{flex:none!important;}
+#fscoreAnalyticsScreen>#fscoreAnalyticsContent{flex:none!important;width:100%!important;margin:0!important;padding-top:0!important;}
 </style>
+<script id="ftracker-v1-4-70-workout-detail-vv-controller">
+(function(){
+  function syncWorkoutDetailViewport(){
+    var vv=window.visualViewport;
+    var h=Math.round((vv&&vv.height)||window.innerHeight||document.documentElement.clientHeight||0);
+    if(h>0) document.documentElement.style.setProperty('--ftracker-workout-detail-vv-height',h+'px');
+  }
+  syncWorkoutDetailViewport();
+  window.addEventListener('resize',syncWorkoutDetailViewport,{passive:true});
+  window.addEventListener('orientationchange',function(){setTimeout(syncWorkoutDetailViewport,60);},{passive:true});
+  if(window.visualViewport){
+    window.visualViewport.addEventListener('resize',syncWorkoutDetailViewport,{passive:true});
+    window.visualViewport.addEventListener('scroll',syncWorkoutDetailViewport,{passive:true});
+  }
+})();
+</script>
 
 </body>
 </html>
