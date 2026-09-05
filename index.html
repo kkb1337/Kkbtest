@@ -8607,13 +8607,13 @@ function createFScoreCustomDraft(){
     const fields=(typeof getMeasurementFields==='function'?getMeasurementFields():[]);
     const latest=(key)=>{const a=(data.measurements||[]).filter(m=>Number(m[key])>0).sort((x,y)=>String(x.date).localeCompare(String(y.date)));return a.length?Number(a[a.length-1][key]):null;};
     const targets={};
-    fields.forEach(f=>{const v=latest(f.key);if(v!=null)targets[f.key]={direction:'maintain',target:v,tolerance:1,enabled:true};});
+    fields.forEach(f=>{const v=latest(f.key);targets[f.key]={direction:'maintain',target:v!=null?v:'',tolerance:1,enabled:true};});
     return {id:makeFScoreCustomId(),name:'',mode:'maintain',evaluationDays:90,targets,training:{target:15,period:'30'},nutrition:{auto:true,calories:0,protein:0,fat:0,carbs:0,toleranceCalories:100,toleranceProtein:10,toleranceFat:10,toleranceCarbs:15},blockWeights:{body:40,training:30,nutrition:30},__draft:true};
 }
 function getFScoreCustomGoals(){
     const fields=(typeof getMeasurementFields==='function'?getMeasurementFields():[]);
     const latest=(key)=>{const a=(data.measurements||[]).filter(m=>Number(m[key])>0).sort((x,y)=>String(x.date).localeCompare(String(y.date)));return a.length?Number(a[a.length-1][key]):null;};
-    const fallbackTargets={}; fields.forEach(f=>{const v=latest(f.key);if(v!=null)fallbackTargets[f.key]={direction:'maintain',target:v,tolerance:1,enabled:true};});
+    const fallbackTargets={}; fields.forEach(f=>{const v=latest(f.key);fallbackTargets[f.key]={direction:'maintain',target:v!=null?v:'',tolerance:1,enabled:true};});
     try{
         let list=Array.isArray(data.fscoreCustomGoals)?data.fscoreCustomGoals:null;
         if(!list || !list.length){
@@ -8814,7 +8814,7 @@ function saveFScoreCustomFromUI(){
     if(!name){showToast('Введите название цели');return;}
     const mode=document.getElementById('fscoreCustomMode')?.value||'maintain';
     const targets={};
-    document.querySelectorAll('#fscoreCustomTargets .fscore-target-card').forEach(row=>{const key=row.dataset.key,enabled=!!row.querySelector('.fscore-target-enabled')?.checked;if(!key)return;const direction=row.querySelector('.fscore-target-direction')?.value||'maintain',targetInputs=[...row.querySelectorAll('.fscore-target-value')],targetInput=targetInputs.find(i=>!i.closest('.hidden'))||targetInputs[0],target=Number(targetInput?.value),tolInputs=[...row.querySelectorAll('.fscore-target-tolerance')],tolInput=tolInputs.find(i=>i.type!=='hidden')||tolInputs[0],tolerance=Math.max(0,Number(tolInput?.value)||0);if(Number.isFinite(target)&&target>0)targets[key]={direction,target,tolerance,enabled};});
+    document.querySelectorAll('#fscoreCustomTargets .fscore-target-card').forEach(row=>{const key=row.dataset.key,enabled=!!row.querySelector('.fscore-target-enabled')?.checked;if(!key)return;const direction=row.querySelector('.fscore-target-direction')?.value||'maintain',targetInputs=[...row.querySelectorAll('.fscore-target-value')],targetInput=targetInputs.find(i=>!i.closest('.hidden'))||targetInputs[0],target=Number(targetInput?.value),tolInputs=[...row.querySelectorAll('.fscore-target-tolerance')],tolInput=tolInputs.find(i=>i.type!=='hidden')||tolInputs[0],tolerance=Math.max(0,Number(tolInput?.value)||0);targets[key]={direction,target:(Number.isFinite(target)&&target>0)?target:'',tolerance,enabled};});
     if(!Object.keys(targets).length){showToast('Добавьте хотя бы один параметр тела');return;}
     if(!Object.values(targets).some(t=>t.enabled!==false)){showToast('Включите хотя бы один параметр для расчёта Индекса');return;}
     const body=Number(document.getElementById('fscoreCustomBodyWeight')?.value)||0,training=Number(document.getElementById('fscoreCustomTrainingWeight')?.value)||0,nutritionWeight=Number(document.getElementById('fscoreCustomNutritionWeight')?.value)||0;
@@ -9302,7 +9302,7 @@ function renderFScoreAnalytics(){
         <button type="button" class="fscore-custom-goal-create" onclick="addFScoreCustomGoal()">＋ Создать свою цель</button>
         ${(x.goal==='custom' && customConfig && !window.__fscoreEditorOpen)?`<button type="button" class="fscore-custom-settings-toggle" onclick="openFScoreCustomEditor()">⚙️ Настроить цель</button>`:''}
         <div id="fscoreCustomEditor" class="fscore-custom-editor ${(window.__fscoreEditorOpen && (customConfig||window.__fscoreCustomDraft))?'':'hidden'}">
-          ${(()=>{const c=getFScoreCustomConfig(); if(!c)return ''; const goals=getFScoreCustomGoals(); const fields=getMeasurementFields(); const addedFields=fields.filter(f=>!!c.targets?.[f.key]); const availableFields=fields.filter(f=>!c.targets?.[f.key]); return `<div class="fscore-custom-title fscore-settings-title">⚙️ Настройки цели</div>
+          ${(()=>{const c=getFScoreCustomConfig(); if(!c)return ''; const goals=getFScoreCustomGoals(); const fields=getMeasurementFields(); const addedFields=fields; const availableFields=[]; return `<div class="fscore-custom-title fscore-settings-title">⚙️ Настройки цели</div>
           <div class="fscore-custom-grid"><label>Название цели<input id="fscoreCustomName" value="${escapeHtml(c.name)}" maxlength="40"></label><label>Стратегия питания и тренировок<select id="fscoreCustomMode" onchange="updateFScoreCustomModeInfo()"><option value="gain" ${c.mode==='gain'?'selected':''}>💪 Рост / набор</option><option value="cut" ${c.mode==='cut'?'selected':''}>🔥 Снижение</option><option value="maintain" ${c.mode==='maintain'?'selected':''}>⚖️ Стабильность</option></select></label></div>
           <div id="fscoreCustomModeInfo" class="fscore-mode-info"></div>
           <div class="fscore-evaluation-field"><b>Период оценки динамики</b><small>Сравниваются предыдущая и текущая половины выбранного периода.</small><div class="fscore-period-presets"><button type="button" class="fscore-period-preset ${Number(c.evaluationDays)===30?'active':''}" data-days="30" onclick="setFScorePeriodPreset(30)">30</button><button type="button" class="fscore-period-preset ${Number(c.evaluationDays)===60?'active':''}" data-days="60" onclick="setFScorePeriodPreset(60)">60</button><button type="button" class="fscore-period-preset ${Number(c.evaluationDays)===90?'active':''}" data-days="90" onclick="setFScorePeriodPreset(90)">90</button><button type="button" class="fscore-period-preset ${Number(c.evaluationDays)===180?'active':''}" data-days="180" onclick="setFScorePeriodPreset(180)">180</button><button type="button" class="fscore-period-custom-btn ${![30,60,90,180].includes(Number(c.evaluationDays))?'active':''}" onclick="setFScoreCustomPeriodMode('custom')">Свой</button></div><input id="fscoreCustomPeriodMode" type="hidden" value="${[30,60,90,180].includes(Number(c.evaluationDays))?'preset':'custom'}"><div id="fscoreCustomPeriodInputWrap" class="fscore-period-input-wrap ${[30,60,90,180].includes(Number(c.evaluationDays))?'hidden':''}"><div class="fscore-period-input"><input id="fscoreCustomEvaluationDays" type="number" min="7" max="365" step="1" value="${c.evaluationDays}" oninput="document.getElementById('fscoreCustomPeriodMode').value='custom';updateFScorePeriodUI()"><span>дней</span></div><small>От 7 до 365 дней.</small></div></div>
@@ -18530,7 +18530,7 @@ body.light-mode .toast{
 </style>
 
 <style id="ftracker-v1-4-64-layout-cleanup">
-/* v1.4.64 — canonical screen ownership for the two requested surfaces. */
+/* v1.4.65 — canonical screen ownership for the two requested surfaces. */
 
 /* Workout history detail: one full-screen application surface, one scrolling surface.
    The title, close control and exercises belong to the same scroll container. */
@@ -18539,6 +18539,7 @@ body.light-mode .toast{
   inset:0!important;
   width:100%!important;
   height:100dvh!important;
+  min-height:100dvh!important;
   margin:0!important;
   padding:0!important;
   background:var(--bg)!important;
@@ -18555,7 +18556,7 @@ body.light-mode .toast{
   min-height:100%!important;
   max-height:none!important;
   margin:0!important;
-  padding:calc(env(safe-area-inset-top,0px) + 16px) 16px calc(env(safe-area-inset-bottom,0px) + 16px)!important;
+  padding:calc(env(safe-area-inset-top,0px) + 16px) 16px env(safe-area-inset-bottom,0px)!important;
   border:0!important;
   border-radius:0!important;
   background:var(--bg)!important;
