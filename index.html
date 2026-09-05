@@ -6978,6 +6978,45 @@ body{min-height:100dvh!important;background:var(--bg)!important;}
 @media(max-width:430px){.fscore-target-main{grid-template-columns:22px minmax(0,1fr)!important;}.fscore-target-direction-inline{grid-column:2!important;}.fscore-target-compact{margin-left:31px!important;}.fscore-period-presets{grid-template-columns:repeat(5,minmax(0,1fr))!important;}.fscore-period-presets button{font-size:12px!important;}}
 @media(max-width:360px){.fscore-period-presets{grid-template-columns:repeat(3,minmax(0,1fr))!important;}.fscore-target-corridor-editor{grid-template-columns:1fr!important;}.fscore-target-corridor{grid-column:auto!important;}}
 </style>
+
+<!-- FTracker v1.4.67 — History screen iOS PWA viewport normalization -->
+<style id="historyScreenViewportFix">
+/*
+  History is an ordinary scrolling screen, not a fullscreen layer.
+  Keep it in normal document flow and avoid applying the safe-area twice.
+*/
+#historyScreen{
+  width:100% !important;
+  min-width:0 !important;
+  box-sizing:border-box !important;
+  min-height:calc(100dvh - var(--safe-top) - var(--safe-bottom)) !important;
+  height:auto !important;
+  padding-bottom:var(--safe-bottom) !important;
+  overflow:visible !important;
+  display:flex;
+  flex-direction:column;
+}
+
+/* The History title must scroll with the screen like the other ordinary pages. */
+#historyScreen > .screen-header{
+  position:relative !important;
+  top:auto !important;
+  inset:auto !important;
+  flex:0 0 auto;
+}
+
+/* The list remains in normal flow and can extend naturally without viewport clipping. */
+#historyScreen > #historyList{
+  flex:0 0 auto;
+  min-height:0;
+  overflow:visible !important;
+}
+
+/* Do not add the iPhone top safe area twice: .safe-area already owns it. */
+#historyScreen > .screen-header{
+  padding-top:8px !important;
+}
+</style>
 </head>
 <body>
 <div class="safe-area"><div class="container" id="app">
