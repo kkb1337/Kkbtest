@@ -26,6 +26,6 @@
       "purpose": "any maskable"
     }
   ],
-  "_build": "ftracker-v1.4.53-custom-goal-card-design",
-  "version": "1.4.53"
+  "_build": "ftracker-v1.4.54-inactive-parameters-workout-close",
+  "version": "1.4.54"
 }

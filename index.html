@@ -7165,7 +7165,7 @@ body{min-height:100dvh!important;background:var(--bg)!important;}
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.46 от 05.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.54 от 05.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -7313,8 +7313,10 @@ body{min-height:100dvh!important;background:var(--bg)!important;}
 </div>
 <div id="workoutDetailModal" class="workout-detail-modal hidden" onclick="if(event.target === this) closeWorkoutDetail()">
     <div class="workout-detail-content">
-        <span class="close-btn" onclick="closeWorkoutDetail()">&times;</span>
-        <div id="workoutDetailTitle" style="font-size:22px; font-weight:700; margin-bottom:16px;"></div>
+        <div class="workout-detail-title-wrap">
+            <div id="workoutDetailTitle" style="font-size:22px; font-weight:700; margin-bottom:16px;"></div>
+            <button type="button" class="close-btn workout-detail-close" onclick="closeWorkoutDetail()" aria-label="Закрыть">&times;</button>
+        </div>
         <div id="workoutDetailContent"></div>
     </div>
 </div>
@@ -8007,8 +8009,7 @@ const DEFAULT_MEASURE_FIELDS = [
     { key: 'chest', label: 'Грудь' },
     { key: 'waist', label: 'Талия' },
     { key: 'hips', label: 'Бёдра' },
-    { key: 'biceps', label: 'Бицепс' },
-    { key: 'thigh', label: 'Бедро' }
+    { key: 'biceps', label: 'Бицепс' }
 ];
 function getMeasurementFields() {
     if (!Array.isArray(data.measurementFields) || !data.measurementFields.length) {
@@ -8643,7 +8644,7 @@ function getFScoreCustomGoals(){
         }
         list=list.filter(x=>x&&typeof x==='object').map((c,i)=>{
             const targets={...fallbackTargets};
-            if(c.targets&&typeof c.targets==='object') Object.keys(c.targets).forEach(k=>{const t=c.targets[k]||{};if(fields.some(f=>f.key===k))targets[k]={direction:['gain','cut','maintain'].includes(t.direction)?t.direction:'maintain',target:Number(t.target)||latest(k)||0,tolerance:Math.max(0,Number.isFinite(Number(t.tolerance))?Number(t.tolerance):1)};});
+            if(c.targets&&typeof c.targets==='object') Object.keys(c.targets).forEach(k=>{const t=c.targets[k]||{};if(fields.some(f=>f.key===k))targets[k]={direction:['gain','cut','maintain'].includes(t.direction)?t.direction:'maintain',target:Number(t.target)||latest(k)||0,tolerance:Math.max(0,Number.isFinite(Number(t.tolerance))?Number(t.tolerance):1),enabled:t.enabled!==false};});
             if(!c.targets&&Array.isArray(c.metrics))Object.keys(targets).forEach(k=>{if(!c.metrics.includes(k))delete targets[k];});
             const bw=c.blockWeights&&typeof c.blockWeights==='object'?c.blockWeights:{};
             const nums={body:Number(bw.body),training:Number(bw.training),nutrition:Number(bw.nutrition)};
@@ -8721,6 +8722,19 @@ function toggleFScoreAddTargets(btn){
     const open=picker.classList.toggle('hidden');
     if(btn){btn.setAttribute('aria-expanded',String(open));}
 }
+function toggleFScoreInactiveTargets(btn){
+    const root=document.getElementById('fscoreCustomTargets'); if(!root)return;
+    const hidden=root.classList.toggle('fscore-hide-inactive');
+    root.querySelectorAll('.fscore-target-card').forEach(row=>{
+        const inactive=!row.querySelector('.fscore-target-enabled')?.checked;
+        row.classList.toggle('fscore-inactive-hidden',hidden&&inactive);
+    });
+    if(btn){
+        btn.textContent=hidden?'Показать неактивные параметры':'Скрыть неактивные параметры';
+        btn.setAttribute('aria-pressed',String(hidden));
+    }
+}
+
 function addFScoreTargetFromPicker(key){
     const cfg=getFScoreCustomConfig();
     cfg.targets=cfg.targets||{};
@@ -8744,6 +8758,8 @@ function updateFScoreTargetRow(el){
     const direction=row.querySelector('.fscore-target-direction')?.value||'maintain';
     const key=row.dataset.key||'', unit=getFScoreMeasurementUnit(key);
     row.classList.toggle('enabled',!!enabled);
+    const targetsRoot=row.closest('#fscoreCustomTargets');
+    row.classList.toggle('fscore-inactive-hidden',!!(targetsRoot?.classList.contains('fscore-hide-inactive') && !enabled));
     row.classList.toggle('is-maintain',direction==='maintain');
     row.querySelector('.fscore-target-goal-wrap')?.classList.toggle('hidden',direction==='maintain');
     row.querySelector('.fscore-target-corridor-editor')?.classList.toggle('hidden',direction!=='maintain');
@@ -9275,7 +9291,7 @@ function renderFScoreAnalytics(){
           <div class="fscore-custom-grid"><label>Название цели<input id="fscoreCustomName" value="${escapeHtml(c.name)}" maxlength="40"></label><label>Стратегия питания и тренировок<select id="fscoreCustomMode" onchange="updateFScoreCustomModeInfo()"><option value="gain" ${c.mode==='gain'?'selected':''}>💪 Рост / набор</option><option value="cut" ${c.mode==='cut'?'selected':''}>🔥 Снижение</option><option value="maintain" ${c.mode==='maintain'?'selected':''}>⚖️ Стабильность</option></select></label></div>
           <div id="fscoreCustomModeInfo" class="fscore-mode-info"></div>
           <div class="fscore-evaluation-field"><b>Период оценки динамики</b><small>Сравниваются предыдущая и текущая половины выбранного периода.</small><div class="fscore-period-presets"><button type="button" class="fscore-period-preset ${Number(c.evaluationDays)===30?'active':''}" data-days="30" onclick="setFScorePeriodPreset(30)">30</button><button type="button" class="fscore-period-preset ${Number(c.evaluationDays)===60?'active':''}" data-days="60" onclick="setFScorePeriodPreset(60)">60</button><button type="button" class="fscore-period-preset ${Number(c.evaluationDays)===90?'active':''}" data-days="90" onclick="setFScorePeriodPreset(90)">90</button><button type="button" class="fscore-period-preset ${Number(c.evaluationDays)===180?'active':''}" data-days="180" onclick="setFScorePeriodPreset(180)">180</button><button type="button" class="fscore-period-custom-btn ${![30,60,90,180].includes(Number(c.evaluationDays))?'active':''}" onclick="setFScoreCustomPeriodMode('custom')">Свой</button></div><input id="fscoreCustomPeriodMode" type="hidden" value="${[30,60,90,180].includes(Number(c.evaluationDays))?'preset':'custom'}"><div id="fscoreCustomPeriodInputWrap" class="fscore-period-input-wrap ${[30,60,90,180].includes(Number(c.evaluationDays))?'hidden':''}"><div class="fscore-period-input"><input id="fscoreCustomEvaluationDays" type="number" min="7" max="365" step="1" value="${c.evaluationDays}" oninput="document.getElementById('fscoreCustomPeriodMode').value='custom';updateFScorePeriodUI()"><span>дней</span></div><small>От 7 до 365 дней.</small></div></div>
-          <details class="fscore-custom-section fscore-body-section" open><summary>🧍 Параметры тела <span>${addedFields.length?'Настроить':'Добавить'}</span></summary><div id="fscoreCustomTargets" class="fscore-custom-targets">${addedFields.length?addedFields.map(f=>{const latest=(data.measurements||[]).filter(m=>Number(m[f.key])>0).sort((a,b)=>String(a.date).localeCompare(String(b.date)));const current=latest.length?Number(latest[latest.length-1][f.key]):'';const t=c.targets[f.key]||{direction:c.mode,target:current!==''?current:'',tolerance:1};const enabled=c.targets[f.key]?.enabled!==false;const unit=getFScoreMeasurementUnit(f.key);const lo=Number(t.target)-Number(t.tolerance||0),hi=Number(t.target)+Number(t.tolerance||0);const label=f.key==='weight'?'Вес':escapeHtml(f.label);return `<div class="fscore-target-card ${enabled?'enabled':''}" data-key="${escapeHtml(f.key)}"><div class="fscore-target-main"><label class="fscore-target-check"><input class="fscore-target-enabled" type="checkbox" ${enabled?'checked':''} onchange="updateFScoreTargetRow(this)" aria-label="Учитывать ${escapeHtml(f.label)}"><span class="fscore-target-checkmark" aria-hidden="true"></span></label><div class="fscore-target-title"><b>${label}</b></div><label class="fscore-target-direction-inline"><select class="fscore-target-direction" onchange="updateFScoreTargetRow(this)"><option value="gain" ${t.direction==='gain'?'selected':''}>↑ Увеличение</option><option value="cut" ${t.direction==='cut'?'selected':''}>↓ Уменьшение</option><option value="maintain" ${t.direction==='maintain'?'selected':''}>→ Стабилизация</option></select></label></div><div class="fscore-target-values"><div class="fscore-current-value"><span>Сейчас</span><b>${current!==''?escapeHtml(formatFScoreValue(current))+' '+unit:'нет данных'}</b></div><div class="fscore-target-divider"></div><label class="fscore-target-goal-wrap ${t.direction==='maintain'?'hidden':''}"><span>Цель</span><div><input class="fscore-target-value" type="number" step="0.1" value="${t.target||''}" placeholder="значение" oninput="updateFScoreTargetRow(this)"><em>${unit}</em></div></label><div class="fscore-target-corridor-editor ${t.direction==='maintain'?'':'hidden'}"><label class="fscore-target-value-label"><span>${f.key==='weight'?'Целевой вес':'Целевое значение'}</span><div><input class="fscore-target-value" type="number" step="0.1" value="${t.target||''}" oninput="updateFScoreTargetRow(this)"><em>${unit}</em></div></label><label class="fscore-target-tolerance-label"><span>Допуск</span><div><strong>±</strong><input class="fscore-target-tolerance" type="number" step="0.1" min="0" value="${Number.isFinite(Number(t.tolerance))?t.tolerance:1}" oninput="updateFScoreTargetRow(this)"><em>${unit}</em></div></label><span class="fscore-target-corridor">Коридор: ${Number.isFinite(lo)&&Number.isFinite(hi)?formatFScoreValue(lo)+'–'+formatFScoreValue(hi)+' '+unit:'задайте значения'}</span></div><input class="fscore-target-tolerance" type="hidden" value="${Number.isFinite(Number(t.tolerance))?t.tolerance:1}"></div></div>`}).join(''):'<div class="fscore-empty-targets">Добавьте параметр, который хотите использовать в цели.</div>'}</div>${availableFields.length?`<div class="fscore-add-target-area"><button type="button" class="fscore-add-target" onclick="toggleFScoreAddTargets(this)" aria-expanded="false"><span>＋</span> Добавить параметр</button><div id="fscoreAddTargetPicker" class="fscore-add-target-picker hidden">${availableFields.map(f=>`<button type="button" onclick="addFScoreTargetFromPicker('${escapeHtml(f.key)}')">${escapeHtml(f.key==='weight'?'Вес':f.label)}</button>`).join('')}</div></div>`:''}</details>
+          <details class="fscore-custom-section fscore-body-section" open><summary>🧍 Параметры тела <span>${addedFields.length?'Настроить':'Добавить'}</span></summary><div id="fscoreCustomTargets" class="fscore-custom-targets">${addedFields.length?addedFields.map(f=>{const latest=(data.measurements||[]).filter(m=>Number(m[f.key])>0).sort((a,b)=>String(a.date).localeCompare(String(b.date)));const current=latest.length?Number(latest[latest.length-1][f.key]):'';const t=c.targets[f.key]||{direction:c.mode,target:current!==''?current:'',tolerance:1};const enabled=c.targets[f.key]?.enabled!==false;const unit=getFScoreMeasurementUnit(f.key);const lo=Number(t.target)-Number(t.tolerance||0),hi=Number(t.target)+Number(t.tolerance||0);const label=f.key==='weight'?'Вес':escapeHtml(f.label);return `<div class="fscore-target-card ${enabled?'enabled':''}" data-key="${escapeHtml(f.key)}"><div class="fscore-target-main"><label class="fscore-target-check"><input class="fscore-target-enabled" type="checkbox" ${enabled?'checked':''} onchange="updateFScoreTargetRow(this)" aria-label="Учитывать ${escapeHtml(f.label)}"><span class="fscore-target-checkmark" aria-hidden="true"></span></label><div class="fscore-target-title"><b>${label}</b></div><label class="fscore-target-direction-inline"><select class="fscore-target-direction" onchange="updateFScoreTargetRow(this)"><option value="gain" ${t.direction==='gain'?'selected':''}>↑ Увеличение</option><option value="cut" ${t.direction==='cut'?'selected':''}>↓ Уменьшение</option><option value="maintain" ${t.direction==='maintain'?'selected':''}>→ Стабилизация</option></select></label></div><div class="fscore-target-values"><div class="fscore-current-value"><span>Сейчас</span><b>${current!==''?escapeHtml(formatFScoreValue(current))+' '+unit:'нет данных'}</b></div><div class="fscore-target-divider"></div><label class="fscore-target-goal-wrap ${t.direction==='maintain'?'hidden':''}"><span>Цель</span><div><input class="fscore-target-value" type="number" step="0.1" value="${t.target||''}" placeholder="значение" oninput="updateFScoreTargetRow(this)"><em>${unit}</em></div></label><div class="fscore-target-corridor-editor ${t.direction==='maintain'?'':'hidden'}"><label class="fscore-target-value-label"><span>${f.key==='weight'?'Целевой вес':'Целевое значение'}</span><div><input class="fscore-target-value" type="number" step="0.1" value="${t.target||''}" oninput="updateFScoreTargetRow(this)"><em>${unit}</em></div></label><label class="fscore-target-tolerance-label"><span>Допуск</span><div><strong>±</strong><input class="fscore-target-tolerance" type="number" step="0.1" min="0" value="${Number.isFinite(Number(t.tolerance))?t.tolerance:1}" oninput="updateFScoreTargetRow(this)"><em>${unit}</em></div></label><span class="fscore-target-corridor">Коридор: ${Number.isFinite(lo)&&Number.isFinite(hi)?formatFScoreValue(lo)+'–'+formatFScoreValue(hi)+' '+unit:'задайте значения'}</span></div><input class="fscore-target-tolerance" type="hidden" value="${Number.isFinite(Number(t.tolerance))?t.tolerance:1}"></div></div>`}).join(''):'<div class="fscore-empty-targets">Добавьте параметр, который хотите использовать в цели.</div>'}</div><div class="fscore-inactive-toggle-area"><button type="button" class="fscore-inactive-toggle" onclick="toggleFScoreInactiveTargets(this)" aria-pressed="false">Скрыть неактивные параметры</button></div></details>
           <details class="fscore-custom-section"><summary>🏋️ Тренировки <span>Настроить</span></summary><div class="fscore-custom-training"><label>Сколько тренировок<input id="fscoreCustomTrainingTarget" type="number" min="1" max="100" value="${c.training.target}"></label><label>За какой период<div class="fscore-period-input"><input id="fscoreCustomTrainingPeriod" type="number" min="7" max="365" step="1" value="${c.training.period}"><span>дней</span></div></label></div><small class="fscore-section-hint">Например, 15 тренировок за 30 дней. Это ориентир частоты, а не требование тренироваться каждый день. Один пропуск не обрушивает оценку.</small></details>
           <details class="fscore-custom-section"><summary>🍽️ Питание и КБЖУ <span>Настроить</span></summary><label>Источник целей<select id="fscoreCustomNutritionAuto" onchange="toggleFScoreNutritionMode()"><option value="auto" ${c.nutrition.auto?'selected':''}>Автоматически</option><option value="manual" ${!c.nutrition.auto?'selected':''}>Задать вручную</option></select></label><small id="fscoreNutritionSourceHint" class="fscore-section-hint">${c.nutrition.auto?'Используются текущие автоматически рассчитанные лимиты FTracker для выбранного типа цели.':'Вы сами задаёте цели и допустимые диапазоны ниже.'}</small><div class="fscore-manual-nutrition ${c.nutrition.auto?'hidden':''}"><div class="fscore-custom-kbju"><label>Ккал<input id="fscoreCustomCalories" type="number" min="0" value="${c.nutrition.calories||''}" placeholder="Например, 2500"></label><label>Белок, г<input id="fscoreCustomProtein" type="number" min="0" value="${c.nutrition.protein||''}" placeholder="Например, 180"></label><label>Жиры, г<input id="fscoreCustomFat" type="number" min="0" value="${c.nutrition.fat||''}" placeholder="Например, 80"></label><label>Углеводы, г<input id="fscoreCustomCarbs" type="number" min="0" value="${c.nutrition.carbs||''}" placeholder="Например, 250"></label></div><div class="fscore-nutrition-tolerances"><label>Допуск ккал<input id="fscoreCustomCalTol" type="number" min="0" value="${c.nutrition.toleranceCalories}"></label><label>Допуск белок, г<input id="fscoreCustomProteinTol" type="number" min="0" value="${c.nutrition.toleranceProtein}"></label><label>Допуск жиры, г<input id="fscoreCustomFatTol" type="number" min="0" value="${c.nutrition.toleranceFat}"></label><label>Допуск углеводы, г<input id="fscoreCustomCarbsTol" type="number" min="0" value="${c.nutrition.toleranceCarbs}"></label></div><small class="fscore-section-hint">2500 ±100 ккал = целевой уровень 2500 ккал и допустимый диапазон 2400–2600. Допуск 0 означает точное значение.</small></div><div class="fscore-nutrition-score"><div class="fscore-nutrition-score-title">Вес в оценке питания</div><div class="fscore-nutrition-score-grid"><span><b>40%</b>Калории</span><span><b>30%</b>Белок</span><span><b>15%</b>Жиры и углеводы</span><span><b>15%</b>Полнота данных</span></div></div></details>
           <details class="fscore-custom-section"><summary>⚖️ Вес факторов <span>40 / 30 / 30</span></summary><div class="fscore-custom-weights"><label>Тело <input id="fscoreCustomBodyWeight" type="number" min="0" max="100" value="${c.blockWeights.body}"></label><label>Тренировки <input id="fscoreCustomTrainingWeight" type="number" min="0" max="100" value="${c.blockWeights.training}"></label><label>Питание <input id="fscoreCustomNutritionWeight" type="number" min="0" max="100" value="${c.blockWeights.nutrition}"></label></div><small class="fscore-section-hint">Проценты автоматически нормализуются до 100%.</small></details>
@@ -18496,6 +18512,17 @@ body.light-mode .toast{
  .fscore-target-corridor-editor{grid-template-columns:1fr!important;}
  .fscore-target-card{border-radius:15px!important;}
 }
+</style>
+
+<style id="ftracker-v1-4-54-target-visibility-and-workout-close">
+/* v1.4.54 — inactive measurement targets + workout history close placement */
+.fscore-inactive-toggle-area{margin:10px 0 12px!important;}
+.fscore-inactive-toggle{width:100%!important;min-height:42px!important;margin:0!important;padding:0 14px!important;border:1px solid var(--border)!important;border-radius:12px!important;background:rgba(255,255,255,.035)!important;color:var(--text)!important;font-size:13px!important;font-weight:800!important;box-shadow:none!important;}
+.fscore-target-card.fscore-inactive-hidden{display:none!important;}
+#workoutDetailModal .workout-detail-content{padding-top:18px!important;}
+#workoutDetailModal .workout-detail-title-wrap{position:relative!important;margin:0 0 14px!important;}
+#workoutDetailModal #workoutDetailTitle{margin:0!important;padding:12px 54px 12px 14px!important;min-height:62px!important;box-sizing:border-box!important;}
+#workoutDetailModal .workout-detail-close{position:absolute!important;top:50%!important;right:8px!important;transform:translateY(-50%)!important;margin:0!important;width:36px!important;height:36px!important;min-width:36px!important;min-height:36px!important;display:grid!important;place-items:center!important;padding:0!important;line-height:1!important;z-index:3!important;}
 </style>
 </body>
 </html>
