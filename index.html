@@ -6975,7 +6975,7 @@ body{min-height:100dvh!important;background:var(--bg)!important;}
 </style>
 
 <style id="ftracker-v1-4-48-dynamics-authoritative">
-/* v1.4.49 — authoritative Dynamics Index layout */
+/* v1.4.50 — authoritative Dynamics Index layout */
 #fscoreCustomEditor .fscore-mode-info{padding:10px 12px!important;margin-top:8px!important;gap:3px!important;}
 #fscoreCustomEditor .fscore-mode-info small{display:block;color:var(--subtext);font-size:11px;line-height:1.35;margin-top:2px;}
 #fscoreCustomEditor .fscore-evaluation-field{display:block;margin-top:14px!important;padding:0!important;border:0!important;background:transparent!important;}
@@ -8695,6 +8695,13 @@ function fscoreCustomModeInfo(mode){
       cut:{title:'Снижение',short:'Дефицит · сохранение тренировочных показателей',text:'Снижение веса оценивается вместе с сохранением тренировочной работоспособности, а автоматический КБЖУ ориентируется на дефицит.'},
       maintain:{title:'Стабильность',short:'Поддержание · контроль стабильности',text:'Стабильность тела и тренировочного режима оценивается положительно, а автоматический КБЖУ ориентируется на поддержание.'}
     }; return map[mode]||map.maintain;
+}
+function openFScoreCustomEditor(){
+    const box=document.getElementById('fscoreCustomEditor');
+    if(box){
+        box.classList.toggle('hidden');
+        setTimeout(initFScoreTargetRows,0);
+    }
 }
 function updateFScoreCustomModeInfo(){
     const mode=document.getElementById('fscoreCustomMode')?.value||'maintain', info=fscoreCustomModeInfo(mode), el=document.getElementById('fscoreCustomModeInfo');
