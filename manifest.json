@@ -26,6 +26,6 @@
       "purpose": "any maskable"
     }
   ],
-  "_build": "ftracker-v1.4.63-canonical-layout-fix",
-  "version": "1.4.63"
+  "_build": "ftracker-v1.4.64-canonical-screen-alignment",
+  "version": "1.4.64"
 }

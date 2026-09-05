@@ -18529,25 +18529,120 @@ body.light-mode .toast{
 }
 </style>
 
-<style id="ftracker-v1-4-63-layout-cleanup">
-/* v1.4.63 — canonical layouts. Replaces conflicting late overrides instead of adding another geometry layer. */
+<style id="ftracker-v1-4-64-layout-cleanup">
+/* v1.4.64 — canonical screen ownership for the two requested surfaces. */
 
-/* Full-screen workout history follows the same viewport ownership as application screens. */
-#workoutDetailModal{position:fixed;inset:0;width:100%;height:100dvh;margin:0;padding:0;background:var(--bg);display:flex;overflow:hidden;z-index:9000;box-sizing:border-box;}
+/* Workout history detail: one full-screen application surface, one scrolling surface.
+   The title, close control and exercises belong to the same scroll container. */
+#workoutDetailModal{
+  position:fixed!important;
+  inset:0!important;
+  width:100%!important;
+  height:100dvh!important;
+  margin:0!important;
+  padding:0!important;
+  background:var(--bg)!important;
+  display:block!important;
+  overflow:hidden!important;
+  z-index:9000!important;
+  box-sizing:border-box!important;
+}
 #workoutDetailModal.hidden{display:none!important;}
-#workoutDetailModal>.workout-detail-content{width:100%;max-width:none;height:100%;max-height:none;min-height:0;margin:0;padding:calc(env(safe-area-inset-top,0px) + 16px) 16px calc(env(safe-area-inset-bottom,0px) + 16px);border:0;border-radius:0;background:var(--bg);display:flex;flex-direction:column;overflow:hidden;box-sizing:border-box;}
-#workoutDetailModal .workout-detail-title-wrap{flex:0 0 auto;position:relative;margin:0 0 14px;}
-#workoutDetailModal #workoutDetailTitle{margin:0;padding:18px 62px 18px 18px;min-height:0;border:1px solid var(--window-border,var(--border));border-radius:24px;background:var(--card-bg);box-sizing:border-box;}
-#workoutDetailModal .workout-detail-close{position:absolute;top:50%;right:12px;transform:translateY(-50%);width:44px;height:44px;margin:0;padding:0;display:grid;place-items:center;line-height:1;z-index:2;}
-#workoutDetailModal #workoutDetailContent{flex:1 1 auto;min-height:0;padding:0 2px;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
+#workoutDetailModal>.workout-detail-content{
+  width:100%!important;
+  max-width:none!important;
+  height:100%!important;
+  min-height:100%!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:calc(env(safe-area-inset-top,0px) + 16px) 16px calc(env(safe-area-inset-bottom,0px) + 16px)!important;
+  border:0!important;
+  border-radius:0!important;
+  background:var(--bg)!important;
+  box-sizing:border-box!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  -webkit-overflow-scrolling:touch!important;
+  overscroll-behavior:contain!important;
+}
+#workoutDetailModal .workout-detail-title-wrap{
+  position:relative!important;
+  margin:0 0 14px!important;
+  padding:0!important;
+}
+#workoutDetailModal #workoutDetailTitle{
+  margin:0!important;
+  padding:18px 62px 18px 18px!important;
+  min-height:0!important;
+  border:1px solid var(--window-border,var(--border))!important;
+  border-radius:24px!important;
+  background:var(--card-bg)!important;
+  box-sizing:border-box!important;
+}
+#workoutDetailModal .workout-detail-close{
+  position:absolute!important;
+  top:50%!important;
+  right:12px!important;
+  transform:translateY(-50%)!important;
+  width:44px!important;
+  height:44px!important;
+  min-width:44px!important;
+  min-height:44px!important;
+  margin:0!important;
+  padding:0!important;
+  display:grid!important;
+  place-items:center!important;
+  line-height:1!important;
+  z-index:2!important;
+}
+#workoutDetailModal #workoutDetailContent{
+  display:block!important;
+  min-height:0!important;
+  padding:0 2px!important;
+  overflow:visible!important;
+}
 
-/* Index header: the real back-button width is part of the grid, so the title cannot overlap it. */
-#fscoreAnalyticsScreen .fscore-screen-header{display:grid!important;grid-template-columns:max-content minmax(0,1fr)!important;align-items:center!important;gap:12px!important;min-height:56px!important;padding:calc(env(safe-area-inset-top,0px) + 8px) 0 10px!important;}
-#fscoreAnalyticsScreen .fscore-screen-header .fscore-back-btn{width:auto!important;min-width:0!important;height:40px!important;min-height:40px!important;margin:0!important;padding:0 12px!important;border-radius:12px!important;font-size:14px!important;line-height:1!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;}
-#fscoreAnalyticsScreen .fscore-screen-header .fscore-title{min-width:0!important;width:auto!important;margin:0!important;justify-content:flex-start!important;text-align:left!important;font-size:24px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;}
+/* Index Dynamics lives inside the app safe-area shell, so it must not add
+   env(safe-area-inset-top) a second time. The real Back button owns its column. */
+#fscoreAnalyticsScreen .fscore-screen-header{
+  display:grid!important;
+  grid-template-columns:max-content minmax(0,1fr)!important;
+  align-items:center!important;
+  gap:12px!important;
+  min-height:48px!important;
+  height:48px!important;
+  padding:4px 0!important;
+  margin:0 0 10px!important;
+  box-sizing:border-box!important;
+}
+#fscoreAnalyticsScreen .fscore-screen-header .fscore-back-btn{
+  width:auto!important;
+  min-width:0!important;
+  height:40px!important;
+  min-height:40px!important;
+  margin:0!important;
+  padding:0 12px!important;
+  border-radius:12px!important;
+  font-size:14px!important;
+  line-height:1!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+}
+#fscoreAnalyticsScreen .fscore-screen-header .fscore-title{
+  min-width:0!important;
+  width:auto!important;
+  margin:0!important;
+  justify-content:flex-start!important;
+  text-align:left!important;
+  font-size:18px!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
 #fscoreAnalyticsScreen .fscore-screen-header .screen-header-spacer{display:none!important;}
 
-/* Custom goals use one shared grid with the three built-in goals. */
+/* Custom goals remain in the same selector as the three built-in goals. */
 .fscore-goal-picker .analytics-period.fscore-all-goals{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important;margin-top:10px!important;}
 .fscore-goal-picker .analytics-period.fscore-all-goals>button,.fscore-custom-goal-entry{width:auto!important;min-width:0!important;min-height:48px!important;}
 .fscore-custom-goal-entry{position:relative;display:block;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--input-bg);box-sizing:border-box;}
@@ -18558,12 +18653,12 @@ body.light-mode .toast{
 .fscore-custom-goal-entry.active .fscore-custom-goal-remove{color:#111;}
 .fscore-custom-goal-create{width:100%;min-height:44px;margin-top:10px;padding:0 14px;border:1px dashed rgba(103,201,112,.55);border-radius:13px;background:transparent;color:var(--positive);font-weight:800;}
 .fscore-custom-settings-toggle{width:100%;min-height:44px;margin-top:8px;border:1px solid var(--border);border-radius:13px;background:rgba(255,255,255,.035);color:var(--text);font-weight:800;}
-/* Legacy list belongs to the old editor flow and is not rendered in the canonical flow. */
+/* Only the canonical editor heading is rendered; legacy saved-goal list is not part of this flow. */
 .fscore-custom-goals-block,.fscore-goals-list,.fscore-add-goal{display:none!important;}
 
 @media(max-width:430px){
   #fscoreAnalyticsScreen .fscore-screen-header{gap:10px!important;}
-  #fscoreAnalyticsScreen .fscore-screen-header .fscore-title{font-size:22px!important;}
+  #fscoreAnalyticsScreen .fscore-screen-header .fscore-title{font-size:18px!important;}
   .fscore-goal-picker .analytics-period.fscore-all-goals{grid-template-columns:repeat(2,minmax(0,1fr))!important;}
 }
 </style>
