@@ -1,4 +1,4 @@
-const CACHE_VERSION='ftracker-v1.4.57-unified-goals-workout-history';
+const CACHE_VERSION='ftracker-v1.4.58-goals-workout-history-final';
 const CACHE_NAME=CACHE_VERSION;
 const APP_SHELL=['./','./index.html','./manifest.json','./icon-192.png','./icon-512.png'];
 self.addEventListener('install',event=>event.waitUntil((async()=>{const c=await caches.open(CACHE_NAME);await c.addAll(APP_SHELL);await self.skipWaiting();})()));

@@ -26,6 +26,6 @@
       "purpose": "any maskable"
     }
   ],
-  "_build": "ftracker-v1.4.57-unified-goals-workout-history",
-  "version": "1.4.57"
+  "_build": "ftracker-v1.4.58-goals-workout-history-final",
+  "version": "1.4.58"
 }

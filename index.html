@@ -7165,7 +7165,7 @@ body{min-height:100dvh!important;background:var(--bg)!important;}
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.57 от 05.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.58 от 05.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -8629,11 +8629,17 @@ function getFScoreGoal(){
     }catch(e){return 'cut';}
 }
 function makeFScoreCustomId(){ return 'cg_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7); }
+function createFScoreCustomDraft(){
+    const fields=(typeof getMeasurementFields==='function'?getMeasurementFields():[]);
+    const latest=(key)=>{const a=(data.measurements||[]).filter(m=>Number(m[key])>0).sort((x,y)=>String(x.date).localeCompare(String(y.date)));return a.length?Number(a[a.length-1][key]):null;};
+    const targets={};
+    fields.forEach(f=>{const v=latest(f.key);if(v!=null)targets[f.key]={direction:'maintain',target:v,tolerance:1,enabled:true};});
+    return {id:makeFScoreCustomId(),name:'',mode:'maintain',evaluationDays:90,targets,training:{target:15,period:'30'},nutrition:{auto:true,calories:0,protein:0,fat:0,carbs:0,toleranceCalories:100,toleranceProtein:10,toleranceFat:10,toleranceCarbs:15},blockWeights:{body:40,training:30,nutrition:30},__draft:true};
+}
 function getFScoreCustomGoals(){
     const fields=(typeof getMeasurementFields==='function'?getMeasurementFields():[]);
     const latest=(key)=>{const a=(data.measurements||[]).filter(m=>Number(m[key])>0).sort((x,y)=>String(x.date).localeCompare(String(y.date)));return a.length?Number(a[a.length-1][key]):null;};
-    const fallbackTargets={}; fields.forEach(f=>{const v=latest(f.key);if(v!=null)fallbackTargets[f.key]={direction:'maintain',target:v,tolerance:f.key==='weight'?1:1};});
-    const fallback={id:makeFScoreCustomId(),name:'Моя цель',mode:'maintain',evaluationDays:90,targets:fallbackTargets,training:{target:15,period:'30'},nutrition:{auto:true,calories:0,protein:0,fat:0,carbs:0,toleranceCalories:100,toleranceProtein:10,toleranceFat:10,toleranceCarbs:15},blockWeights:{body:40,training:30,nutrition:30}};
+    const fallbackTargets={}; fields.forEach(f=>{const v=latest(f.key);if(v!=null)fallbackTargets[f.key]={direction:'maintain',target:v,tolerance:1,enabled:true};});
     try{
         let list=Array.isArray(data.fscoreCustomGoals)?data.fscoreCustomGoals:null;
         if(!list || !list.length){
@@ -8642,7 +8648,7 @@ function getFScoreCustomGoals(){
             const legacy=(list&&list.length)?null:(data.fscoreCustomGoal||JSON.parse(localStorage.getItem('ftracker_fscore_custom_goal')||'null'));
             list=legacy&&typeof legacy==='object'?[legacy]:[];
         }
-        list=list.filter(x=>x&&typeof x==='object').map((c,i)=>{
+        list=(list||[]).filter(x=>x&&typeof x==='object'&&!x.__draft).map((c,i)=>{
             const targets={...fallbackTargets};
             if(c.targets&&typeof c.targets==='object') Object.keys(c.targets).forEach(k=>{const t=c.targets[k]||{};if(fields.some(f=>f.key===k))targets[k]={direction:['gain','cut','maintain'].includes(t.direction)?t.direction:'maintain',target:Number(t.target)||latest(k)||0,tolerance:Math.max(0,Number.isFinite(Number(t.tolerance))?Number(t.tolerance):1),enabled:t.enabled!==false};});
             if(!c.targets&&Array.isArray(c.metrics))Object.keys(targets).forEach(k=>{if(!c.metrics.includes(k))delete targets[k];});
@@ -8650,53 +8656,58 @@ function getFScoreCustomGoals(){
             const nums={body:Number(bw.body),training:Number(bw.training),nutrition:Number(bw.nutrition)};
             const valid=Object.values(nums).every(Number.isFinite)&&Object.values(nums).every(v=>v>=0)&&Object.values(nums).some(v=>v>0);
             const tr=c.training&&typeof c.training==='object'?c.training:{}; const nu=c.nutrition&&typeof c.nutrition==='object'?c.nutrition:{};
-            return {id:String(c.id||('cg_legacy_'+i)),name:String(c.name||'Моя цель').trim().slice(0,40)||'Моя цель',mode:['gain','cut','maintain'].includes(c.mode)?c.mode:'maintain',evaluationDays:Math.max(7,Math.min(365,Number(c.evaluationDays)||90)),targets,training:{target:Math.max(1,Number(tr.target)||15),period:String(Math.max(7,Math.min(365,Number(tr.period)||30)))},nutrition:{auto:nu.auto!==false,calories:Math.max(0,Number(nu.calories)||0),protein:Math.max(0,Number(nu.protein)||0),fat:Math.max(0,Number(nu.fat)||0),carbs:Math.max(0,Number(nu.carbs)||0),toleranceCalories:Math.max(0,Number.isFinite(Number(nu.toleranceCalories))?Number(nu.toleranceCalories):100),toleranceProtein:Math.max(0,Number.isFinite(Number(nu.toleranceProtein))?Number(nu.toleranceProtein):10),toleranceFat:Math.max(0,Number.isFinite(Number(nu.toleranceFat))?Number(nu.toleranceFat):10),toleranceCarbs:Math.max(0,Number.isFinite(Number(nu.toleranceCarbs))?Number(nu.toleranceCarbs):15)},blockWeights:valid?nums:fallback.blockWeights};
-        });
-        if(!list.length)return [fallback];
+            return {id:String(c.id||('cg_legacy_'+i)),name:String(c.name||'').trim().slice(0,40),mode:['gain','cut','maintain'].includes(c.mode)?c.mode:'maintain',evaluationDays:Math.max(7,Math.min(365,Number(c.evaluationDays)||90)),targets,training:{target:Math.max(1,Number(tr.target)||15),period:String(Math.max(7,Math.min(365,Number(tr.period)||30)))},nutrition:{auto:nu.auto!==false,calories:Math.max(0,Number(nu.calories)||0),protein:Math.max(0,Number(nu.protein)||0),fat:Math.max(0,Number(nu.fat)||0),carbs:Math.max(0,Number(nu.carbs)||0),toleranceCalories:Math.max(0,Number.isFinite(Number(nu.toleranceCalories))?Number(nu.toleranceCalories):100),toleranceProtein:Math.max(0,Number.isFinite(Number(nu.toleranceProtein))?Number(nu.toleranceProtein):10),toleranceFat:Math.max(0,Number.isFinite(Number(nu.toleranceFat))?Number(nu.toleranceFat):10),toleranceCarbs:Math.max(0,Number.isFinite(Number(nu.toleranceCarbs))?Number(nu.toleranceCarbs):15)},blockWeights:valid?nums:{body:40,training:30,nutrition:30}};
+        }).filter(c=>c.name);
+        // Удаляем старую автоматически созданную заглушку «Моя цель», если уже есть реальные сохранённые цели.
+        if(list.length>1) list=list.filter(c=>!(c.name==='Моя цель' && c.mode==='maintain' && Number(c.evaluationDays)===90));
         return list;
-    }catch(e){return [fallback];}
+    }catch(e){return [];}
 }
 function getFScoreCustomConfig(){
+    if(window.__fscoreCustomDraft) return window.__fscoreCustomDraft;
     const list=getFScoreCustomGoals();
     const activeId=data.fscoreActiveCustomGoalId;
-    return list.find(x=>x.id===activeId)||list[0];
+    return list.find(x=>x.id===activeId)||list[0]||null;
 }
 function persistFScoreCustomGoals(list){
     data.fscoreCustomGoals=list; data.fscoreCustomGoal=list.find(x=>x.id===data.fscoreActiveCustomGoalId)||list[0]||null;
     if(data.fscoreCustomGoal)data.fscoreActiveCustomGoalId=data.fscoreCustomGoal.id;
-    try{localStorage.setItem('ftracker_fscore_custom_goals',JSON.stringify(list));if(data.fscoreCustomGoal)localStorage.setItem('ftracker_fscore_custom_goal',JSON.stringify(data.fscoreCustomGoal));}catch(e){}
+    else data.fscoreActiveCustomGoalId=null;
+    try{localStorage.setItem('ftracker_fscore_custom_goals',JSON.stringify(list));if(data.fscoreCustomGoal)localStorage.setItem('ftracker_fscore_custom_goal',JSON.stringify(data.fscoreCustomGoal));else localStorage.removeItem('ftracker_fscore_custom_goal');}catch(e){}
     try{saveData(false,'Изменение своей цели');}catch(e){}
 }
 function saveFScoreCustomConfig(cfg, existingId=null){
     const list=getFScoreCustomGoals();
-    const clean={id:existingId||cfg.id||makeFScoreCustomId(),name:String(cfg.name||'Моя цель').trim().slice(0,40)||'Моя цель',mode:['gain','cut','maintain'].includes(cfg.mode)?cfg.mode:'maintain',evaluationDays:Math.max(7,Math.min(365,Number(cfg.evaluationDays)||90)),targets:cfg.targets&&typeof cfg.targets==='object'?cfg.targets:{},training:cfg.training||{target:15,period:'30'},nutrition:{auto:cfg.nutrition?.auto!==false,calories:Math.max(0,Number(cfg.nutrition?.calories)||0),protein:Math.max(0,Number(cfg.nutrition?.protein)||0),fat:Math.max(0,Number(cfg.nutrition?.fat)||0),carbs:Math.max(0,Number(cfg.nutrition?.carbs)||0),toleranceCalories:Math.max(0,Number(cfg.nutrition?.toleranceCalories)||100),toleranceProtein:Math.max(0,Number(cfg.nutrition?.toleranceProtein)||10),toleranceFat:Math.max(0,Number(cfg.nutrition?.toleranceFat)||10),toleranceCarbs:Math.max(0,Number(cfg.nutrition?.toleranceCarbs)||15)},blockWeights:cfg.blockWeights||{body:40,training:30,nutrition:30}};
+    const clean={id:existingId||cfg.id||makeFScoreCustomId(),name:String(cfg.name||'').trim().slice(0,40)||'Моя цель',mode:['gain','cut','maintain'].includes(cfg.mode)?cfg.mode:'maintain',evaluationDays:Math.max(7,Math.min(365,Number(cfg.evaluationDays)||90)),targets:cfg.targets&&typeof cfg.targets==='object'?cfg.targets:{},training:cfg.training||{target:15,period:'30'},nutrition:{auto:cfg.nutrition?.auto!==false,calories:Math.max(0,Number(cfg.nutrition?.calories)||0),protein:Math.max(0,Number(cfg.nutrition?.protein)||0),fat:Math.max(0,Number(cfg.nutrition?.fat)||0),carbs:Math.max(0,Number(cfg.nutrition?.carbs)||0),toleranceCalories:Math.max(0,Number(cfg.nutrition?.toleranceCalories)||100),toleranceProtein:Math.max(0,Number(cfg.nutrition?.toleranceProtein)||10),toleranceFat:Math.max(0,Number(cfg.nutrition?.toleranceFat)||10),toleranceCarbs:Math.max(0,Number(cfg.nutrition?.toleranceCarbs)||15)},blockWeights:cfg.blockWeights||{body:40,training:30,nutrition:30}};
     const sum=Object.values(clean.blockWeights).reduce((a,b)=>a+(Number(b)||0),0)||1; clean.blockWeights=Object.fromEntries(Object.entries(clean.blockWeights).map(([k,v])=>[k,Math.round((Number(v)||0)/sum*100)]));
     const idx=list.findIndex(x=>x.id===clean.id); if(idx>=0)list[idx]=clean; else list.push(clean);
+    window.__fscoreCustomDraft=null;
     data.fscoreActiveCustomGoalId=clean.id; data.fscoreGoal='custom'; persistFScoreCustomGoals(list);
     renderFScoreAnalytics(); renderFScoreHomeWidget();
 }
 function selectFScoreCustomGoal(id){
     const list=getFScoreCustomGoals(); const c=list.find(x=>x.id===id); if(!c)return;
+    window.__fscoreCustomDraft=null;
     data.fscoreActiveCustomGoalId=c.id;
     data.fscoreCustomGoal=JSON.parse(JSON.stringify(c));
     persistFScoreCustomGoals(list);
-    // A saved custom goal is a full-fledged goal: switching to it must run the
-    // same recalculation pipeline as Gain / Cut / Maintain.
     setFScoreGoal('custom');
 }
 function deleteFScoreCustomGoal(id){
-    const list=getFScoreCustomGoals(); if(list.length<=1){showToast('Должна остаться хотя бы одна своя цель');return;}
-    const next=list.filter(x=>x.id!==id); if(data.fscoreActiveCustomGoalId===id)data.fscoreActiveCustomGoalId=next[0].id;
-    data.fscoreCustomGoal=next[0]; persistFScoreCustomGoals(next); renderFScoreAnalytics(); renderFScoreHomeWidget(); showToast('Цель удалена');
+    const list=getFScoreCustomGoals(); const next=list.filter(x=>x.id!==id);
+    if(data.fscoreActiveCustomGoalId===id){
+        window.__fscoreCustomDraft=null;
+        if(next.length){data.fscoreActiveCustomGoalId=next[0].id;data.fscoreGoal='custom';}
+        else {data.fscoreActiveCustomGoalId=null;data.fscoreGoal='maintain';}
+    }
+    persistFScoreCustomGoals(next); renderFScoreAnalytics(); renderFScoreHomeWidget(); showToast('Цель удалена');
 }
 function addFScoreCustomGoal(){
-    const base=getFScoreCustomConfig(); const copy=JSON.parse(JSON.stringify(base));
-    copy.id=makeFScoreCustomId(); copy.name='Новая цель';
-    saveFScoreCustomConfig(copy,copy.id);
-    // New goal becomes the active goal immediately and gets the same recalculation
-    // treatment as any other goal switch.
-    setFScoreGoal('custom');
-    openFScoreCustomEditor();
+    // Новая цель не попадает в переключатель, пока пользователь её не сохранит.
+    window.__fscoreCustomDraft=createFScoreCustomDraft();
+    data.fscoreGoal='custom';
+    renderFScoreAnalytics();
+    requestAnimationFrame(openFScoreCustomEditor);
 }
 function fscoreCustomModeInfo(mode){
     const map={
@@ -18646,7 +18657,7 @@ body.light-mode .toast{
 
 
 <style id="ftracker-v1-4-57-unified-goals-workout-history">
-/* v1.4.57 — one unified goal switcher + full safe-area workout history */
+/* v1.4.57 — one unified goal switcher + workout history */
 .fscore-goal-picker .analytics-period.fscore-all-goals{
   display:flex!important;
   flex-wrap:wrap!important;
@@ -18773,6 +18784,46 @@ body.light-mode .toast{
   overscroll-behavior:contain!important;
   padding-bottom:8px!important;
 }
+</style>
+
+
+<style id="ftracker-v1-4-58-goals-workout-history-final">
+/* v1.4.58 — restore native modal geometry; custom goals appear only after saving. */
+#workoutDetailModal.workout-detail-modal{
+  position:fixed!important;
+  inset:0!important;
+  width:100%!important;
+  height:100dvh!important;
+  padding:calc(env(safe-area-inset-top,0px) + 12px) 12px calc(env(safe-area-inset-bottom,0px) + 12px)!important;
+  box-sizing:border-box!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  overflow:hidden!important;
+}
+#workoutDetailModal .workout-detail-content{
+  width:min(100%,540px)!important;
+  max-width:540px!important;
+  height:auto!important;
+  max-height:100%!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:18px!important;
+  border-radius:22px!important;
+  box-sizing:border-box!important;
+  display:block!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  -webkit-overflow-scrolling:touch!important;
+  overscroll-behavior:contain!important;
+}
+#workoutDetailModal .workout-detail-title-wrap{position:relative!important;margin:0 0 14px!important;}
+#workoutDetailModal #workoutDetailTitle{padding:12px 54px 12px 0!important;margin:0!important;min-height:62px!important;box-sizing:border-box!important;}
+#workoutDetailModal .workout-detail-close{position:absolute!important;top:12px!important;right:0!important;transform:none!important;}
+#workoutDetailModal #workoutDetailContent{overflow:visible!important;padding-bottom:0!important;}
+/* One switcher: only three base goals until a user actually saves a custom goal. */
+.fscore-goal-picker .analytics-period.fscore-all-goals{display:flex!important;flex-wrap:wrap!important;gap:8px!important;}
+.fscore-custom-goal-entry{flex:1 1 145px!important;}
 </style>
 
 </body>
