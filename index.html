@@ -9290,7 +9290,7 @@ function renderFScoreAnalytics(){
       ? `${bodyUsed.length} ${bodyUsed.length===1?'показатель':'показателей'} подключено${(data.measurements||[]).length<2?' · ждём следующий замер':''}`
       : 'Добавьте любой удобный замер тела';
     const tc=x.training.consistency;
-    const trainingPeriod=x.goal==='custom'?getFScoreCustomConfig().training.period:30;
+    const trainingPeriod=x.goal==='custom'?(customConfig?.training?.period||30):30;
     const trainingText=x.training.available
       ? `${tc.count} тренировок за ${trainingPeriod} дней · ${metric(x.training.score)}`
       : 'Нет завершённых тренировок для анализа';
@@ -9313,11 +9313,11 @@ function renderFScoreAnalytics(){
           <button type="button" class="${x.goal==='gain'?'active':''}" aria-pressed="${x.goal==='gain'}" onclick="setFScoreGoal('gain')">💪 Набор</button>
           <button type="button" class="${x.goal==='cut'?'active':''}" aria-pressed="${x.goal==='cut'}" onclick="setFScoreGoal('cut')">🔥 Сушка</button>
           <button type="button" class="${x.goal==='maintain'?'active':''}" aria-pressed="${x.goal==='maintain'}" onclick="setFScoreGoal('maintain')">⚖️ Поддержание</button>
-          ${(()=>{const goals=getFScoreCustomGoals(); const active=getFScoreCustomConfig(); return goals.map(g=>`<div class="fscore-custom-goal-entry ${x.goal==='custom'&&g.id===active.id?'active':''}"><button type="button" class="fscore-custom-goal-main" onclick="selectFScoreCustomGoal('${escapeHtml(g.id)}')" aria-pressed="${x.goal==='custom'&&g.id===active.id?'true':'false'}">🎯 ${escapeHtml(g.name)}</button><button type="button" class="fscore-custom-goal-remove" onclick="event.stopPropagation();deleteFScoreCustomGoal('${escapeHtml(g.id)}')" aria-label="Удалить цель «${escapeHtml(g.name)}»">×</button></div>`).join('');})()}
+          ${(()=>{const goals=getFScoreCustomGoals(); const active=getFScoreCustomConfig(); return goals.map(g=>`<div class="fscore-custom-goal-entry ${x.goal==='custom'&&active&&g.id===active.id?'active':''}"><button type="button" class="fscore-custom-goal-main" onclick="selectFScoreCustomGoal('${escapeHtml(g.id)}')" aria-pressed="${x.goal==='custom'&&active&&g.id===active.id?'true':'false'}">🎯 ${escapeHtml(g.name)}</button><button type="button" class="fscore-custom-goal-remove" onclick="event.stopPropagation();deleteFScoreCustomGoal('${escapeHtml(g.id)}')" aria-label="Удалить цель «${escapeHtml(g.name)}»">×</button></div>`).join('');})()}
         </div>
         <button type="button" class="fscore-custom-goal-create" onclick="addFScoreCustomGoal()">＋ Создать свою цель</button>
         <div id="fscoreCustomEditor" class="fscore-custom-editor ${x.goal==='custom'?'':'hidden'}">
-          ${(()=>{const c=getFScoreCustomConfig(); const goals=getFScoreCustomGoals(); const fields=getMeasurementFields(); const addedFields=fields.filter(f=>!!c.targets?.[f.key]); const availableFields=fields.filter(f=>!c.targets?.[f.key]); return `<div class="fscore-custom-title fscore-my-goal-title">🎯 Настройка цели</div>
+          ${(()=>{const c=getFScoreCustomConfig(); if(!c)return ''; const goals=getFScoreCustomGoals(); const fields=getMeasurementFields(); const addedFields=fields.filter(f=>!!c.targets?.[f.key]); const availableFields=fields.filter(f=>!c.targets?.[f.key]); return `<div class="fscore-custom-title fscore-my-goal-title">🎯 Настройка цели</div>
           <div class="fscore-goals-list">${goals.map(g=>`<div class="fscore-goal-item ${g.id===c.id?'active':''}"><button type="button" class="fscore-goal-select" onclick="selectFScoreCustomGoal('${escapeHtml(g.id)}')"><b>${escapeHtml(g.name)}</b><small>${g.mode==='gain'?'Рост / набор':g.mode==='cut'?'Снижение':'Стабильность'} · ${g.evaluationDays} дней</small></button><button type="button" class="fscore-goal-delete" aria-label="Удалить цель" onclick="deleteFScoreCustomGoal('${escapeHtml(g.id)}')">⋮</button></div>`).join('')}</div>
           <button type="button" class="fscore-add-goal" onclick="addFScoreCustomGoal()"><span>＋</span> Создать новую цель</button>
           <div class="fscore-custom-title fscore-settings-title">⚙️ Настройки цели</div>
@@ -18548,7 +18548,7 @@ body.light-mode .toast{
 </style>
 
 <style id="ftracker-v1-4-60-clean-modal-and-goals">
-/* v1.4.60 — one clean owner for workout-history modal and one real custom-goal list. */
+/* v1.4.61 — one clean owner for workout-history modal and one real custom-goal list. */
 
 /* Keep the inactive measurement-target control. */
 .fscore-inactive-toggle-area{margin:10px 0 12px!important;}
@@ -18585,6 +18585,13 @@ body.light-mode .toast{
 .fscore-custom-goal-create{width:100%!important;min-height:44px!important;margin-top:10px!important;padding:0 14px!important;border:1px dashed rgba(103,201,112,.55)!important;border-radius:13px!important;background:transparent!important;color:var(--positive)!important;font-weight:800!important;}
 /* Remove obsolete duplicate goal-management UI from the editor. */
 .fscore-custom-goals-block,.fscore-goals-list,.fscore-add-goal{display:none!important;}
+
+/* v1.4.61 canonical workout detail modal geometry */
+#app>#workoutDetailModal:not(.hidden),body>#workoutDetailModal:not(.hidden),#workoutDetailModal:not(.hidden){position:fixed!important;inset:0!important;width:100%!important;height:100dvh!important;min-height:100dvh!important;max-height:100dvh!important;margin:0!important;padding:calc(env(safe-area-inset-top,0px) + 12px) 12px calc(env(safe-area-inset-bottom,0px) + 12px)!important;box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:center!important;overflow:hidden!important;}
+#workoutDetailModal.hidden{display:none!important;}
+#app>#workoutDetailModal>.workout-detail-content,#workoutDetailModal>.workout-detail-content{position:relative!important;width:min(100%,760px)!important;max-width:760px!important;height:auto!important;max-height:100%!important;min-height:0!important;margin:0!important;padding:18px!important;box-sizing:border-box!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;}
+#workoutDetailModal .workout-detail-title-wrap{flex:0 0 auto!important;position:relative!important;margin:0 0 14px!important;}
+#workoutDetailModal #workoutDetailContent{flex:1 1 auto!important;min-height:0!important;overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch!important;padding:0 0 2px!important;}
 </style>
 
 </body>
