@@ -26,6 +26,6 @@
       "purpose": "any maskable"
     }
   ],
-  "_build": "ftracker-v1.4.71-unified-modal-system",
-  "version": "1.4.71"
+  "_build": "ftracker-v1.4.72-modal-architecture-rebuild",
+  "version": "1.4.72"
 }
