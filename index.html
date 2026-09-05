@@ -7165,7 +7165,7 @@ body{min-height:100dvh!important;background:var(--bg)!important;}
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.54 от 05.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.55 от 05.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -8677,10 +8677,13 @@ function saveFScoreCustomConfig(cfg, existingId=null){
 }
 function selectFScoreCustomGoal(id){
     const list=getFScoreCustomGoals(); const c=list.find(x=>x.id===id); if(!c)return;
-    data.fscoreActiveCustomGoalId=c.id; data.fscoreCustomGoal=c; data.fscoreGoal='custom';
+    data.fscoreActiveCustomGoalId=c.id;
+    data.fscoreCustomGoal=JSON.parse(JSON.stringify(c));
+    data.fscoreGoal='custom';
+    persistFScoreCustomGoals(list);
     try{localStorage.setItem('ftracker_fscore_goal','custom');}catch(e){}
-    try{saveData(false,'Выбор своей цели');}catch(e){}
-    renderFScoreAnalytics(); renderFScoreHomeWidget();
+    renderFScoreAnalytics();
+    renderFScoreHomeWidget();
 }
 function deleteFScoreCustomGoal(id){
     const list=getFScoreCustomGoals(); if(list.length<=1){showToast('Должна остаться хотя бы одна своя цель');return;}
@@ -9281,8 +9284,8 @@ function renderFScoreAnalytics(){
           <button type="button" class="${x.goal==='gain'?'active':''}" aria-pressed="${x.goal==='gain'}" onclick="setFScoreGoal('gain')">💪 Набор</button>
           <button type="button" class="${x.goal==='cut'?'active':''}" aria-pressed="${x.goal==='cut'}" onclick="setFScoreGoal('cut')">🔥 Сушка</button>
           <button type="button" class="${x.goal==='maintain'?'active':''}" aria-pressed="${x.goal==='maintain'}" onclick="setFScoreGoal('maintain')">⚖️ Поддержание</button>
-          <button type="button" class="${x.goal==='custom'?'active':''}" aria-pressed="${x.goal==='custom'}" onclick="openFScoreCustomEditor()">⚙️ Своя цель</button>
         </div>
+        ${(()=>{const goals=getFScoreCustomGoals(); const active=getFScoreCustomConfig(); return `<div class="fscore-custom-goals-row">${goals.map(g=>`<button type="button" class="fscore-custom-goal-chip ${x.goal==='custom'&&g.id===active.id?'active':''}" onclick="selectFScoreCustomGoal('${escapeHtml(g.id)}');openFScoreCustomEditor();" aria-pressed="${x.goal==='custom'&&g.id===active.id?'true':'false'}">🎯 ${escapeHtml(g.name)}</button>`).join('')}<button type="button" class="fscore-custom-goal-create" onclick="addFScoreCustomGoal()">＋ Своя цель</button></div>`;})()}
         <div id="fscoreCustomEditor" class="fscore-custom-editor ${x.goal==='custom'?'':'hidden'}">
           ${(()=>{const c=getFScoreCustomConfig(); const goals=getFScoreCustomGoals(); const fields=getMeasurementFields(); const addedFields=fields.filter(f=>!!c.targets?.[f.key]); const availableFields=fields.filter(f=>!c.targets?.[f.key]); return `<div class="fscore-custom-title fscore-my-goal-title">🎯 Моя цель</div>
           <div class="fscore-goals-list">${goals.map(g=>`<div class="fscore-goal-item ${g.id===c.id?'active':''}"><button type="button" class="fscore-goal-select" onclick="selectFScoreCustomGoal('${escapeHtml(g.id)}')"><b>${escapeHtml(g.name)}</b><small>${g.mode==='gain'?'Рост / набор':g.mode==='cut'?'Снижение':'Стабильность'} · ${g.evaluationDays} дней</small></button><button type="button" class="fscore-goal-delete" aria-label="Удалить цель" onclick="deleteFScoreCustomGoal('${escapeHtml(g.id)}')">⋮</button></div>`).join('')}</div>
@@ -18523,6 +18526,26 @@ body.light-mode .toast{
 #workoutDetailModal .workout-detail-title-wrap{position:relative!important;margin:0 0 14px!important;}
 #workoutDetailModal #workoutDetailTitle{margin:0!important;padding:12px 54px 12px 14px!important;min-height:62px!important;box-sizing:border-box!important;}
 #workoutDetailModal .workout-detail-close{position:absolute!important;top:50%!important;right:8px!important;transform:translateY(-50%)!important;margin:0!important;width:36px!important;height:36px!important;min-width:36px!important;min-height:36px!important;display:grid!important;place-items:center!important;padding:0!important;line-height:1!important;z-index:3!important;}
+</style>
+
+<style id="ftracker-v1-4-55-goals-and-safe-area">
+/* v1.4.55 — custom goal selection + workout detail safe-area alignment */
+#workoutDetailModal{
+  padding-top:calc(env(safe-area-inset-top,0px) + 12px)!important;
+  padding-bottom:calc(env(safe-area-inset-bottom,0px) + 12px)!important;
+  align-items:center!important;
+}
+#workoutDetailModal .workout-detail-content{
+  margin:0!important;
+  max-height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 24px)!important;
+  padding-top:18px!important;
+}
+/* Standard goals are always separate; saved custom goals are selectable directly below them. */
+.fscore-custom-goals-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+.fscore-custom-goal-chip{min-height:42px!important;width:auto!important;flex:1 1 145px!important;padding:0 12px!important;border-radius:12px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.fscore-custom-goal-chip.active{border-color:rgba(103,201,112,.65)!important;box-shadow:inset 0 0 0 1px rgba(103,201,112,.35)!important;}
+.fscore-custom-goal-create{min-height:42px!important;width:auto!important;flex:0 1 auto!important;padding:0 13px!important;border:1px dashed rgba(103,201,112,.55)!important;border-radius:12px!important;background:transparent!important;color:var(--positive)!important;font-weight:800!important;}
+#fscoreCustomEditor .fscore-goals-list,#fscoreCustomEditor .fscore-add-goal{display:none!important;}
 </style>
 </body>
 </html>
