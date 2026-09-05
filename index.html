@@ -5171,35 +5171,6 @@ body {
   display:flex;
   flex-direction:column;
 }
-#app>div:not(.hidden) {
-  position:relative !important;
-  inset:auto !important;
-  height:auto !important;
-  min-height:0 !important;
-  max-height:none !important;
-  overflow:visible !important;
-}
-#app>div.hidden { display:none !important; }
-#app>div>.screen-header {
-  position:sticky !important;
-  top:0 !important;
-  z-index:5000 !important;
-  background:var(--bg,#000) !important;
-}
-#app [id$="Modal"]:not(.hidden),
-#app .theme-modal:not(.hidden),
-#app .exercise-modal:not(.hidden),
-#app .date-modal:not(.hidden),
-#app .confirm-modal:not(.hidden),
-#app .workout-detail-modal:not(.hidden),
-#app .manual-workout-modal:not(.hidden),
-#app .achievements-modal:not(.hidden),
-#app .food-modal:not(.hidden),
-#app .catalog-modal:not(.hidden) {
-  height:100% !important;
-  max-height:100% !important;
-  box-sizing:border-box !important;
-}
 @media (display-mode:standalone){
   html, body, #app { height:auto !important; min-height:100% !important; }
 }
@@ -7065,7 +7036,7 @@ body{min-height:100dvh!important;background:var(--bg)!important;}
         <div id="progressContent"></div>
     </div>
     <div id="fscoreAnalyticsScreen" class="hidden">
-        <div class="screen-header fscore-screen-header"><button onclick="goHome()" class="gray fscore-back-btn" aria-label="Назад">← Назад</button><div class="title section-title fscore-title"><span class="section-title-icon">◎</span><span>Индекс динамики</span></div><span class="screen-header-spacer" aria-hidden="true"></span></div>
+        <div class="screen-header fscore-screen-header"><button onclick="goHome()" class="gray fscore-back-btn" aria-label="Назад">← Назад</button><div class="title section-title fscore-title"><span class="section-title-icon">◎</span><span>Индекс динамики</span></div></div>
         <div id="fscoreAnalyticsContent"></div>
     </div>
     <div id="bodyScreen" class="hidden">
@@ -9329,11 +9300,9 @@ function renderFScoreAnalytics(){
           ${(()=>{const goals=getFScoreCustomGoals(); const active=getFScoreCustomConfig(); return goals.map(g=>`<div class="fscore-custom-goal-entry ${x.goal==='custom'&&active&&g.id===active.id?'active':''}"><button type="button" class="fscore-custom-goal-main" onclick="selectFScoreCustomGoal('${escapeHtml(g.id)}')" aria-pressed="${x.goal==='custom'&&active&&g.id===active.id?'true':'false'}">🎯 ${escapeHtml(g.name)}</button><button type="button" class="fscore-custom-goal-remove" onclick="event.stopPropagation();deleteFScoreCustomGoal('${escapeHtml(g.id)}')" aria-label="Удалить цель «${escapeHtml(g.name)}»">×</button></div>`).join('');})()}
         </div>
         <button type="button" class="fscore-custom-goal-create" onclick="addFScoreCustomGoal()">＋ Создать свою цель</button>
-        <div id="fscoreCustomEditor" class="fscore-custom-editor ${x.goal==='custom'?'':'hidden'}">
-          ${(()=>{const c=getFScoreCustomConfig(); if(!c)return ''; const goals=getFScoreCustomGoals(); const fields=getMeasurementFields(); const addedFields=fields.filter(f=>!!c.targets?.[f.key]); const availableFields=fields.filter(f=>!c.targets?.[f.key]); return `<div class="fscore-custom-title fscore-my-goal-title">🎯 Настройка цели</div>
-          <div class="fscore-goals-list">${goals.map(g=>`<div class="fscore-goal-item ${g.id===c.id?'active':''}"><button type="button" class="fscore-goal-select" onclick="selectFScoreCustomGoal('${escapeHtml(g.id)}')"><b>${escapeHtml(g.name)}</b><small>${g.mode==='gain'?'Рост / набор':g.mode==='cut'?'Снижение':'Стабильность'} · ${g.evaluationDays} дней</small></button><button type="button" class="fscore-goal-delete" aria-label="Удалить цель" onclick="deleteFScoreCustomGoal('${escapeHtml(g.id)}')">⋮</button></div>`).join('')}</div>
-          <button type="button" class="fscore-add-goal" onclick="addFScoreCustomGoal()"><span>＋</span> Создать новую цель</button>
-          <div class="fscore-custom-title fscore-settings-title">⚙️ Настройки цели</div>
+        ${(x.goal==='custom' && customConfig && !window.__fscoreEditorOpen)?`<button type="button" class="fscore-custom-settings-toggle" onclick="openFScoreCustomEditor()">⚙️ Настроить цель</button>`:''}
+        <div id="fscoreCustomEditor" class="fscore-custom-editor ${(window.__fscoreEditorOpen && (customConfig||window.__fscoreCustomDraft))?'':'hidden'}">
+          ${(()=>{const c=getFScoreCustomConfig(); if(!c)return ''; const goals=getFScoreCustomGoals(); const fields=getMeasurementFields(); const addedFields=fields.filter(f=>!!c.targets?.[f.key]); const availableFields=fields.filter(f=>!c.targets?.[f.key]); return `<div class="fscore-custom-title fscore-settings-title">⚙️ Настройки цели</div>
           <div class="fscore-custom-grid"><label>Название цели<input id="fscoreCustomName" value="${escapeHtml(c.name)}" maxlength="40"></label><label>Стратегия питания и тренировок<select id="fscoreCustomMode" onchange="updateFScoreCustomModeInfo()"><option value="gain" ${c.mode==='gain'?'selected':''}>💪 Рост / набор</option><option value="cut" ${c.mode==='cut'?'selected':''}>🔥 Снижение</option><option value="maintain" ${c.mode==='maintain'?'selected':''}>⚖️ Стабильность</option></select></label></div>
           <div id="fscoreCustomModeInfo" class="fscore-mode-info"></div>
           <div class="fscore-evaluation-field"><b>Период оценки динамики</b><small>Сравниваются предыдущая и текущая половины выбранного периода.</small><div class="fscore-period-presets"><button type="button" class="fscore-period-preset ${Number(c.evaluationDays)===30?'active':''}" data-days="30" onclick="setFScorePeriodPreset(30)">30</button><button type="button" class="fscore-period-preset ${Number(c.evaluationDays)===60?'active':''}" data-days="60" onclick="setFScorePeriodPreset(60)">60</button><button type="button" class="fscore-period-preset ${Number(c.evaluationDays)===90?'active':''}" data-days="90" onclick="setFScorePeriodPreset(90)">90</button><button type="button" class="fscore-period-preset ${Number(c.evaluationDays)===180?'active':''}" data-days="180" onclick="setFScorePeriodPreset(180)">180</button><button type="button" class="fscore-period-custom-btn ${![30,60,90,180].includes(Number(c.evaluationDays))?'active':''}" onclick="setFScoreCustomPeriodMode('custom')">Свой</button></div><input id="fscoreCustomPeriodMode" type="hidden" value="${[30,60,90,180].includes(Number(c.evaluationDays))?'preset':'custom'}"><div id="fscoreCustomPeriodInputWrap" class="fscore-period-input-wrap ${[30,60,90,180].includes(Number(c.evaluationDays))?'hidden':''}"><div class="fscore-period-input"><input id="fscoreCustomEvaluationDays" type="number" min="7" max="365" step="1" value="${c.evaluationDays}" oninput="document.getElementById('fscoreCustomPeriodMode').value='custom';updateFScorePeriodUI()"><span>дней</span></div><small>От 7 до 365 дней.</small></div></div>
@@ -18560,109 +18529,43 @@ body.light-mode .toast{
 }
 </style>
 
-<style id="ftracker-v1-4-60-clean-modal-and-goals">
-/* v1.4.62 — fullscreen workout history and stable custom-goal UI state. */
+<style id="ftracker-v1-4-63-layout-cleanup">
+/* v1.4.63 — canonical layouts. Replaces conflicting late overrides instead of adding another geometry layer. */
 
-/* Keep the inactive measurement-target control. */
-.fscore-inactive-toggle-area{margin:10px 0 12px!important;}
-.fscore-inactive-toggle{width:100%!important;min-height:42px!important;margin:0!important;padding:0 14px!important;border:1px solid var(--border)!important;border-radius:12px!important;background:rgba(255,255,255,.035)!important;color:var(--text)!important;font-size:13px!important;font-weight:800!important;box-shadow:none!important;}
-.fscore-target-card.fscore-inactive-hidden{display:none!important;}
-
-/* Measurement history remains an independent full safe-area surface. */
-#measurementHistoryModal.catalog-modal{position:fixed!important;inset:0!important;width:100%!important;height:100dvh!important;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)!important;box-sizing:border-box!important;display:flex!important;align-items:stretch!important;justify-content:stretch!important;overflow:hidden!important;}
-#measurementHistoryModal.catalog-modal.hidden{display:none!important;}
-#measurementHistoryModal>.body-history-modal-content{width:100%!important;max-width:none!important;height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))!important;max-height:none!important;min-height:0!important;margin:0!important;padding:14px 16px 20px!important;border-radius:0!important;box-sizing:border-box!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;}
-#measurementHistoryModal .body-history-modal-head{flex:0 0 auto!important;}
-#measurementHistoryModal #measurementHistory{flex:1 1 auto!important;min-height:0!important;overflow-y:auto!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior:contain!important;padding-bottom:12px!important;}
-
-/* WORKOUT HISTORY DETAIL
-   This is a full-screen application surface, not a compact dialog. */
-#workoutDetailModal{
-  position:fixed!important;
-  inset:0!important;
-  width:100%!important;
-  height:100dvh!important;
-  margin:0!important;
-  padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)!important;
-  box-sizing:border-box!important;
-  display:flex!important;
-  align-items:stretch!important;
-  justify-content:stretch!important;
-  overflow:hidden!important;
-  background:var(--bg)!important;
-}
+/* Full-screen workout history follows the same viewport ownership as application screens. */
+#workoutDetailModal{position:fixed;inset:0;width:100%;height:100dvh;margin:0;padding:0;background:var(--bg);display:flex;overflow:hidden;z-index:9000;box-sizing:border-box;}
 #workoutDetailModal.hidden{display:none!important;}
-#workoutDetailModal>.workout-detail-content{
-  width:100%!important;
-  max-width:none!important;
-  height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))!important;
-  max-height:none!important;
-  min-height:0!important;
-  margin:0!important;
-  padding:20px 16px 24px!important;
-  box-sizing:border-box!important;
-  border:0!important;
-  border-radius:0!important;
-  background:var(--bg)!important;
-  display:flex!important;
-  flex-direction:column!important;
-  overflow:hidden!important;
-}
-#workoutDetailModal .workout-detail-title-wrap{
-  flex:0 0 auto!important;
-  position:relative!important;
-  margin:0 0 16px!important;
-  padding:0!important;
-}
-#workoutDetailModal #workoutDetailTitle{
-  margin:0!important;
-  padding:18px 62px 18px 18px!important;
-  min-height:0!important;
-  border:1px solid var(--window-border)!important;
-  border-radius:24px!important;
-  background:linear-gradient(180deg,var(--window-surface),var(--card-bg))!important;
-  box-shadow:var(--window-shadow)!important;
-  box-sizing:border-box!important;
-}
-#workoutDetailModal .workout-detail-close{
-  position:absolute!important;
-  top:50%!important;
-  right:12px!important;
-  transform:translateY(-50%)!important;
-  width:44px!important;
-  height:44px!important;
-  min-width:44px!important;
-  min-height:44px!important;
-  margin:0!important;
-  padding:0!important;
-  display:grid!important;
-  place-items:center!important;
-  line-height:1!important;
-  z-index:2!important;
-}
-#workoutDetailModal #workoutDetailContent{
-  flex:1 1 auto!important;
-  min-height:0!important;
-  padding:0 2px 2px!important;
-  overflow-y:auto!important;
-  overflow-x:hidden!important;
-  overscroll-behavior:contain!important;
-  -webkit-overflow-scrolling:touch!important;
-}
+#workoutDetailModal>.workout-detail-content{width:100%;max-width:none;height:100%;max-height:none;min-height:0;margin:0;padding:calc(env(safe-area-inset-top,0px) + 16px) 16px calc(env(safe-area-inset-bottom,0px) + 16px);border:0;border-radius:0;background:var(--bg);display:flex;flex-direction:column;overflow:hidden;box-sizing:border-box;}
+#workoutDetailModal .workout-detail-title-wrap{flex:0 0 auto;position:relative;margin:0 0 14px;}
+#workoutDetailModal #workoutDetailTitle{margin:0;padding:18px 62px 18px 18px;min-height:0;border:1px solid var(--window-border,var(--border));border-radius:24px;background:var(--card-bg);box-sizing:border-box;}
+#workoutDetailModal .workout-detail-close{position:absolute;top:50%;right:12px;transform:translateY(-50%);width:44px;height:44px;margin:0;padding:0;display:grid;place-items:center;line-height:1;z-index:2;}
+#workoutDetailModal #workoutDetailContent{flex:1 1 auto;min-height:0;padding:0 2px;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
 
-/* CUSTOM GOALS: one visual card per goal; delete is part of the same card. */
-.fscore-goal-picker .analytics-period.fscore-all-goals{display:flex!important;flex-wrap:wrap!important;gap:8px!important;margin-top:10px!important;}
-.fscore-goal-picker .analytics-period.fscore-all-goals>button,.fscore-custom-goal-entry{flex:1 1 145px!important;min-width:0!important;}
-.fscore-goal-picker .analytics-period.fscore-all-goals>button{width:auto!important;}
-.fscore-custom-goal-entry{position:relative!important;display:flex!important;align-items:stretch!important;min-height:48px!important;border:1px solid var(--border)!important;border-radius:14px!important;overflow:hidden!important;background:var(--input-bg)!important;box-sizing:border-box!important;}
-.fscore-custom-goal-entry.active{border-color:var(--accent)!important;box-shadow:0 0 0 3px rgba(212,255,79,.18)!important;background:var(--accent)!important;}
-.fscore-custom-goal-main{width:100%!important;min-width:0!important;margin:0!important;border:0!important;border-radius:0!important;background:transparent!important;color:var(--text)!important;padding:10px 50px 10px 14px!important;min-height:48px!important;font-size:14px!important;font-weight:800!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;box-shadow:none!important;text-align:center!important;}
-.fscore-custom-goal-entry.active .fscore-custom-goal-main{color:#111!important;background:transparent!important;}
-.fscore-custom-goal-remove{position:absolute!important;top:0!important;right:0!important;width:44px!important;min-width:44px!important;height:100%!important;min-height:48px!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;color:var(--subtext)!important;font-size:22px!important;line-height:1!important;box-shadow:none!important;z-index:2!important;}
-.fscore-custom-goal-entry.active .fscore-custom-goal-remove{color:#111!important;background:transparent!important;}
-.fscore-custom-goal-create{width:100%!important;min-height:44px!important;margin-top:10px!important;padding:0 14px!important;border:1px dashed rgba(103,201,112,.55)!important;border-radius:13px!important;background:transparent!important;color:var(--positive)!important;font-weight:800!important;}
-.fscore-custom-settings-toggle{width:100%!important;min-height:46px!important;margin-top:10px!important;border:1px solid var(--border)!important;border-radius:13px!important;background:rgba(255,255,255,.035)!important;color:var(--text)!important;font-weight:800!important;}
+/* Index header: the real back-button width is part of the grid, so the title cannot overlap it. */
+#fscoreAnalyticsScreen .fscore-screen-header{display:grid!important;grid-template-columns:max-content minmax(0,1fr)!important;align-items:center!important;gap:12px!important;min-height:56px!important;padding:calc(env(safe-area-inset-top,0px) + 8px) 0 10px!important;}
+#fscoreAnalyticsScreen .fscore-screen-header .fscore-back-btn{width:auto!important;min-width:0!important;height:40px!important;min-height:40px!important;margin:0!important;padding:0 12px!important;border-radius:12px!important;font-size:14px!important;line-height:1!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;}
+#fscoreAnalyticsScreen .fscore-screen-header .fscore-title{min-width:0!important;width:auto!important;margin:0!important;justify-content:flex-start!important;text-align:left!important;font-size:24px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;}
+#fscoreAnalyticsScreen .fscore-screen-header .screen-header-spacer{display:none!important;}
+
+/* Custom goals use one shared grid with the three built-in goals. */
+.fscore-goal-picker .analytics-period.fscore-all-goals{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important;margin-top:10px!important;}
+.fscore-goal-picker .analytics-period.fscore-all-goals>button,.fscore-custom-goal-entry{width:auto!important;min-width:0!important;min-height:48px!important;}
+.fscore-custom-goal-entry{position:relative;display:block;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--input-bg);box-sizing:border-box;}
+.fscore-custom-goal-entry.active{border-color:var(--accent);background:var(--accent);box-shadow:none;}
+.fscore-custom-goal-main{width:100%;min-width:0;min-height:48px;margin:0;padding:10px 40px 10px 12px;border:0;border-radius:0;background:transparent;color:var(--text);font-size:14px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;box-shadow:none;}
+.fscore-custom-goal-entry.active .fscore-custom-goal-main{color:#111;}
+.fscore-custom-goal-remove{position:absolute;top:50%;right:0;transform:translateY(-50%);width:38px;min-width:38px;height:38px;min-height:38px;margin:0;padding:0;border:0;border-radius:0;background:transparent;color:var(--subtext);font-size:20px;line-height:1;box-shadow:none;}
+.fscore-custom-goal-entry.active .fscore-custom-goal-remove{color:#111;}
+.fscore-custom-goal-create{width:100%;min-height:44px;margin-top:10px;padding:0 14px;border:1px dashed rgba(103,201,112,.55);border-radius:13px;background:transparent;color:var(--positive);font-weight:800;}
+.fscore-custom-settings-toggle{width:100%;min-height:44px;margin-top:8px;border:1px solid var(--border);border-radius:13px;background:rgba(255,255,255,.035);color:var(--text);font-weight:800;}
+/* Legacy list belongs to the old editor flow and is not rendered in the canonical flow. */
 .fscore-custom-goals-block,.fscore-goals-list,.fscore-add-goal{display:none!important;}
+
+@media(max-width:430px){
+  #fscoreAnalyticsScreen .fscore-screen-header{gap:10px!important;}
+  #fscoreAnalyticsScreen .fscore-screen-header .fscore-title{font-size:22px!important;}
+  .fscore-goal-picker .analytics-period.fscore-all-goals{grid-template-columns:repeat(2,minmax(0,1fr))!important;}
+}
 </style>
 
 </body>

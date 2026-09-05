@@ -26,6 +26,6 @@
       "purpose": "any maskable"
     }
   ],
-  "_build": "ftracker-v1.4.62-fullscreen-history-goal-state",
-  "version": "1.4.62"
+  "_build": "ftracker-v1.4.63-canonical-layout-fix",
+  "version": "1.4.63"
 }
