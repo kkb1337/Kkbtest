@@ -6975,7 +6975,7 @@ body{min-height:100dvh!important;background:var(--bg)!important;}
 </style>
 
 <style id="ftracker-v1-4-48-dynamics-authoritative">
-/* v1.4.48 — authoritative Dynamics Index layout */
+/* v1.4.49 — authoritative Dynamics Index layout */
 #fscoreCustomEditor .fscore-mode-info{padding:10px 12px!important;margin-top:8px!important;gap:3px!important;}
 #fscoreCustomEditor .fscore-mode-info small{display:block;color:var(--subtext);font-size:11px;line-height:1.35;margin-top:2px;}
 #fscoreCustomEditor .fscore-evaluation-field{display:block;margin-top:14px!important;padding:0!important;border:0!important;background:transparent!important;}
@@ -9094,6 +9094,59 @@ function fScoreTrackScoreChange(x){
     if(prev.score===x.score)return {delta:0,previous:prev.score};
     return {delta:x.score-prev.score,previous:prev.score};
 }
+
+function fScoreFmt(v,u){return v==null?'—':(v>0?'+':'')+Number(v).toFixed(1)+u;}
+function fScoreBuildExplanation(x){
+    const reasons=[];
+    const goalName={gain:'набора',cut:'сушки',maintain:'поддержания'}[x.goal]||'поддержания';
+    const add=(kind,title,text)=>reasons.push({kind,title,text});
+    if(x.goal==='custom' && x.body?.details?.length){
+        x.body.details.slice(0,3).forEach(d=>{
+            const title=(typeof getMeasurementFields==='function'?getMeasurementFields().find(f=>f.key===d.key)?.label:null)||d.key;
+            const kind=d.score>=80?'good':d.score>=60?'attention':'bad';
+            add(kind,title,d.status||'Параметр участвует в оценке динамики.');
+        });
+    }else{
+        const w=x.body?.weight, wa=x.body?.waist;
+        if(w){
+            const speed=w.speed;
+            if(x.goal==='gain') add(speed>0?'good':'bad','Вес',speed>0?`Тренд веса растёт (${fScoreFmt(speed,'%/нед')}) — направление соответствует цели.`:'Тренд веса не растёт — для набора это снижает оценку тела.');
+            else if(x.goal==='cut') add(speed<0?'good':'bad','Вес',speed<0?`Тренд веса снижается (${fScoreFmt(speed,'%/нед')}) — направление соответствует сушке.`:'Тренд веса не снижается — для сушки это ухудшает соответствие цели.');
+            else add(Math.abs(speed)<=.3?'good':'attention','Вес',Math.abs(speed)<=.3?'Вес остаётся в зоне стабильности — это соответствует поддержанию.':`Вес меняется на ${fScoreFmt(speed,'%/нед')}, что выходит за комфортную зону поддержания.`);
+        }
+        if(wa){
+            if(x.goal==='cut') add(wa.change<0?'good':wa.change===0?'attention':'bad','Талия',wa.change<0?'Талия уменьшается вместе с динамикой сушки — это подтверждает качество снижения веса.':wa.change===0?'Талия пока стабильна — снижение веса ещё не подтверждено изменением объёма.':'Талия растёт — это противоречит цели сушки.');
+            else if(x.goal==='maintain') add(Math.abs(wa.speed)<=.3?'good':'attention','Талия',Math.abs(wa.speed)<=.3?'Талия стабильна — это соответствует поддержанию.':'Есть заметная динамика талии, поэтому стабильность тела оценивается ниже.');
+            else add('neutral','Талия','На наборе талия используется как контекст и сама по себе не штрафует индекс.');
+        }
+        if(x.body?.other!=null) add(x.body.other>=80?'good':x.body.other>=60?'attention':'bad','Другие замеры',x.body.other>=80?'Остальные доступные объёмы поддерживают выбранную цель.':x.body.other>=60?'Динамика остальных замеров смешанная или умеренная.':'Остальные доступные замеры пока слабо подтверждают выбранную цель.');
+    }
+    if(x.training?.available){
+        const c=x.training.consistency;
+        add(c.score>=80?'good':c.score>=60?'attention':'bad','Тренировки',c.score>=80?'Регулярность тренировок поддерживает индекс.':c.score>=60?'Системность тренировок есть, но не максимальная — отдельные пропуски допускаются.':'Недостаточно устойчивой тренировочной системности.');
+    } else add('muted','Тренировки','Недостаточно завершённых тренировок с данными — блок пока не участвует в расчёте.');
+    if(x.nutrition?.available){
+        const n=x.nutrition,avg=Math.round(n.score);
+        add(avg>=80?'good':avg>=60?'attention':'bad','Питание',avg>=80?`КБЖУ в целом соответствует цели ${goalName} и поддерживает итоговый индекс.`:avg>=60?`Питание частично соответствует цели ${goalName}; этот блок ограничивает итоговый результат.`:`Текущие калории или КБЖУ заметно расходятся с целью ${goalName}.`);
+    } else add('muted','Питание','Питание опционально: без свежих записей оно исключено из формулы и не считается штрафом.');
+    if(x.phase==='calibration') add('attention','Точность','Данных пока недостаточно для полной оценки, поэтому результат предварительный.');
+    return reasons.slice(0,6);
+}
+function renderFScoreHomeWidget(){
+    const el=document.getElementById('fscoreHomeWidget'); if(!el)return;
+    try{
+        const x=fScoreData();
+        el.className=`fscore-widget fscore-widget-${x.statusLevel}`;
+        const goalName=x.goal==='custom'?getFScoreCustomConfig().name:({cut:'Сушка',gain:'Набор',maintain:'Поддержание'}[x.goal]||'Поддержание');
+        const displayStatus=x.phase==='calibration'?'Собираем данные':x.status;
+        el.innerHTML=`<span class="fscore-home-top"><span><span class="fscore-home-title">Индекс динамики</span><span class="fscore-home-goal">Цель: ${escapeHtml(goalName)}</span></span><span class="fscore-home-actions"><span class="fscore-home-action">Подробнее <span aria-hidden="true">›</span></span><button type="button" class="fscore-home-collapse" onclick="event.stopPropagation();toggleHomeFScoreCollapse(this)" aria-expanded="true" aria-label="Свернуть индекс">⌃</button></span></span><span class="fscore-home-middle"><span class="fscore-home-number-wrap"><span class="fscore-home-number">${x.availableCount?x.score:'—'}</span><span class="fscore-home-scale">/ 100</span></span><span class="fscore-home-status"><span class="fscore-home-dot" aria-hidden="true"></span><span class="fscore-home-status-text">${escapeHtml(displayStatus)}</span></span></span><span class="fscore-home-progress" aria-hidden="true"><span class="fscore-home-progress-fill" style="width:${x.availableCount?Math.max(0,Math.min(100,x.score)):0}%"></span></span><span class="fscore-home-hint">${x.phase==='calibration'?'Индекс использует доступные данные и будет уточняться по мере накопления истории.':x.availableCount?'Результат рассчитан только по доступным данным.':'Добавьте любые данные для начала анализа'}</span>`;
+    }catch(err){
+        console.error('FScore render failed',err);
+        el.className='fscore-widget fscore-widget-attention';
+        el.innerHTML='<span class="fscore-home-top"><span class="fscore-home-title">Индекс динамики</span></span><span class="fscore-home-middle"><span class="fscore-home-number-wrap"><span class="fscore-home-number">0</span><span class="fscore-home-scale">/ 100</span></span></span><span class="fscore-home-hint">Не удалось обновить индекс. Откройте раздел после обновления приложения.</span>';
+    }
+}
+
 function toggleHomeFScoreCollapse(btn){
     const card=document.getElementById('fscoreHomeWidget');
     if(!card)return;
