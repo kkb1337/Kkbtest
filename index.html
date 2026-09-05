@@ -6979,127 +6979,40 @@ body{min-height:100dvh!important;background:var(--bg)!important;}
 @media(max-width:360px){.fscore-period-presets{grid-template-columns:repeat(3,minmax(0,1fr))!important;}.fscore-target-corridor-editor{grid-template-columns:1fr!important;}.fscore-target-corridor{grid-column:auto!important;}}
 </style>
 
-<!-- FTracker v1.4.67 — History screen iOS PWA viewport normalization -->
-<style id="historyScreenViewportFix">
-/*
-  History is an ordinary scrolling screen, not a fullscreen layer.
-  Keep it in normal document flow and avoid applying the safe-area twice.
-*/
-#historyScreen{
-  width:100% !important;
-  min-width:0 !important;
-  box-sizing:border-box !important;
-  min-height:calc(100dvh - var(--safe-top) - var(--safe-bottom)) !important;
-  height:auto !important;
-  padding-bottom:var(--safe-bottom) !important;
-  overflow:visible !important;
-  display:flex;
-  flex-direction:column;
-}
-
-/* The History title must scroll with the screen like the other ordinary pages. */
-#historyScreen > .screen-header{
-  position:relative !important;
-  top:auto !important;
-  inset:auto !important;
-  flex:0 0 auto;
-}
-
-/* The list remains in normal flow and can extend naturally without viewport clipping. */
-#historyScreen > #historyList{
-  flex:0 0 auto;
-  min-height:0;
-  overflow:visible !important;
-}
-
-/* Do not add the iPhone top safe area twice: .safe-area already owns it. */
-#historyScreen > .screen-header{
-  padding-top:8px !important;
-}
-</style>
-\n<!-- FTracker v1.4.68 — History detail fullscreen + custom goal canonicalization -->
-<style id="ftracker-v1-4-68-history-detail-fix">
-/* The problem is the workout detail opened FROM History, not the History list itself.
-   Make that detail a true viewport surface in iOS Standalone. */
-#workoutDetailModal.workout-detail-modal{
+<style id="ftracker-v1-4-69-history-detail-geometry">
+/* v1.4.69 — surgical repair.
+   Do not change global safe-area ownership or ordinary screen headers. */
+#workoutDetailModal{
   position:fixed!important;
+  top:0!important; right:0!important; bottom:0!important; left:0!important;
   inset:0!important;
-  width:100vw!important;
-  min-width:100vw!important;
-  height:100svh!important;
-  min-height:100svh!important;
+  width:auto!important;
+  min-width:0!important;
+  height:auto!important;
+  min-height:0!important;
   max-height:none!important;
-  z-index:2147483000!important;
   margin:0!important;
   padding:0!important;
   display:flex!important;
   align-items:stretch!important;
   justify-content:stretch!important;
   overflow:hidden!important;
-  overscroll-behavior:none!important;
-  background:var(--bg)!important;
-  box-sizing:border-box!important;
 }
-@supports (height:100dvh){
-  #workoutDetailModal.workout-detail-modal{height:100dvh!important;min-height:100dvh!important;}
-}
-#workoutDetailModal.workout-detail-modal.hidden{display:none!important;}
-#workoutDetailModal.workout-detail-modal>.workout-detail-content{
-  position:relative!important;
-  inset:auto!important;
+#workoutDetailModal>.workout-detail-content{
   width:100%!important;
-  min-width:0!important;
   height:100%!important;
   min-height:0!important;
-  max-width:none!important;
   max-height:none!important;
-  margin:0!important;
-  border:0!important;
-  border-radius:0!important;
-  padding:calc(env(safe-area-inset-top,0px) + 8px) 16px calc(env(safe-area-inset-bottom,0px) + 8px)!important;
-  display:flex!important;
-  flex-direction:column!important;
-  overflow:hidden!important;
-  box-sizing:border-box!important;
-  background:var(--bg)!important;
-}
-#workoutDetailModal .workout-detail-title-wrap{
-  flex:0 0 auto!important;
-  min-height:0!important;
-  margin:0 0 10px!important;
-  padding:0!important;
-}
-#workoutDetailModal #workoutDetailTitle{
-  width:100%!important;
-  margin:0!important;
-  box-sizing:border-box!important;
+  flex:1 1 auto!important;
 }
 #workoutDetailModal #workoutDetailContent{
   flex:1 1 0!important;
   min-height:0!important;
   height:auto!important;
   max-height:none!important;
-  margin:0!important;
-  padding:0 2px!important;
   overflow-y:auto!important;
-  overflow-x:hidden!important;
-  -webkit-overflow-scrolling:touch!important;
-  overscroll-behavior:contain!important;
-}
-/* Custom goals use the exact same grid/button primitive as the three base goals. */
-.fscore-goal-picker .fscore-all-goals>button{
-  width:100%!important;
-  min-width:0!important;
-  margin:0!important;
-}
-.fscore-goal-picker .fscore-all-goals>button[aria-pressed="true"]{
-  background:rgba(103,201,112,.16)!important;
-  color:#9be39d!important;
-  border-color:rgba(103,201,112,.72)!important;
-  box-shadow:0 0 0 2px rgba(103,201,112,.12)!important;
 }
 </style>
-
 </head>
 <body>
 <div class="safe-area"><div class="container" id="app">

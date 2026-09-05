@@ -26,6 +26,6 @@
       "purpose": "any maskable"
     }
   ],
-  "_build": "ftracker-v1.4.68-history-detail-goal-fix",
-  "version": "1.4.68"
+  "_build": "ftracker-v1.4.69-canonical-screen-alignment",
+  "version": "1.4.69"
 }
