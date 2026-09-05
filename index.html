@@ -7165,7 +7165,7 @@ body{min-height:100dvh!important;background:var(--bg)!important;}
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.59 от 05.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v. 1.4.60 от 05.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -8660,8 +8660,8 @@ function getFScoreCustomGoals(){
         }).filter(c=>c.name);
         // Удаляем старую автоматически созданную заглушку «Моя цель», если существует хотя бы одна реально сохранённая пользовательская цель.
         // Это миграция старого UX: новая пустая цель больше никогда не создаётся автоматически.
-        const hasRealNamedGoal=list.some(c=>String(c.name||'').trim() && String(c.name||'').trim()!=='Моя цель');
-        if(hasRealNamedGoal) list=list.filter(c=>String(c.name||'').trim()!=='Моя цель');
+        // Legacy automatic placeholder is never a real saved goal.
+        list=list.filter(c=>String(c.name||'').trim()!=='Моя цель');
         return list;
     }catch(e){return [];}
 }
@@ -8680,7 +8680,8 @@ function persistFScoreCustomGoals(list){
 }
 function saveFScoreCustomConfig(cfg, existingId=null){
     const list=getFScoreCustomGoals();
-    const clean={id:existingId||cfg.id||makeFScoreCustomId(),name:String(cfg.name||'').trim().slice(0,40)||'Моя цель',mode:['gain','cut','maintain'].includes(cfg.mode)?cfg.mode:'maintain',evaluationDays:Math.max(7,Math.min(365,Number(cfg.evaluationDays)||90)),targets:cfg.targets&&typeof cfg.targets==='object'?cfg.targets:{},training:cfg.training||{target:15,period:'30'},nutrition:{auto:cfg.nutrition?.auto!==false,calories:Math.max(0,Number(cfg.nutrition?.calories)||0),protein:Math.max(0,Number(cfg.nutrition?.protein)||0),fat:Math.max(0,Number(cfg.nutrition?.fat)||0),carbs:Math.max(0,Number(cfg.nutrition?.carbs)||0),toleranceCalories:Math.max(0,Number(cfg.nutrition?.toleranceCalories)||100),toleranceProtein:Math.max(0,Number(cfg.nutrition?.toleranceProtein)||10),toleranceFat:Math.max(0,Number(cfg.nutrition?.toleranceFat)||10),toleranceCarbs:Math.max(0,Number(cfg.nutrition?.toleranceCarbs)||15)},blockWeights:cfg.blockWeights||{body:40,training:30,nutrition:30}};
+    const cleanName=String(cfg.name||'').trim().slice(0,40); if(!cleanName){showToast('Введите название цели');return false;}
+    const clean={id:existingId||cfg.id||makeFScoreCustomId(),name:cleanName,mode:['gain','cut','maintain'].includes(cfg.mode)?cfg.mode:'maintain',evaluationDays:Math.max(7,Math.min(365,Number(cfg.evaluationDays)||90)),targets:cfg.targets&&typeof cfg.targets==='object'?cfg.targets:{},training:cfg.training||{target:15,period:'30'},nutrition:{auto:cfg.nutrition?.auto!==false,calories:Math.max(0,Number(cfg.nutrition?.calories)||0),protein:Math.max(0,Number(cfg.nutrition?.protein)||0),fat:Math.max(0,Number(cfg.nutrition?.fat)||0),carbs:Math.max(0,Number(cfg.nutrition?.carbs)||0),toleranceCalories:Math.max(0,Number(cfg.nutrition?.toleranceCalories)||100),toleranceProtein:Math.max(0,Number(cfg.nutrition?.toleranceProtein)||10),toleranceFat:Math.max(0,Number(cfg.nutrition?.toleranceFat)||10),toleranceCarbs:Math.max(0,Number(cfg.nutrition?.toleranceCarbs)||15)},blockWeights:cfg.blockWeights||{body:40,training:30,nutrition:30}};
     const sum=Object.values(clean.blockWeights).reduce((a,b)=>a+(Number(b)||0),0)||1; clean.blockWeights=Object.fromEntries(Object.entries(clean.blockWeights).map(([k,v])=>[k,Math.round((Number(v)||0)/sum*100)]));
     const idx=list.findIndex(x=>x.id===clean.id); if(idx>=0)list[idx]=clean; else list.push(clean);
     window.__fscoreCustomDraft=null;
@@ -8828,7 +8829,8 @@ function toggleFScoreNutritionMode(){
 }
 function saveFScoreCustomFromUI(){
     const current=getFScoreCustomConfig();
-    const name=document.getElementById('fscoreCustomName')?.value||'Моя цель';
+    const name=(document.getElementById('fscoreCustomName')?.value||'').trim();
+    if(!name){showToast('Введите название цели');return;}
     const mode=document.getElementById('fscoreCustomMode')?.value||'maintain';
     const targets={};
     document.querySelectorAll('#fscoreCustomTargets .fscore-target-card').forEach(row=>{const key=row.dataset.key,enabled=!!row.querySelector('.fscore-target-enabled')?.checked;if(!key)return;const direction=row.querySelector('.fscore-target-direction')?.value||'maintain',targetInputs=[...row.querySelectorAll('.fscore-target-value')],targetInput=targetInputs.find(i=>!i.closest('.hidden'))||targetInputs[0],target=Number(targetInput?.value),tolInputs=[...row.querySelectorAll('.fscore-target-tolerance')],tolInput=tolInputs.find(i=>i.type!=='hidden')||tolInputs[0],tolerance=Math.max(0,Number(tolInput?.value)||0);if(Number.isFinite(target)&&target>0)targets[key]={direction,target,tolerance,enabled};});
@@ -9311,11 +9313,11 @@ function renderFScoreAnalytics(){
           <button type="button" class="${x.goal==='gain'?'active':''}" aria-pressed="${x.goal==='gain'}" onclick="setFScoreGoal('gain')">💪 Набор</button>
           <button type="button" class="${x.goal==='cut'?'active':''}" aria-pressed="${x.goal==='cut'}" onclick="setFScoreGoal('cut')">🔥 Сушка</button>
           <button type="button" class="${x.goal==='maintain'?'active':''}" aria-pressed="${x.goal==='maintain'}" onclick="setFScoreGoal('maintain')">⚖️ Поддержание</button>
-          ${(()=>{const goals=getFScoreCustomGoals(); const active=getFScoreCustomConfig(); return goals.map(g=>`<div class="fscore-custom-goal-entry ${x.goal==='custom'&&g.id===active.id?'active':''}"><button type="button" class="fscore-custom-goal-main" onclick="selectFScoreCustomGoal('${escapeHtml(g.id)}');openFScoreCustomEditor();" aria-pressed="${x.goal==='custom'&&g.id===active.id?'true':'false'}">🎯 ${escapeHtml(g.name)}</button><button type="button" class="fscore-custom-goal-remove" onclick="event.stopPropagation();deleteFScoreCustomGoal('${escapeHtml(g.id)}')" aria-label="Удалить цель «${escapeHtml(g.name)}»">×</button></div>`).join('');})()}
+          ${(()=>{const goals=getFScoreCustomGoals(); const active=getFScoreCustomConfig(); return goals.map(g=>`<div class="fscore-custom-goal-entry ${x.goal==='custom'&&g.id===active.id?'active':''}"><button type="button" class="fscore-custom-goal-main" onclick="selectFScoreCustomGoal('${escapeHtml(g.id)}')" aria-pressed="${x.goal==='custom'&&g.id===active.id?'true':'false'}">🎯 ${escapeHtml(g.name)}</button><button type="button" class="fscore-custom-goal-remove" onclick="event.stopPropagation();deleteFScoreCustomGoal('${escapeHtml(g.id)}')" aria-label="Удалить цель «${escapeHtml(g.name)}»">×</button></div>`).join('');})()}
         </div>
         <button type="button" class="fscore-custom-goal-create" onclick="addFScoreCustomGoal()">＋ Создать свою цель</button>
         <div id="fscoreCustomEditor" class="fscore-custom-editor ${x.goal==='custom'?'':'hidden'}">
-          ${(()=>{const c=getFScoreCustomConfig(); const goals=getFScoreCustomGoals(); const fields=getMeasurementFields(); const addedFields=fields.filter(f=>!!c.targets?.[f.key]); const availableFields=fields.filter(f=>!c.targets?.[f.key]); return `<div class="fscore-custom-title fscore-my-goal-title">🎯 Моя цель</div>
+          ${(()=>{const c=getFScoreCustomConfig(); const goals=getFScoreCustomGoals(); const fields=getMeasurementFields(); const addedFields=fields.filter(f=>!!c.targets?.[f.key]); const availableFields=fields.filter(f=>!c.targets?.[f.key]); return `<div class="fscore-custom-title fscore-my-goal-title">🎯 Настройка цели</div>
           <div class="fscore-goals-list">${goals.map(g=>`<div class="fscore-goal-item ${g.id===c.id?'active':''}"><button type="button" class="fscore-goal-select" onclick="selectFScoreCustomGoal('${escapeHtml(g.id)}')"><b>${escapeHtml(g.name)}</b><small>${g.mode==='gain'?'Рост / набор':g.mode==='cut'?'Снижение':'Стабильность'} · ${g.evaluationDays} дней</small></button><button type="button" class="fscore-goal-delete" aria-label="Удалить цель" onclick="deleteFScoreCustomGoal('${escapeHtml(g.id)}')">⋮</button></div>`).join('')}</div>
           <button type="button" class="fscore-add-goal" onclick="addFScoreCustomGoal()"><span>＋</span> Создать новую цель</button>
           <div class="fscore-custom-title fscore-settings-title">⚙️ Настройки цели</div>
@@ -18545,366 +18547,43 @@ body.light-mode .toast{
 }
 </style>
 
-<style id="ftracker-v1-4-54-target-visibility-and-workout-close">
-/* v1.4.54 — inactive measurement targets + workout history close placement */
+<style id="ftracker-v1-4-60-clean-modal-and-goals">
+/* v1.4.60 — one clean owner for workout-history modal and one real custom-goal list. */
+
+/* Keep the inactive measurement-target control. */
 .fscore-inactive-toggle-area{margin:10px 0 12px!important;}
 .fscore-inactive-toggle{width:100%!important;min-height:42px!important;margin:0!important;padding:0 14px!important;border:1px solid var(--border)!important;border-radius:12px!important;background:rgba(255,255,255,.035)!important;color:var(--text)!important;font-size:13px!important;font-weight:800!important;box-shadow:none!important;}
 .fscore-target-card.fscore-inactive-hidden{display:none!important;}
-#workoutDetailModal .workout-detail-content{padding-top:18px!important;}
+
+/* Measurement history remains an independent full safe-area surface. */
+#measurementHistoryModal.catalog-modal{position:fixed!important;inset:0!important;width:100%!important;height:100dvh!important;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)!important;box-sizing:border-box!important;display:flex!important;align-items:stretch!important;justify-content:stretch!important;overflow:hidden!important;}
+#measurementHistoryModal.catalog-modal.hidden{display:none!important;}
+#measurementHistoryModal>.body-history-modal-content{width:100%!important;max-width:none!important;height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))!important;max-height:none!important;min-height:0!important;margin:0!important;padding:14px 16px 20px!important;border-radius:0!important;box-sizing:border-box!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;}
+#measurementHistoryModal .body-history-modal-head{flex:0 0 auto!important;}
+#measurementHistoryModal #measurementHistory{flex:1 1 auto!important;min-height:0!important;overflow-y:auto!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior:contain!important;padding-bottom:12px!important;}
+
+/* WORKOUT HISTORY DETAIL: no custom viewport/height owner here.
+   It intentionally inherits the application's parent modal architecture from the base rules:
+   fixed inset -> safe-area padding -> centered content -> max-height:100% -> internal scroll.
+   Only the local header geometry belongs to this modal. */
+#workoutDetailModal .workout-detail-content{display:block!important;position:relative!important;}
 #workoutDetailModal .workout-detail-title-wrap{position:relative!important;margin:0 0 14px!important;}
 #workoutDetailModal #workoutDetailTitle{margin:0!important;padding:12px 54px 12px 14px!important;min-height:62px!important;box-sizing:border-box!important;}
-#workoutDetailModal .workout-detail-close{position:absolute!important;top:50%!important;right:8px!important;transform:translateY(-50%)!important;margin:0!important;width:36px!important;height:36px!important;min-width:36px!important;min-height:36px!important;display:grid!important;place-items:center!important;padding:0!important;line-height:1!important;z-index:3!important;}
-</style>
-
-<style id="ftracker-v1-4-55-goals-and-safe-area">
-/* v1.4.55 — custom goal selection + workout detail safe-area alignment */
-#workoutDetailModal{
-  padding-top:calc(env(safe-area-inset-top,0px) + 12px)!important;
-  padding-bottom:calc(env(safe-area-inset-bottom,0px) + 12px)!important;
-  align-items:center!important;
-}
-#workoutDetailModal .workout-detail-content{
-  margin:0!important;
-  max-height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 24px)!important;
-  padding-top:18px!important;
-}
-/* Standard goals are always separate; saved custom goals are selectable directly below them. */
-.fscore-custom-goals-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
-.fscore-custom-goal-chip{min-height:42px!important;width:auto!important;flex:1 1 145px!important;padding:0 12px!important;border-radius:12px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.fscore-custom-goal-chip.active{border-color:rgba(103,201,112,.65)!important;box-shadow:inset 0 0 0 1px rgba(103,201,112,.35)!important;}
-.fscore-custom-goal-create{min-height:42px!important;width:auto!important;flex:0 1 auto!important;padding:0 13px!important;border:1px dashed rgba(103,201,112,.55)!important;border-radius:12px!important;background:transparent!important;color:var(--positive)!important;font-weight:800!important;}
-#fscoreCustomEditor .fscore-goals-list,#fscoreCustomEditor .fscore-add-goal{display:none!important;}
-</style>
-
-<style id="ftracker-v1-4-56-history-and-custom-goals">
-/* v1.4.56 — measurement history geometry + reliable custom-goal editor opening */
-
-/* Measurement history is a full safe-area surface. This intentionally overrides the
-   generic centered catalog-modal rules that were clipping this particular long view. */
-#measurementHistoryModal.catalog-modal{
-  position:fixed!important;
-  inset:0!important;
-  width:100%!important;
-  height:100dvh!important;
-  padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)!important;
-  box-sizing:border-box!important;
-  display:flex!important;
-  align-items:stretch!important;
-  justify-content:stretch!important;
-  overflow:hidden!important;
-}
-#measurementHistoryModal.catalog-modal.hidden{display:none!important;}
-#measurementHistoryModal>.body-history-modal-content{
-  width:100%!important;
-  max-width:none!important;
-  height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))!important;
-  max-height:none!important;
-  min-height:0!important;
-  margin:0!important;
-  padding:14px 16px 20px!important;
-  border-radius:0!important;
-  box-sizing:border-box!important;
-  display:flex!important;
-  flex-direction:column!important;
-  overflow:hidden!important;
-}
-#measurementHistoryModal .body-history-modal-head{flex:0 0 auto!important;}
-#measurementHistoryModal #measurementHistory{
-  flex:1 1 auto!important;
-  min-height:0!important;
-  overflow-y:auto!important;
-  overflow-x:hidden!important;
-  -webkit-overflow-scrolling:touch!important;
-  overscroll-behavior:contain!important;
-  padding-bottom:12px!important;
-}
-
-/* Standard and saved goals are visually separate. Saved goals are neutral until active. */
-.fscore-custom-goals-block{
-  margin-top:14px!important;
-  padding-top:12px!important;
-  border-top:1px solid var(--border)!important;
-}
-.fscore-custom-goals-heading{
-  display:flex!important;
-  align-items:baseline!important;
-  justify-content:space-between!important;
-  gap:10px!important;
-  margin-bottom:8px!important;
-}
-.fscore-custom-goals-heading b{font-size:15px!important;font-weight:850!important;}
-.fscore-custom-goals-heading small{font-size:11px!important;color:var(--subtext)!important;}
-.fscore-custom-goals-row{display:flex!important;flex-wrap:wrap!important;gap:8px!important;margin:0!important;}
-.fscore-custom-goal-chip{
-  flex:1 1 140px!important;
-  min-height:44px!important;
-  width:auto!important;
-  padding:0 12px!important;
-  border-radius:13px!important;
-  background:var(--input-bg)!important;
-  color:var(--text)!important;
-  border:1px solid var(--border)!important;
-  box-shadow:none!important;
-}
-.fscore-custom-goal-chip.active{
-  background:rgba(103,201,112,.14)!important;
-  color:#a8e5aa!important;
-  border-color:rgba(103,201,112,.72)!important;
-  box-shadow:inset 0 0 0 1px rgba(103,201,112,.18)!important;
-}
-.fscore-custom-goal-create{
-  width:100%!important;
-  min-height:42px!important;
-  margin-top:9px!important;
-  padding:0 13px!important;
-  border:1px dashed rgba(103,201,112,.55)!important;
-  border-radius:13px!important;
-  background:transparent!important;
-  color:var(--positive)!important;
-  font-weight:800!important;
-}
-</style>
-
-
-<style id="ftracker-v1-4-57-unified-goals-workout-history">
-/* v1.4.57 — one unified goal switcher + workout history */
-.fscore-goal-picker .analytics-period.fscore-all-goals{
-  display:flex!important;
-  flex-wrap:wrap!important;
-  grid-template-columns:none!important;
-  gap:8px!important;
-  margin-top:10px!important;
-}
-.fscore-goal-picker .analytics-period.fscore-all-goals>button,
-.fscore-custom-goal-entry{
-  flex:1 1 145px!important;
-  min-width:0!important;
-}
-.fscore-goal-picker .analytics-period.fscore-all-goals>button{
-  width:auto!important;
-}
-.fscore-custom-goal-entry{
-  display:flex!important;
-  align-items:stretch!important;
-  min-height:48px!important;
-  border:1px solid var(--border)!important;
-  border-radius:14px!important;
-  overflow:hidden!important;
-  background:var(--input-bg)!important;
-  box-sizing:border-box!important;
-}
-.fscore-custom-goal-entry.active{
-  border-color:var(--accent)!important;
-  box-shadow:0 0 0 3px rgba(212,255,79,.18)!important;
-}
-.fscore-custom-goal-main{
-  flex:1 1 auto!important;
-  min-width:0!important;
-  margin:0!important;
-  border:0!important;
-  border-radius:0!important;
-  background:transparent!important;
-  color:var(--text)!important;
-  padding:10px 8px 10px 12px!important;
-  min-height:48px!important;
-  font-size:12px!important;
-  font-weight:800!important;
-  white-space:nowrap!important;
-  overflow:hidden!important;
-  text-overflow:ellipsis!important;
-  box-shadow:none!important;
-}
-.fscore-custom-goal-entry.active .fscore-custom-goal-main{
-  background:var(--accent)!important;
-  color:#111!important;
-}
-.fscore-custom-goal-remove{
-  flex:0 0 40px!important;
-  width:40px!important;
-  min-width:40px!important;
-  min-height:48px!important;
-  margin:0!important;
-  padding:0!important;
-  border:0!important;
-  border-left:1px solid var(--border)!important;
-  border-radius:0!important;
-  background:rgba(255,255,255,.035)!important;
-  color:var(--subtext)!important;
-  font-size:24px!important;
-  line-height:1!important;
-  box-shadow:none!important;
-}
-.fscore-custom-goal-entry.active .fscore-custom-goal-remove{
-  color:#111!important;
-  background:rgba(0,0,0,.08)!important;
-}
-.fscore-custom-goal-create{
-  width:100%!important;
-  min-height:44px!important;
-  margin-top:10px!important;
-  padding:0 14px!important;
-  border:1px dashed rgba(103,201,112,.55)!important;
-  border-radius:13px!important;
-  background:transparent!important;
-  color:var(--positive)!important;
-  font-weight:800!important;
-}
-.fscore-custom-goals-block{display:none!important;}
-
-/* Workout history detail: one full-height surface inside the safe area.
-   The header stays inside the card and the exercise list scrolls inside it. */
-#workoutDetailModal.workout-detail-modal{
-  position:fixed!important;
-  inset:0!important;
-  width:100%!important;
-  height:100dvh!important;
-  padding:
-    calc(env(safe-area-inset-top,0px) + 10px)
-    12px
-    calc(env(safe-area-inset-bottom,0px) + 10px)!important;
-  box-sizing:border-box!important;
-  display:flex!important;
-  align-items:stretch!important;
-  justify-content:stretch!important;
-  overflow:hidden!important;
-}
-#workoutDetailModal .workout-detail-content{
-  width:100%!important;
-  max-width:760px!important;
-  height:100%!important;
-  max-height:none!important;
-  min-height:0!important;
-  margin:0 auto!important;
-  padding:18px!important;
-  box-sizing:border-box!important;
-  display:flex!important;
-  flex-direction:column!important;
-  overflow:hidden!important;
-}
-#workoutDetailModal .workout-detail-title-wrap{
-  flex:0 0 auto!important;
-  margin:0 0 14px!important;
-}
-#workoutDetailModal #workoutDetailContent{
-  flex:1 1 auto!important;
-  min-height:0!important;
-  overflow-y:auto!important;
-  overflow-x:hidden!important;
-  -webkit-overflow-scrolling:touch!important;
-  overscroll-behavior:contain!important;
-  padding-bottom:8px!important;
-}
-</style>
-
-
-<style id="ftracker-v1-4-58-goals-workout-history-final">
-/* v1.4.59 — restore native modal geometry; custom goals appear only after saving. */
-#workoutDetailModal.workout-detail-modal{
-  position:fixed!important;
-  inset:0!important;
-  width:100%!important;
-  height:100dvh!important;
-  padding:calc(env(safe-area-inset-top,0px) + 12px) 12px calc(env(safe-area-inset-bottom,0px) + 12px)!important;
-  box-sizing:border-box!important;
-  display:flex!important;
-  align-items:center!important;
-  justify-content:center!important;
-  overflow:hidden!important;
-}
-#workoutDetailModal .workout-detail-content{
-  width:min(100%,540px)!important;
-  max-width:540px!important;
-  height:auto!important;
-  max-height:100%!important;
-  min-height:0!important;
-  margin:0!important;
-  padding:18px!important;
-  border-radius:22px!important;
-  box-sizing:border-box!important;
-  display:block!important;
-  overflow-y:auto!important;
-  overflow-x:hidden!important;
-  -webkit-overflow-scrolling:touch!important;
-  overscroll-behavior:contain!important;
-}
-#workoutDetailModal .workout-detail-title-wrap{position:relative!important;margin:0 0 14px!important;}
-#workoutDetailModal #workoutDetailTitle{padding:12px 54px 12px 0!important;margin:0!important;min-height:62px!important;box-sizing:border-box!important;}
-#workoutDetailModal .workout-detail-close{position:absolute!important;top:12px!important;right:0!important;transform:none!important;}
+#workoutDetailModal .workout-detail-close{position:absolute!important;top:50%!important;right:8px!important;transform:translateY(-50%)!important;margin:0!important;width:40px!important;height:40px!important;min-width:40px!important;min-height:40px!important;display:grid!important;place-items:center!important;padding:0!important;line-height:1!important;z-index:3!important;}
 #workoutDetailModal #workoutDetailContent{overflow:visible!important;padding-bottom:0!important;}
-/* One switcher: only three base goals until a user actually saves a custom goal. */
-.fscore-goal-picker .analytics-period.fscore-all-goals{display:flex!important;flex-wrap:wrap!important;gap:8px!important;}
-.fscore-custom-goal-entry{flex:1 1 145px!important;}
-</style>
 
-
-<style id="ftracker-v1-4-59-final-modal-and-goals-fix">
-/* v1.4.59 — workout detail uses the same modal viewport architecture as the parent app windows.
-   Remove the competing v1.4.54–v1.4.59 geometry by giving this modal one owner only. */
-#workoutDetailModal.workout-detail-modal{
-  position:fixed!important;
-  inset:0!important;
-  z-index:10000!important;
-  width:100vw!important;
-  height:100dvh!important;
-  min-height:100dvh!important;
-  box-sizing:border-box!important;
-  /* Fixed overlays do not inherit body safe-area padding. Keep the same visible top clearance as app screens. */
-  padding-top:max(calc(env(safe-area-inset-top,0px) + 12px), 58px)!important;
-  padding-right:12px!important;
-  padding-bottom:max(calc(env(safe-area-inset-bottom,0px) + 12px), 16px)!important;
-  padding-left:12px!important;
-  display:flex!important;
-  align-items:stretch!important;
-  justify-content:center!important;
-  overflow:hidden!important;
-  background:var(--modal-overlay)!important;
-}
-#workoutDetailModal.hidden{display:none!important;}
-#workoutDetailModal .workout-detail-content{
-  width:min(100%,540px)!important;
-  max-width:540px!important;
-  height:100%!important;
-  max-height:100%!important;
-  min-height:0!important;
-  margin:0 auto!important;
-  padding:18px!important;
-  box-sizing:border-box!important;
-  border-radius:22px!important;
-  background:var(--card-bg)!important;
-  border:1px solid var(--border)!important;
-  display:flex!important;
-  flex-direction:column!important;
-  overflow:hidden!important;
-  overscroll-behavior:contain!important;
-}
-#workoutDetailModal .workout-detail-title-wrap{
-  position:relative!important;
-  flex:0 0 auto!important;
-  margin:0 0 14px!important;
-  min-height:62px!important;
-}
-#workoutDetailModal #workoutDetailTitle{
-  margin:0!important;
-  padding:0 54px 0 0!important;
-  min-height:62px!important;
-  box-sizing:border-box!important;
-}
-#workoutDetailModal .workout-detail-close{
-  position:absolute!important;
-  top:0!important;
-  right:0!important;
-  transform:none!important;
-}
-#workoutDetailModal #workoutDetailContent{
-  flex:1 1 auto!important;
-  min-height:0!important;
-  overflow-y:auto!important;
-  overflow-x:hidden!important;
-  -webkit-overflow-scrolling:touch!important;
-  overscroll-behavior:contain!important;
-  padding:0 2px 10px 0!important;
-}
-/* Goal switcher: exactly three base goals, then only actually saved custom goals. */
+/* GOALS: exactly three base goals; only actually saved custom goals are appended. */
+.fscore-goal-picker .analytics-period.fscore-all-goals{display:flex!important;flex-wrap:wrap!important;gap:8px!important;margin-top:10px!important;}
+.fscore-goal-picker .analytics-period.fscore-all-goals>button,.fscore-custom-goal-entry{flex:1 1 145px!important;min-width:0!important;}
+.fscore-goal-picker .analytics-period.fscore-all-goals>button{width:auto!important;}
+.fscore-custom-goal-entry{display:flex!important;align-items:stretch!important;min-height:48px!important;border:1px solid var(--border)!important;border-radius:14px!important;overflow:hidden!important;background:var(--input-bg)!important;box-sizing:border-box!important;}
+.fscore-custom-goal-entry.active{border-color:var(--accent)!important;box-shadow:0 0 0 3px rgba(212,255,79,.18)!important;}
+.fscore-custom-goal-main{flex:1 1 auto!important;min-width:0!important;margin:0!important;border:0!important;border-radius:0!important;background:transparent!important;color:var(--text)!important;padding:10px 8px 10px 12px!important;min-height:48px!important;font-size:14px!important;font-weight:800!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;box-shadow:none!important;}
+.fscore-custom-goal-entry.active .fscore-custom-goal-main{background:var(--accent)!important;color:#111!important;}
+.fscore-custom-goal-remove{flex:0 0 40px!important;width:40px!important;min-width:40px!important;min-height:48px!important;margin:0!important;padding:0!important;border:0!important;border-left:1px solid var(--border)!important;border-radius:0!important;background:rgba(255,255,255,.035)!important;color:var(--subtext)!important;font-size:24px!important;line-height:1!important;box-shadow:none!important;}
+.fscore-custom-goal-entry.active .fscore-custom-goal-remove{color:#111!important;background:rgba(0,0,0,.08)!important;}
+.fscore-custom-goal-create{width:100%!important;min-height:44px!important;margin-top:10px!important;padding:0 14px!important;border:1px dashed rgba(103,201,112,.55)!important;border-radius:13px!important;background:transparent!important;color:var(--positive)!important;font-weight:800!important;}
+/* Remove obsolete duplicate goal-management UI from the editor. */
 .fscore-custom-goals-block,.fscore-goals-list,.fscore-add-goal{display:none!important;}
 </style>
 

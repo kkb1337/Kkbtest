@@ -26,6 +26,6 @@
       "purpose": "any maskable"
     }
   ],
-  "_build": "ftracker-v1.4.58-goals-workout-history-final",
-  "version": "1.4.58"
+  "_build": "ftracker-v1.4.60-clean-modal-goals",
+  "version": "1.4.60"
 }
