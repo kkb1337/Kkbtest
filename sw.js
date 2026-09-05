@@ -1,4 +1,4 @@
-const CACHE_VERSION='ftracker-v1.4.46-custom-goals';
+const CACHE_VERSION='ftracker-v1.4.47-dynamics-index';
 const CACHE_NAME=CACHE_VERSION;
 const APP_SHELL=['./','./index.html','./manifest.json','./icon-192.png','./icon-512.png'];
 self.addEventListener('install',event=>event.waitUntil((async()=>{const c=await caches.open(CACHE_NAME);await c.addAll(APP_SHELL);await self.skipWaiting();})()));

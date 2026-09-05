@@ -26,6 +26,6 @@
       "purpose": "any maskable"
     }
   ],
-  "_build": "ftracker-v1.4.46-custom-goals",
-  "version": "1.4.46"
+  "_build": "ftracker-v1.4.47-dynamics-index",
+  "version": "1.4.47"
 }
