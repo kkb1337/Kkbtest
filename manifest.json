@@ -26,7 +26,7 @@
       "purpose": "any maskable"
     }
   ],
-  "_build": "ftracker-v1.4.83-header-gap-fix",
-  "version": "1.4.83",
-  "description": "FTracker v1.4.83 — base v1.4.79, header-to-content gap fix"
+  "_build": "ftracker-v1.4.84-workspace-scroll",
+  "version": "1.4.84",
+  "description": "FTracker v1.4.84 — workspace full-height scrolling and progress header cleanup"
 }

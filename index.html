@@ -6288,7 +6288,7 @@ body{
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v1.4.83 от 06.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v1.4.79 от 06.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -12571,7 +12571,6 @@ function renderProgressDashboard(){
       : `<button type="button" class="progress-open-picker" onclick="openProgressExercisePicker()">Выбрать упражнение <span>›</span></button>`;
 
     container.innerHTML=`<div class="progress-ex">
-        <div class="progress-ex-head"><div class="progress-ex-title">Прогресс упражнений</div></div>
         <div class="progress-ex-period"><button class="${progressPeriod===30?'active':''}" onclick="setProgressPeriod(30)" type="button">30 дней</button><button class="${progressPeriod===90?'active':''}" onclick="setProgressPeriod(90)" type="button">90 дней</button><button class="${progressPeriod==='all'?'active':''}" onclick="setProgressPeriod('all')" type="button">Всё время</button></div>
         <div class="progress-ex-picker">
             <div class="progress-ex-picker-label">Упражнение</div>
@@ -17488,7 +17487,7 @@ html,body{width:100%!important;min-height:100%!important;margin:0!important;padd
 .ft-window-root{position:fixed!important;inset:0!important;width:100%!important;height:100dvh!important;min-height:100dvh!important;margin:0!important;box-sizing:border-box!important;padding:var(--ft-safe-top) var(--ft-safe-right) var(--ft-safe-bottom) var(--ft-safe-left)!important;background:var(--modal-overlay)!important;display:flex!important;justify-content:center!important;overflow:hidden!important;overscroll-behavior:contain!important;isolation:isolate!important;}
 .ft-window-root.hidden{display:none!important;}.ft-window-root.is-stack-inactive{pointer-events:none!important;}.ft-window-root.is-stack-active{pointer-events:auto!important;}
 /* Workspace = full usable safe-area height. No centering, no modal gap. */
-.ft-window-workspace{align-items:stretch!important;}
+.ft-window-workspace{align-items:stretch!important;padding:var(--ft-safe-top) 0 0 0!important;}
 .ft-window-workspace>:first-child{position:relative!important;width:100%!important;height:100%!important;min-height:0!important;max-width:none!important;max-height:none!important;margin:0!important;box-sizing:border-box!important;border:var(--ft-border)!important;border-radius:var(--ft-radius-window)!important;background:var(--card-bg)!important;box-shadow:0 16px 42px rgba(0,0,0,.30)!important;overflow:auto!important;overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch!important;}
 /* Technique is explicitly a workspace but preserves its original full-screen visual surface. */
 #techniqueModal.ft-window-root{padding:0!important;background:var(--bg)!important;z-index:6000!important;}
@@ -17525,7 +17524,7 @@ html,body{width:100%!important;min-height:100%!important;margin:0!important;padd
   min-height:var(--ft-viewport-h)!important;
   max-height:var(--ft-viewport-h)!important;
 }
-.ft-window-workspace{align-items:stretch!important;}
+.ft-window-workspace{align-items:stretch!important;padding:var(--ft-safe-top) 0 0 0!important;}
 .ft-window-workspace>:first-child{
   height:100%!important;
   min-height:100%!important;
@@ -17537,13 +17536,14 @@ html,body{width:100%!important;min-height:100%!important;margin:0!important;padd
   height:var(--ft-viewport-h)!important;
   min-height:var(--ft-viewport-h)!important;
   max-height:var(--ft-viewport-h)!important;
+  padding:var(--ft-safe-top) 0 0 0!important;
 }
 #techniqueModal.ft-window-workspace>.technique-modal-content{
   height:100%!important;
   min-height:100%!important;
   max-height:100%!important;
-  padding-top:calc(var(--ft-safe-top) + 12px)!important;
-  padding-bottom:calc(var(--ft-safe-bottom) + 12px)!important;
+  padding-top:12px!important;
+  padding-bottom:0!important;
 }
 
 /* Header contract: compact side zones + centered title that may use two lines. */
@@ -17678,38 +17678,14 @@ html,body{width:100%!important;min-height:100%!important;margin:0!important;padd
   #workoutDetailModal .workout-history-set span{font-size:14px!important;}
   #workoutDetailModal .workout-history-set b{font-size:17px!important;}
 }
+/* v1.4.84 — final workspace geometry: top safe area only, no bottom black strip. */
+<style id="ftracker-v1-4-84-workspace-scroll-fix">
+.ft-window-workspace{padding:var(--ft-safe-top) 0 0 0!important;}
+.ft-window-workspace>:first-child{height:100%!important;min-height:100%!important;max-height:100%!important;overflow:auto!important;-webkit-overflow-scrolling:touch!important;}
+#techniqueModal.ft-window-root{padding:var(--ft-safe-top) 0 0 0!important;}
+#techniqueModal.ft-window-workspace>.technique-modal-content{padding-top:12px!important;padding-bottom:0!important;overflow-y:auto!important;}
+#progressScreen .progress-ex-head{display:none!important;}
 </style>
 
-
-<style id="ftracker-v1-4-83-header-gap-authoritative">
-/* v1.4.83 — BASE v1.4.79 ONLY: remove the phantom vertical space after screen headers.
-   No window architecture, safe-area, fullscreen, dialogs, data or business logic changes. */
-#app > [id$="Screen"] > .screen-header,
-#app > [id$="Screen"] > .fscore-screen-header{
-  flex:0 0 56px!important;
-  height:56px!important;
-  min-height:56px!important;
-  max-height:56px!important;
-  margin:0 0 4px!important;
-  padding:0!important;
-  overflow:visible!important;
-}
-#app > [id$="Screen"] > .screen-header + *,
-#app > [id$="Screen"] > .fscore-screen-header + *{
-  margin-top:0!important;
-}
-#app > [id$="Screen"]{
-  row-gap:4px!important;
-}
-@media(max-width:430px){
-  #app > [id$="Screen"] > .screen-header,
-  #app > [id$="Screen"] > .fscore-screen-header{
-    flex-basis:56px!important;
-    height:56px!important;
-    min-height:56px!important;
-    max-height:56px!important;
-  }
-}
-</style>
 </body>
 </html>
