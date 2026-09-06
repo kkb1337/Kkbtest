@@ -6288,7 +6288,7 @@ body{
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v1.4.79 от 06.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v1.4.80 от 06.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -17508,7 +17508,7 @@ html,body{width:100%!important;min-height:100%!important;margin:0!important;padd
 
 <style id="ftracker-v1-4-76-surface-finalization">
 /* ================================================================
-   FTracker v1.4.79 — rollback to the last pre-regression surface architecture
+   FTracker v1.4.80 — unified window system
    Geometry only. No business logic, formulas, storage or handlers changed.
    ================================================================ */
 :root{
@@ -17677,6 +17677,183 @@ html,body{width:100%!important;min-height:100%!important;margin:0!important;padd
   #workoutDetailModal .workout-history-set{min-height:54px!important;padding:11px 12px!important;}
   #workoutDetailModal .workout-history-set span{font-size:14px!important;}
   #workoutDetailModal .workout-history-set b{font-size:17px!important;}
+}
+</style>
+
+
+<style id="ftracker-v1-4-80-window-system">
+/* ================================================================
+   FTracker v1.4.80 — unified window system
+   Geometry-only patch. One viewport contract for every modal level;
+   three explicit surface types: workspace / adaptive / dialog.
+   ================================================================ */
+:root{
+  --ft-window-gap:12px;
+  --ft-window-pad:16px;
+  --ft-window-safe-top:var(--ft-safe-top, env(safe-area-inset-top,0px));
+  --ft-window-safe-right:var(--ft-safe-right, env(safe-area-inset-right,0px));
+  --ft-window-safe-bottom:var(--ft-safe-bottom, env(safe-area-inset-bottom,0px));
+  --ft-window-safe-left:var(--ft-safe-left, env(safe-area-inset-left,0px));
+}
+
+/* Every overlay owns exactly the physical viewport once. */
+.ft-window-root{
+  position:fixed!important;
+  inset:0!important;
+  width:100%!important;
+  height:100dvh!important;
+  min-height:100dvh!important;
+  max-height:100dvh!important;
+  margin:0!important;
+  padding:var(--ft-window-safe-top) var(--ft-window-safe-right) var(--ft-window-safe-bottom) var(--ft-window-safe-left)!important;
+  box-sizing:border-box!important;
+  overflow:hidden!important;
+  overscroll-behavior:contain!important;
+}
+.ft-window-root.hidden{display:none!important;}
+
+/* Full surfaces: edge-to-edge inside the safe area, independently scrollable. */
+.ft-window-workspace{align-items:stretch!important;justify-content:center!important;}
+.ft-window-workspace>:first-child{
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  max-height:none!important;
+  margin:0!important;
+  box-sizing:border-box!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  overscroll-behavior:contain!important;
+  -webkit-overflow-scrolling:touch!important;
+}
+
+/* Adaptive surfaces: compact when content fits, scrollable when it does not. */
+.ft-window-adaptive,.ft-window-dialog{
+  align-items:center!important;
+  justify-content:center!important;
+  padding:calc(var(--ft-window-safe-top) + 12px) calc(var(--ft-window-safe-right) + 12px) calc(var(--ft-window-safe-bottom) + 12px) calc(var(--ft-window-safe-left) + 12px)!important;
+}
+.ft-window-adaptive>:first-child,.ft-window-dialog>:first-child{
+  width:min(100%,760px)!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:calc(100dvh - var(--ft-window-safe-top) - var(--ft-window-safe-bottom) - 24px)!important;
+  margin:0!important;
+  box-sizing:border-box!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  overscroll-behavior:contain!important;
+  -webkit-overflow-scrolling:touch!important;
+}
+.ft-window-dialog>:first-child{width:min(100%,560px)!important;}
+
+/* Remove legacy per-component viewport limits from adaptive lists/sheets. */
+.ft-window-adaptive .date-modal-content,
+.ft-window-adaptive .catalog-modal-content,
+.ft-window-adaptive .exercise-modal-content,
+.ft-window-adaptive .theme-modal-content,
+.ft-window-adaptive .confirm-modal-content,
+.ft-window-adaptive .food-modal-content{
+  max-height:inherit!important;
+  min-height:0!important;
+}
+
+/* One shared header rhythm inside every large surface. */
+.ft-window-workspace .unified-surface-header,
+.ft-window-workspace .chart-modal-header,
+.ft-window-workspace .measurement-modal-header,
+.ft-window-workspace .body-graph-header,
+.ft-window-workspace .body-history-modal-head{
+  margin-bottom:var(--ft-window-gap)!important;
+}
+.ft-window-workspace .surface-title,
+.ft-window-workspace .chart-modal-title,
+.ft-window-workspace .body-history-modal-title{
+  margin:0!important;
+}
+
+/* Header-to-content spacing: no accidental double margins/padding. */
+.ft-window-workspace .unified-surface-header + *,
+.ft-window-workspace .chart-modal-header + *,
+.ft-window-workspace .measurement-modal-header + *,
+.ft-window-workspace .body-graph-header + *,
+.ft-window-workspace .body-history-modal-head + *{
+  margin-top:0!important;
+}
+
+/* Legacy measurement surfaces: header row is compact, content starts predictably. */
+#measurementManagerModal .measurement-manager-modal-content,
+#measurementFieldModal .measurement-manager-modal-content,
+#newMeasurementModal .measurement-manager-modal-content,
+#editMeasurementModal .measurement-manager-modal-content{
+  row-gap:0!important;
+}
+#measurementManagerModal .measurement-manager-modal-content > .surface-title,
+#measurementFieldModal .measurement-manager-modal-content > .surface-title,
+#newMeasurementModal .measurement-manager-modal-content > .surface-title,
+#editMeasurementModal .measurement-manager-modal-content > .surface-title{
+  margin:0!important;
+}
+
+/* The history card is adaptive by design, but never gets trapped in a tiny inner viewport. */
+#measurementHistoryModal.ft-window-adaptive>.body-history-modal-content{
+  width:min(100%,760px)!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:calc(100dvh - var(--ft-window-safe-top) - var(--ft-window-safe-bottom) - 24px)!important;
+  margin:0!important;
+  box-sizing:border-box!important;
+  overflow-y:auto!important;
+}
+
+/* Workout details: one scroll owner, no nested clipped panel. */
+#workoutDetailModal.ft-window-workspace>.workout-detail-content{
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+}
+
+/* Exercise technique surface: safe area is supplied by the root, not twice by the child. */
+#techniqueModal.ft-window-root{padding:var(--ft-window-safe-top) var(--ft-window-safe-right) var(--ft-window-safe-bottom) var(--ft-window-safe-left)!important;background:var(--bg)!important;}
+#techniqueModal.ft-window-workspace>.technique-modal-content{
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:12px 16px 16px!important;
+  box-sizing:border-box!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+}
+
+/* Graphs use the same workspace geometry as every other full surface. */
+#bodyGraphModal.ft-window-workspace>.body-graph-modal-content,
+#chartModal.ft-window-workspace>.chart-modal-content{
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  max-height:none!important;
+  box-sizing:border-box!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+}
+
+/* Nested modal levels never inherit a smaller rectangle from the previous level. */
+.ft-window-root.is-stack-active,
+.ft-window-root.is-stack-inactive{
+  height:100dvh!important;
+  min-height:100dvh!important;
+  max-height:100dvh!important;
+}
+
+@media(max-width:430px){
+  :root{--ft-window-pad:14px;--ft-window-gap:10px;}
+  .ft-window-workspace>:first-child{border-radius:0!important;}
+  .ft-window-workspace .unified-surface-header,
+  .ft-window-workspace .chart-modal-header,
+  .ft-window-workspace .measurement-modal-header,
+  .ft-window-workspace .body-graph-header,
+  .ft-window-workspace .body-history-modal-head{margin-bottom:10px!important;}
 }
 </style>
 
