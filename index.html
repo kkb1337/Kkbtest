@@ -6288,7 +6288,7 @@ body{
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v1.4.80 от 06.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v1.4.79 от 06.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -6836,10 +6836,22 @@ let modalStackInitialized = false;
 let modalStackObserverStarted = false;
 
 const FT_WINDOW_REGISTRY = Object.freeze({
-  // Every real application surface is fullscreen. Only true confirmations are compact dialogs.
+  // Full workspaces: serious content gets the entire usable PWA surface.
+  workoutDetailModal:'workspace', achievementsModal:'workspace', manualWorkoutModal:'workspace',
+  addFoodModal:'workspace', foodLimitModal:'workspace', workoutSummaryModal:'workspace',
+  bodyGraphModal:'workspace', chartModal:'workspace', measurementManagerModal:'workspace',
+  measurementFieldModal:'workspace', measurementHistoryModal:'adaptive',
+  newMeasurementModal:'workspace', editMeasurementModal:'workspace', techniqueModal:'workspace',
+  // Compact/adaptive forms.
+  renameExerciseModal:'adaptive', directoryNewExerciseModal:'adaptive', workoutNewExerciseModal:'adaptive',
+  replaceExerciseModal:'adaptive', exerciseModal:'adaptive', exerciseOrderModal:'adaptive',
+  exercisePickerModal:'adaptive', progressExercisePickerModal:'adaptive', dateModal:'adaptive',
+  copyDatePickerModal:'adaptive', themeModal:'adaptive', catalogEditModal:'adaptive',
+  exerciseDuplicateModal:'adaptive', foodDuplicateModal:'adaptive',
+  // True compact system decisions.
   confirmExitModal:'dialog', finishWorkoutConfirmModal:'dialog', deleteConfirmModal:'dialog',
   importConfirmModal:'dialog', autoBackupRestoreConfirmModal:'dialog', measurementSaveConfirmModal:'dialog',
-  foodCopyConfirmModal:'dialog', systemConfirmModal:'dialog', exerciseDuplicateModal:'dialog', foodDuplicateModal:'dialog'
+  foodCopyConfirmModal:'dialog', systemConfirmModal:'dialog'
 });
 function isModalElement(el) {
   if (!(el instanceof Element)) return false;
@@ -6853,12 +6865,11 @@ function getModalRoots() {
 }
 function getModalContent(modal) { return modal ? modal.firstElementChild : null; }
 function classifyModal(modal) {
-  if (!modal) return 'workspace';
+  if (!modal) return 'adaptive';
+  // No guessing from a class name. Every known surface has an explicit contract.
   if (Object.prototype.hasOwnProperty.call(FT_WINDOW_REGISTRY, modal.id)) return FT_WINDOW_REGISTRY[modal.id];
-  const cls = typeof modal.className === 'string' ? modal.className : '';
-  // Unknown confirmation surfaces remain compact; every other application surface is fullscreen.
-  if (/(?:^|\s)(?:confirm-modal|system-confirm)(?:\s|$)/i.test(cls)) return 'dialog';
-  return 'workspace';
+  // Unknown windows stay conservative/adaptive rather than being force-converted to fullscreen.
+  return 'adaptive';
 }
 function prepareModalRoot(modal) {
   if (!modal) return;
@@ -6894,7 +6905,7 @@ function updateModalStackState() {
   open.forEach(m=>{ prepareModalRoot(m); if(!modalStack.includes(m)) modalStack.push(m); });
   modalStack.forEach((m,i)=>{
     const active=i===modalStack.length-1;
-    m.style.setProperty('z-index',String(1000+(i+1)*10),'important');
+    m.style.zIndex=String(1000+(i+1)*10);
     m.classList.toggle('is-stack-active',active);
     m.classList.toggle('is-stack-inactive',!active);
     m.style.pointerEvents=active?'auto':'none';
@@ -14092,7 +14103,7 @@ function closeTechniqueModal() {
     modal.scrollTop=0;
     const content=modal.querySelector('.technique-modal-content');
     if(content) content.scrollTop=0;
-    updateModalStackState();
+    /* Technique card is isolated from Modal Stack; do not touch body geometry here. */
 }
 
 function switchTechniqueTab(tabId) {
@@ -14770,8 +14781,7 @@ function ensureTechniqueModal(){
   m.classList.remove('modal-stack-root','modal-stack-content');
   const existingContent = m.firstElementChild;
   existingContent?.classList.remove('modal-stack-content');
-  /* Technique card uses the same canonical modal stack as every other application surface. */
-  prepareModalRoot(m);
+  /* Exercise Card is intentionally outside Modal Stack: do not lock/fix <body>. */
   m.classList.remove('hidden');
   m.style.pointerEvents='auto';
   m.setAttribute('aria-hidden','false');
@@ -17498,7 +17508,7 @@ html,body{width:100%!important;min-height:100%!important;margin:0!important;padd
 
 <style id="ftracker-v1-4-76-surface-finalization">
 /* ================================================================
-   FTracker v1.4.80 — unified window system
+   FTracker v1.4.79 — rollback to the last pre-regression surface architecture
    Geometry only. No business logic, formulas, storage or handlers changed.
    ================================================================ */
 :root{
@@ -17667,191 +17677,6 @@ html,body{width:100%!important;min-height:100%!important;margin:0!important;padd
   #workoutDetailModal .workout-history-set{min-height:54px!important;padding:11px 12px!important;}
   #workoutDetailModal .workout-history-set span{font-size:14px!important;}
   #workoutDetailModal .workout-history-set b{font-size:17px!important;}
-}
-</style>
-
-
-<style id="ftracker-v1-4-81-window-system">
-/* FTracker v1.4.81 — authoritative window geometry.
-   This block intentionally overrides the accumulated legacy modal CSS.
-   One viewport owner, one scroll owner, one header rhythm. */
-:root{
-  --ft-safe-top:env(safe-area-inset-top,0px);
-  --ft-safe-right:env(safe-area-inset-right,0px);
-  --ft-safe-bottom:env(safe-area-inset-bottom,0px);
-  --ft-safe-left:env(safe-area-inset-left,0px);
-  --ft-window-header-h:56px;
-  --ft-window-x:16px;
-  --ft-window-gap:10px;
-}
-
-/* Kill legacy per-modal viewport geometry. */
-.ft-window-root,
-#techniqueModal.ft-window-root,
-#exerciseModal.ft-window-root,
-#catalogEditModal.ft-window-root,
-#replaceExerciseModal.ft-window-root,
-#exercisePickerModal.ft-window-root,
-#progressExercisePickerModal.ft-window-root,
-#exerciseOrderModal.ft-window-root,
-#measurementHistoryModal.ft-window-root{
-  position:fixed!important; inset:0!important;
-  width:100%!important; height:100dvh!important;
-  min-height:100dvh!important; max-height:100dvh!important;
-  margin:0!important;
-  box-sizing:border-box!important;
-  padding:var(--ft-safe-top) var(--ft-safe-right) var(--ft-safe-bottom) var(--ft-safe-left)!important;
-  overflow:hidden!important;
-  overscroll-behavior:contain!important;
-  isolation:isolate!important;
-}
-.ft-window-root.hidden{display:none!important;pointer-events:none!important;visibility:hidden!important;}
-
-/* JS stack owns z-index; no legacy ID-specific z-index may win. */
-#techniqueModal.ft-window-root,#measurementManagerModal.ft-window-root,#measurementFieldModal.ft-window-root,
-#deleteConfirmModal.ft-window-root,#measurementSaveConfirmModal.ft-window-root,#foodCopyConfirmModal.ft-window-root,
-#exerciseDuplicateModal.ft-window-root,#foodDuplicateModal.ft-window-root{z-index:auto!important;}
-
-/* All non-confirmation surfaces are true full-height workspaces. */
-.ft-window-workspace{
-  display:flex!important; align-items:stretch!important; justify-content:stretch!important;
-}
-.ft-window-workspace>:first-child{
-  position:relative!important;
-  width:100%!important; height:100%!important;
-  min-width:0!important; min-height:0!important;
-  max-width:none!important; max-height:none!important;
-  margin:0!important;
-  box-sizing:border-box!important;
-  border:0!important; border-radius:0!important;
-  box-shadow:none!important;
-  overflow-y:auto!important; overflow-x:hidden!important;
-  overscroll-behavior:contain!important;
-  -webkit-overflow-scrolling:touch!important;
-}
-
-/* Eliminate inner viewport traps in fullscreen surfaces. */
-.ft-window-workspace .replace-exercise-sheet,
-.ft-window-workspace .workout-new-exercise-sheet,
-.ft-window-workspace .catalog-modal-content,
-.ft-window-workspace .exercise-modal-content,
-.ft-window-workspace .food-modal-content,
-.ft-window-workspace .manual-workout-content,
-.ft-window-workspace .achievements-content,
-.ft-window-workspace .workout-detail-content,
-.ft-window-workspace .measurement-manager-modal-content,
-.ft-window-workspace .body-graph-modal-content,
-.ft-window-workspace .chart-modal-content,
-.ft-window-workspace .technique-modal-content{
-  max-height:none!important; min-height:0!important; height:100%!important;
-}
-
-/* Fullscreen list surfaces: the window scrolls, not a tiny 43/46/55/58vh box. */
-.ft-window-workspace .replace-exercise-list,
-.ft-window-workspace #replaceExerciseList,
-.ft-window-workspace #exercisePickerList,
-.ft-window-workspace #progressPickerList,
-.ft-window-workspace #exerciseOrderList,
-.ft-window-workspace .catalog-modal-list,
-.ft-window-workspace .progress-picker-list,
-.ft-window-workspace .order-position-list{
-  max-height:none!important; min-height:0!important; overflow:visible!important;
-}
-
-/* Technique card: safe area belongs to the root exactly once. */
-#techniqueModal.ft-window-workspace>.technique-modal-content{
-  padding:12px var(--ft-window-x) calc(16px + var(--ft-safe-bottom))!important;
-  background:var(--bg)!important; border:0!important;
-}
-
-/* Compact dialogs remain centered, but their content can always scroll. */
-.ft-window-dialog{
-  display:flex!important; align-items:center!important; justify-content:center!important;
-  padding:calc(var(--ft-safe-top) + 12px) 12px calc(var(--ft-safe-bottom) + 12px)!important;
-}
-.ft-window-dialog>:first-child{
-  position:relative!important; width:min(100%,560px)!important;
-  height:auto!important; min-height:0!important;
-  max-height:calc(100dvh - var(--ft-safe-top) - var(--ft-safe-bottom) - 24px)!important;
-  margin:0!important; box-sizing:border-box!important;
-  overflow-y:auto!important; overflow-x:hidden!important;
-  overscroll-behavior:contain!important; -webkit-overflow-scrolling:touch!important;
-}
-
-/* Dialogs created dynamically or carrying old sheet classes cannot inherit 82/86/92vh traps. */
-.ft-window-dialog .confirm-modal-content,
-.ft-window-dialog .system-confirm-content,
-.ft-window-dialog .exercise-dup-sheet{
-  width:min(100%,560px)!important; height:auto!important; min-height:0!important;
-  max-height:calc(100dvh - var(--ft-safe-top) - var(--ft-safe-bottom) - 24px)!important;
-  overflow-y:auto!important; box-sizing:border-box!important;
-}
-
-/* Shared close button geometry. */
-.ft-window-root>:first-child>.close-btn,
-.ft-window-root>:first-child>.modal-close-btn,
-.ft-window-root>:first-child>.exercise-dup-close,
-.ft-window-root>:first-child>#exerciseDupClose,
-.ft-window-root>:first-child>#foodDupClose{
-  position:absolute!important; top:10px!important; right:12px!important; left:auto!important; bottom:auto!important;
-  transform:none!important; z-index:80!important;
-  width:38px!important; height:38px!important; min-width:38px!important; min-height:38px!important;
-  margin:0!important; padding:0!important; display:inline-flex!important;
-  align-items:center!important; justify-content:center!important; box-sizing:border-box!important;
-}
-
-/* Shared fullscreen header rhythm. */
-.ft-window-workspace .unified-surface-header,
-.ft-window-workspace .chart-modal-header,
-.ft-window-workspace .measurement-modal-header,
-.ft-window-workspace .body-graph-header,
-.ft-window-workspace .body-history-modal-head{
-  min-height:var(--ft-window-header-h)!important;
-  height:auto!important; margin:0 0 var(--ft-window-gap)!important;
-  padding:0!important;
-  box-sizing:border-box!important;
-}
-.ft-window-workspace .surface-title,
-.ft-window-workspace .chart-modal-title,
-.ft-window-workspace .body-history-modal-title{
-  margin:0!important; padding:0!important;
-  font-size:clamp(18px,5vw,23px)!important; line-height:1.08!important; font-weight:850!important;
-}
-.ft-window-workspace .unified-surface-header + *,
-.ft-window-workspace .chart-modal-header + *,
-.ft-window-workspace .measurement-modal-header + *,
-.ft-window-workspace .body-graph-header + *,
-.ft-window-workspace .body-history-modal-head + *{margin-top:0!important;}
-
-/* Legacy measurement grid gets the same header-to-content rhythm. */
-#measurementManagerModal .measurement-manager-modal-content,
-#measurementFieldModal .measurement-manager-modal-content,
-#newMeasurementModal .measurement-manager-modal-content,
-#editMeasurementModal .measurement-manager-modal-content,
-#historicalMeasurementEditModal .measurement-manager-modal-content{
-  row-gap:0!important;
-}
-#measurementManagerModal .measurement-manager-modal-content>.surface-title,
-#measurementFieldModal .measurement-manager-modal-content>.surface-title,
-#newMeasurementModal .measurement-manager-modal-content>.surface-title,
-#editMeasurementModal .measurement-manager-modal-content>.surface-title{margin:0!important;}
-
-/* Old inline heading margins are a major source of the giant title-to-content gap. */
-.ft-window-workspace [style*="font-size:21px"],
-.ft-window-workspace [style*="font-size:22px"],
-.ft-window-workspace [style*="font-size:23px"]{
-  margin-top:0!important;
-}
-
-/* Mobile PWA: workspaces touch the usable viewport edges; dialogs keep 12px breathing room. */
-@media(max-width:430px){
-  :root{--ft-window-header-h:54px;--ft-window-x:14px;--ft-window-gap:8px;}
-  .ft-window-workspace .unified-surface-header,
-  .ft-window-workspace .chart-modal-header,
-  .ft-window-workspace .measurement-modal-header,
-  .ft-window-workspace .body-graph-header,
-  .ft-window-workspace .body-history-modal-head{margin-bottom:8px!important;}
-  .ft-window-workspace .screen-header{margin-bottom:8px!important;}
 }
 </style>
 
