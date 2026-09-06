@@ -6288,7 +6288,7 @@ body{
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v1.5.1 от 06.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v1.4.79 от 06.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -6826,7 +6826,7 @@ body{
 
 <script id="ftracker-app">
 /* ================================================================
-   FTracker v1.5.1 — unified Bottom Sheet / Dialog surfaces
+   FTracker v1.4.76 — canonical viewport and adaptive surfaces
    One owner for stacking and interaction order. It does not rewrite window
    DOM, headers, borders, padding, or the original visual content.
    ================================================================ */
@@ -6837,17 +6837,17 @@ let modalStackObserverStarted = false;
 
 const FT_WINDOW_REGISTRY = Object.freeze({
   // Full workspaces: serious content gets the entire usable PWA surface.
-  workoutDetailModal:'sheet', achievementsModal:'sheet', manualWorkoutModal:'sheet',
-  addFoodModal:'sheet', foodLimitModal:'sheet', workoutSummaryModal:'sheet',
-  bodyGraphModal:'sheet', chartModal:'sheet', measurementManagerModal:'sheet',
-  measurementFieldModal:'sheet', measurementHistoryModal:'sheet',
-  newMeasurementModal:'sheet', editMeasurementModal:'sheet', techniqueModal:'sheet',
+  workoutDetailModal:'workspace', achievementsModal:'workspace', manualWorkoutModal:'workspace',
+  addFoodModal:'workspace', foodLimitModal:'workspace', workoutSummaryModal:'workspace',
+  bodyGraphModal:'workspace', chartModal:'workspace', measurementManagerModal:'workspace',
+  measurementFieldModal:'workspace', measurementHistoryModal:'adaptive',
+  newMeasurementModal:'workspace', editMeasurementModal:'workspace', techniqueModal:'workspace',
   // Compact/adaptive forms.
-  renameExerciseModal:'sheet', directoryNewExerciseModal:'sheet', workoutNewExerciseModal:'sheet',
-  replaceExerciseModal:'sheet', exerciseModal:'sheet', exerciseOrderModal:'sheet',
-  exercisePickerModal:'sheet', progressExercisePickerModal:'sheet', dateModal:'sheet',
-  copyDatePickerModal:'sheet', themeModal:'sheet', catalogEditModal:'sheet',
-  exerciseDuplicateModal:'sheet', foodDuplicateModal:'sheet',
+  renameExerciseModal:'adaptive', directoryNewExerciseModal:'adaptive', workoutNewExerciseModal:'adaptive',
+  replaceExerciseModal:'adaptive', exerciseModal:'adaptive', exerciseOrderModal:'adaptive',
+  exercisePickerModal:'adaptive', progressExercisePickerModal:'adaptive', dateModal:'adaptive',
+  copyDatePickerModal:'adaptive', themeModal:'adaptive', catalogEditModal:'adaptive',
+  exerciseDuplicateModal:'adaptive', foodDuplicateModal:'adaptive',
   // True compact system decisions.
   confirmExitModal:'dialog', finishWorkoutConfirmModal:'dialog', deleteConfirmModal:'dialog',
   importConfirmModal:'dialog', autoBackupRestoreConfirmModal:'dialog', measurementSaveConfirmModal:'dialog',
@@ -6865,16 +6865,16 @@ function getModalRoots() {
 }
 function getModalContent(modal) { return modal ? modal.firstElementChild : null; }
 function classifyModal(modal) {
-  if (!modal) return 'sheet';
+  if (!modal) return 'adaptive';
   // No guessing from a class name. Every known surface has an explicit contract.
   if (Object.prototype.hasOwnProperty.call(FT_WINDOW_REGISTRY, modal.id)) return FT_WINDOW_REGISTRY[modal.id];
-  // Any secondary surface uses the same Bottom Sheet contract.
-  return 'sheet';
+  // Unknown windows stay conservative/adaptive rather than being force-converted to fullscreen.
+  return 'adaptive';
 }
 function prepareModalRoot(modal) {
   if (!modal) return;
   modal.classList.add('ft-window-root');
-  modal.classList.remove('ft-window-workspace','ft-window-adaptive','ft-window-sheet','ft-window-dialog');
+  modal.classList.remove('ft-window-workspace','ft-window-adaptive','ft-window-dialog');
   modal.classList.add('ft-window-'+classifyModal(modal));
   modal.setAttribute('aria-modal','true');
 }
@@ -17431,12 +17431,17 @@ body.light-mode .toast{
 }
 </style>
 
-<style id="ftracker-v1-4-80-window-system">
+
+
+
+
+
+
+<style id="ftracker-v1-4-75-canonical-ui">
 /* ================================================================
-   FTracker v1.5.1 — canonical surface system
-   Geometry is owned exactly once per level:
-   device -> safe-area -> surface -> header/content.
-   No business logic, formulas, storage or handlers are changed.
+   FTracker v1.4.76 — canonical viewport, headers and surfaces
+   One geometry owner per surface. Explicit window registry.
+   Business logic and formulas are intentionally untouched.
    ================================================================ */
 :root{
   --ft-safe-top:env(safe-area-inset-top,0px);
@@ -17444,319 +17449,234 @@ body.light-mode .toast{
   --ft-safe-bottom:env(safe-area-inset-bottom,0px);
   --ft-safe-left:env(safe-area-inset-left,0px);
   --ft-page-x:14px;
-  --ft-header-side:88px;
-  --ft-header-h:56px;
-  --ft-header-gap:10px;
-  --ft-card-radius:18px;
-  --ft-window-radius:22px;
+  --ft-header-h:52px;
+  --ft-header-side:104px;
+  --ft-space-1:8px;
+  --ft-space-2:12px;
+  --ft-radius-card:18px;
+  --ft-radius-window:22px;
   --ft-border:1px solid var(--border);
 }
-html,body{width:100%!important;min-height:100%!important;margin:0!important;padding:0!important;overflow-x:hidden!important;-webkit-text-size-adjust:100%;}
-
-/* Device safe area is consumed once, here. */
-.safe-area{
-  width:100%!important;
-  min-height:100dvh!important;
-  margin:0!important;
-  padding:var(--ft-safe-top) var(--ft-safe-right) var(--ft-safe-bottom) var(--ft-safe-left)!important;
-  box-sizing:border-box!important;
-  background:var(--bg)!important;
-}
-.safe-area>#app,.safe-area>.container,#app.container{
-  width:100%!important;
-  max-width:680px!important;
-  min-height:calc(100dvh - var(--ft-safe-top) - var(--ft-safe-bottom))!important;
-  margin:0 auto!important;
-  padding:0 var(--ft-page-x)!important;
-  box-sizing:border-box!important;
-  position:relative!important;
-}
-
-/* App screens: normal document flow. No hidden spacer/viewport owner. */
-#app>[id$="Screen"]{
-  width:100%!important;
-  min-width:0!important;
-  min-height:0!important;
-  margin:0!important;
-  padding:0!important;
-  box-sizing:border-box!important;
-  position:relative!important;
-  overflow:visible!important;
-}
+html,body{width:100%!important;min-height:100%!important;margin:0!important;padding:0!important;background:var(--bg)!important;overflow-x:hidden!important;-webkit-text-size-adjust:100%;}
+/* Physical device insets belong here and nowhere else. */
+.safe-area{width:100%!important;min-height:100dvh!important;margin:0!important;padding:var(--ft-safe-top) var(--ft-safe-right) var(--ft-safe-bottom) var(--ft-safe-left)!important;box-sizing:border-box!important;background:var(--bg)!important;}
+.safe-area>#app,.safe-area>.container,#app.container{width:100%!important;max-width:680px!important;min-height:calc(100dvh - var(--ft-safe-top) - var(--ft-safe-bottom))!important;height:auto!important;margin:0 auto!important;padding:0 var(--ft-page-x)!important;box-sizing:border-box!important;position:relative!important;display:block!important;overflow:visible!important;}
+/* Main screens start immediately at the usable safe boundary. */
+#app>[id$="Screen"]{width:100%!important;min-width:0!important;height:auto!important;min-height:0!important;margin:0!important;padding:0!important;box-sizing:border-box!important;position:relative!important;overflow:visible!important;}
 #app>[id$="Screen"].hidden{display:none!important;}
 #app>[id$="Screen"]>*{min-width:0!important;box-sizing:border-box!important;}
+/* One app header contract: [back] [centered title] [symmetric action zone]. */
+.screen-header,.fscore-screen-header{display:grid!important;grid-template-columns:var(--ft-header-side) minmax(0,1fr) var(--ft-header-side)!important;grid-template-rows:var(--ft-header-h)!important;align-items:center!important;gap:0!important;width:100%!important;height:var(--ft-header-h)!important;min-height:var(--ft-header-h)!important;margin:0 0 var(--ft-space-2)!important;padding:0!important;box-sizing:border-box!important;position:sticky!important;top:0!important;z-index:120!important;background:var(--bg)!important;box-shadow:none!important;}
+.screen-header>button:first-child,.fscore-screen-header>button:first-child{grid-column:1!important;grid-row:1!important;justify-self:start!important;align-self:center!important;width:auto!important;min-width:0!important;max-width:100%!important;min-height:42px!important;margin:0!important;padding:8px 10px!important;border-radius:12px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;font-size:15px!important;font-weight:800!important;line-height:1!important;}
+.screen-header>.title,.screen-header>.title.section-title,.screen-header>.section-title,.fscore-screen-header>.title,.fscore-screen-header>.section-title{grid-column:2!important;grid-row:1!important;width:100%!important;min-width:0!important;margin:0!important;padding:0!important;justify-self:stretch!important;display:flex!important;align-items:center!important;justify-content:center!important;text-align:center!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;font-size:clamp(20px,5.5vw,25px)!important;line-height:1.1!important;font-weight:850!important;letter-spacing:-.02em!important;}
+.screen-header>.screen-header-spacer,.fscore-screen-header>.screen-header-spacer{grid-column:3!important;grid-row:1!important;display:block!important;width:100%!important;height:1px!important;visibility:hidden!important;margin:0!important;padding:0!important;}
+/* Shared nested workspace header contract. */
+.unified-surface-header,.chart-modal-header,.measurement-modal-header,.body-graph-header,.body-history-modal-head{display:grid!important;grid-template-columns:var(--ft-header-side) minmax(0,1fr) var(--ft-header-side)!important;grid-template-rows:var(--ft-header-h) auto!important;align-items:center!important;gap:0!important;width:100%!important;min-height:var(--ft-header-h)!important;margin:0 0 var(--ft-space-2)!important;padding:0!important;box-sizing:border-box!important;position:relative!important;}
+.unified-surface-header .surface-back-btn,.chart-modal-header .chart-back-btn,.measurement-modal-header .surface-back-btn,.body-graph-header .surface-back-btn,.body-history-modal-head .surface-back-btn{grid-column:1!important;grid-row:1!important;justify-self:start!important;margin:0!important;width:auto!important;min-width:0!important;max-width:100%!important;min-height:42px!important;padding:8px 10px!important;border-radius:12px!important;font-size:15px!important;font-weight:800!important;line-height:1!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;}
+.unified-surface-header .surface-title,.chart-modal-header .surface-title,.chart-modal-header .chart-modal-title,.measurement-modal-header .surface-title,.body-graph-header .surface-title,.body-history-modal-head .body-history-modal-title{grid-column:2!important;grid-row:1!important;min-width:0!important;margin:0!important;text-align:center!important;justify-self:stretch!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;font-size:clamp(19px,5vw,24px)!important;line-height:1.1!important;font-weight:850!important;}
+.body-history-modal-head .body-history-modal-sub{grid-column:2!important;grid-row:2!important;margin:0!important;text-align:center!important;font-size:12px!important;color:var(--subtext)!important;line-height:1.25!important;}
+/* Legacy measurement forms have the same header without DOM surgery. */
+#measurementManagerModal .measurement-manager-modal-content,#measurementFieldModal .measurement-manager-modal-content,#newMeasurementModal .measurement-manager-modal-content,#editMeasurementModal .measurement-manager-modal-content{display:grid!important;grid-template-columns:var(--ft-header-side) minmax(0,1fr) var(--ft-header-side)!important;grid-auto-rows:auto!important;align-items:start!important;column-gap:0!important;row-gap:0!important;}
+#measurementManagerModal .measurement-manager-modal-content>.surface-back-btn,#measurementFieldModal .measurement-manager-modal-content>.surface-back-btn,#newMeasurementModal .measurement-manager-modal-content>.surface-back-btn,#editMeasurementModal .measurement-manager-modal-content>.surface-back-btn{grid-column:1!important;grid-row:1!important;justify-self:start!important;align-self:center!important;margin:0!important;min-height:42px!important;padding:8px 10px!important;border-radius:12px!important;font-size:15px!important;font-weight:800!important;line-height:1!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;}
+#measurementManagerModal .measurement-manager-modal-content>.surface-title,#measurementFieldModal .measurement-manager-modal-content>.surface-title,#newMeasurementModal .measurement-manager-modal-content>.surface-title,#editMeasurementModal .measurement-manager-modal-content>.surface-title{grid-column:2!important;grid-row:1!important;align-self:center!important;min-width:0!important;margin:0!important;text-align:center!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;font-size:clamp(19px,5vw,24px)!important;line-height:1.1!important;font-weight:850!important;}
+#measurementManagerModal .measurement-manager-modal-content>:not(.surface-back-btn):not(.surface-title),#measurementFieldModal .measurement-manager-modal-content>:not(.surface-back-btn):not(.surface-title),#newMeasurementModal .measurement-manager-modal-content>:not(.surface-back-btn):not(.surface-title),#editMeasurementModal .measurement-manager-modal-content>:not(.surface-back-btn):not(.surface-title){grid-column:1 / -1!important;}
+/* Cards and lists remain in normal flow. */
+#app .card,.ft-window-root .card{box-sizing:border-box!important;min-width:0!important;max-width:100%!important;border-radius:var(--ft-radius-card)!important;}
+#app .directory-list,#app .measurement-manager-list,#app .exercise-dup-list,#app .order-position-list,#app .progress-picker-list,#app .replace-exercise-list,#app .catalog-modal-list,#app .body-comparison-list{position:static!important;width:100%!important;min-width:0!important;display:flex!important;flex-direction:column!important;gap:var(--ft-space-1)!important;}
+#app .directory-list>*,#app .measurement-manager-list>*,#app .exercise-dup-list>*,#app .order-position-list>*,#app .progress-picker-list>*,#app .replace-exercise-list>*,#app .catalog-modal-list>*,#app .body-comparison-list>*{position:static!important;width:100%!important;min-width:0!important;margin:0!important;}
+/* Window roots only provide the stack and physical viewport. */
+.ft-window-root{position:fixed!important;inset:0!important;width:100%!important;height:100dvh!important;min-height:100dvh!important;margin:0!important;box-sizing:border-box!important;padding:var(--ft-safe-top) var(--ft-safe-right) var(--ft-safe-bottom) var(--ft-safe-left)!important;background:var(--modal-overlay)!important;display:flex!important;justify-content:center!important;overflow:hidden!important;overscroll-behavior:contain!important;isolation:isolate!important;}
+.ft-window-root.hidden{display:none!important;}.ft-window-root.is-stack-inactive{pointer-events:none!important;}.ft-window-root.is-stack-active{pointer-events:auto!important;}
+/* Workspace = full usable safe-area height. No centering, no modal gap. */
+.ft-window-workspace{align-items:stretch!important;}
+.ft-window-workspace>:first-child{position:relative!important;width:100%!important;height:100%!important;min-height:0!important;max-width:none!important;max-height:none!important;margin:0!important;box-sizing:border-box!important;border:var(--ft-border)!important;border-radius:var(--ft-radius-window)!important;background:var(--card-bg)!important;box-shadow:0 16px 42px rgba(0,0,0,.30)!important;overflow:auto!important;overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch!important;}
+/* Technique is explicitly a workspace but preserves its original full-screen visual surface. */
+#techniqueModal.ft-window-root{padding:0!important;background:var(--bg)!important;z-index:6000!important;}
+#techniqueModal.ft-window-workspace>.technique-modal-content{position:relative!important;inset:auto!important;width:100%!important;height:100%!important;min-height:100%!important;max-width:none!important;max-height:none!important;margin:0!important;padding:calc(var(--ft-safe-top) + 12px) 16px calc(var(--ft-safe-bottom) + 12px)!important;box-sizing:border-box!important;border:0!important;border-radius:0!important;background:var(--bg)!important;box-shadow:none!important;overflow-y:auto!important;overflow-x:hidden!important;}
+/* Adaptive and dialog surfaces are compact by contract. */
+.ft-window-adaptive,.ft-window-dialog{align-items:center!important;padding:calc(var(--ft-safe-top) + 12px) calc(var(--ft-safe-right) + 12px) calc(var(--ft-safe-bottom) + 12px) calc(var(--ft-safe-left) + 12px)!important;}
+.ft-window-adaptive>:first-child,.ft-window-dialog>:first-child{position:relative!important;box-sizing:border-box!important;width:min(100%,760px)!important;max-height:100%!important;margin:0!important;border:var(--ft-border)!important;background:var(--card-bg)!important;overflow:auto!important;overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch!important;}
+.ft-window-adaptive>:first-child{border-radius:20px!important;box-shadow:0 16px 42px rgba(0,0,0,.30)!important;}.ft-window-dialog>:first-child{max-width:560px!important;border-radius:18px!important;box-shadow:0 16px 42px rgba(0,0,0,.30)!important;}
+/* Close controls belong to their surface, not the device viewport. */
+.ft-window-root>:first-child>.close-btn,.ft-window-root>:first-child>.modal-close-btn,.ft-window-root>:first-child>.exercise-dup-close,.ft-window-root>:first-child>#exerciseDupClose,.ft-window-root>:first-child>#foodDupClose{position:absolute!important;top:12px!important;right:12px!important;left:auto!important;bottom:auto!important;transform:none!important;z-index:80!important;width:40px!important;height:40px!important;min-width:40px!important;min-height:40px!important;margin:0!important;padding:0!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;border-radius:12px!important;box-sizing:border-box!important;}
+.ft-window-root .workout-detail-title-wrap>.workout-detail-close{top:50%!important;right:10px!important;left:auto!important;bottom:auto!important;transform:translateY(-50%)!important;z-index:80!important;}
+#workoutDetailModal #workoutDetailContent{min-width:0!important;overflow-x:hidden!important;}#workoutDetailModal .workout-detail-title-wrap{position:relative!important;}#workoutDetailModal #workoutDetailTitle{padding-right:52px!important;}
+#app img,#app video,#app canvas,#app svg,.ft-window-root img,.ft-window-root video,.ft-window-root canvas,.ft-window-root svg{max-width:100%!important;}#app input,#app select,#app textarea,.ft-window-root input,.ft-window-root select,.ft-window-root textarea{max-width:100%!important;box-sizing:border-box!important;}
+@media(max-width:430px){:root{--ft-page-x:12px;--ft-header-side:100px;--ft-header-h:50px;}.screen-header>button:first-child,.fscore-screen-header>button:first-child{font-size:14px!important;padding-inline:9px!important;}.unified-surface-header .surface-back-btn,.chart-modal-header .chart-back-btn,.measurement-modal-header .surface-back-btn,.body-graph-header .surface-back-btn,.body-history-modal-head .surface-back-btn{font-size:14px!important;padding-inline:9px!important;}}
+</style>
 
-/* One header contract: [back] [center title] [symmetric zone]. */
+
+<style id="ftracker-v1-4-76-surface-finalization">
+/* ================================================================
+   FTracker v1.4.79 — rollback to the last pre-regression surface architecture
+   Geometry only. No business logic, formulas, storage or handlers changed.
+   ================================================================ */
+:root{
+  --ft-header-side:88px;
+  --ft-header-h:58px;
+  --ft-viewport-h:100dvh;
+}
+
+/* One physical viewport contract for every overlay in standalone PWA. */
+.safe-area{min-height:var(--ft-viewport-h)!important;}
+.safe-area>#app,.safe-area>.container,#app.container{min-height:calc(var(--ft-viewport-h) - var(--ft-safe-top) - var(--ft-safe-bottom))!important;}
+.ft-window-root{
+  height:var(--ft-viewport-h)!important;
+  min-height:var(--ft-viewport-h)!important;
+  max-height:var(--ft-viewport-h)!important;
+}
+.ft-window-workspace{align-items:stretch!important;}
+.ft-window-workspace>:first-child{
+  height:100%!important;
+  min-height:100%!important;
+  max-height:100%!important;
+}
+
+/* Full-screen exercise surface uses the same usable PWA height as all workspaces. */
+#techniqueModal.ft-window-root{
+  height:var(--ft-viewport-h)!important;
+  min-height:var(--ft-viewport-h)!important;
+  max-height:var(--ft-viewport-h)!important;
+}
+#techniqueModal.ft-window-workspace>.technique-modal-content{
+  height:100%!important;
+  min-height:100%!important;
+  max-height:100%!important;
+  padding-top:calc(var(--ft-safe-top) + 12px)!important;
+  padding-bottom:calc(var(--ft-safe-bottom) + 12px)!important;
+}
+
+/* Header contract: compact side zones + centered title that may use two lines. */
 .screen-header,.fscore-screen-header,
 .unified-surface-header,.chart-modal-header,.measurement-modal-header,.body-graph-header,.body-history-modal-head{
-  display:grid!important;
   grid-template-columns:var(--ft-header-side) minmax(0,1fr) var(--ft-header-side)!important;
-  grid-template-rows:minmax(var(--ft-header-h),auto)!important;
-  align-items:center!important;
-  width:100%!important;
-  min-width:0!important;
   min-height:var(--ft-header-h)!important;
-  margin:0 0 var(--ft-header-gap)!important;
-  padding:0!important;
-  box-sizing:border-box!important;
-  position:relative!important;
-  background:transparent!important;
+  height:auto!important;
 }
-.screen-header{position:sticky!important;top:0!important;z-index:120!important;background:var(--bg)!important;}
 .screen-header>button:first-child,.fscore-screen-header>button:first-child,
-.unified-surface-header .surface-back-btn,.chart-modal-header .chart-back-btn,.measurement-modal-header .surface-back-btn,.body-graph-header .surface-back-btn,.body-history-modal-head .surface-back-btn,
-.measurement-manager-modal-content>.surface-back-btn{
-  grid-column:1!important;
-  grid-row:1!important;
-  justify-self:start!important;
-  align-self:center!important;
+.unified-surface-header .surface-back-btn,.chart-modal-header .chart-back-btn,.measurement-modal-header .surface-back-btn,.body-graph-header .surface-back-btn,.body-history-modal-head .surface-back-btn{
   width:auto!important;
-  max-width:100%!important;
-  min-width:0!important;
+  max-width:84px!important;
   min-height:40px!important;
-  margin:0!important;
   padding:8px 9px!important;
-  border-radius:12px!important;
-  box-sizing:border-box!important;
-  white-space:nowrap!important;
-  overflow:hidden!important;
-  text-overflow:ellipsis!important;
   font-size:14px!important;
-  font-weight:800!important;
-  line-height:1!important;
+  border-radius:12px!important;
 }
 .screen-header>.title,.screen-header>.title.section-title,.screen-header>.section-title,
 .fscore-screen-header>.title,.fscore-screen-header>.section-title,
-.unified-surface-header .surface-title,.chart-modal-header .surface-title,.chart-modal-header .chart-modal-title,.measurement-modal-header .surface-title,.body-graph-header .surface-title,.body-history-modal-head .body-history-modal-title,
-.measurement-manager-modal-content>.surface-title{
-  grid-column:2!important;
-  grid-row:1!important;
-  min-width:0!important;
-  width:100%!important;
-  margin:0!important;
-  padding:0!important;
-  text-align:center!important;
-  align-self:center!important;
-  justify-self:stretch!important;
+.unified-surface-header .surface-title,.chart-modal-header .surface-title,.chart-modal-header .chart-modal-title,.measurement-modal-header .surface-title,.body-graph-header .surface-title,.body-history-modal-head .body-history-modal-title{
   white-space:normal!important;
-  overflow:hidden!important;
-  overflow-wrap:anywhere!important;
-  word-break:normal!important;
+  overflow:visible!important;
   text-overflow:clip!important;
-  font-size:clamp(18px,5vw,24px)!important;
-  line-height:1.08!important;
-  font-weight:850!important;
-  max-height:2.16em!important;
+  overflow-wrap:normal!important;
+  word-break:normal!important;
+  hyphens:none!important;
+  text-align:center!important;
+  display:block!important;
+  align-self:center!important;
+  font-size:clamp(18px,5vw,23px)!important;
+  line-height:1.05!important;
+  max-height:2.1em!important;
 }
-.screen-header-spacer{grid-column:3!important;grid-row:1!important;min-width:0!important;min-height:1px!important;visibility:hidden!important;}
-/* The first content block follows the header by one deliberate gap, not accumulated margins. */
-#app>[id$="Screen"]>.screen-header + *,
-#app>[id$="Screen"]>.fscore-screen-header + *,
-.ft-window-workspace .unified-surface-header + *,
-.ft-window-workspace .chart-modal-header + *,
-.ft-window-workspace .measurement-modal-header + *,
-.ft-window-workspace .body-graph-header + *{margin-top:0!important;}
-
-/* Window root owns only the overlay and the usable PWA bounds. */
-.ft-window-root{
-  position:fixed!important;
-  inset:0!important;
-  width:100%!important;
-  height:100dvh!important;
-  min-height:100dvh!important;
-  max-height:100dvh!important;
-  margin:0!important;
-  padding:var(--ft-safe-top) var(--ft-safe-right) var(--ft-safe-bottom) var(--ft-safe-left)!important;
-  box-sizing:border-box!important;
-  display:flex!important;
-  overflow:hidden!important;
-  overscroll-behavior:contain!important;
-  isolation:isolate!important;
-  background:var(--modal-overlay)!important;
-}
-.ft-window-root.hidden{display:none!important;}
-.ft-window-root.is-stack-inactive{pointer-events:none!important;}
-.ft-window-root.is-stack-active{pointer-events:auto!important;}
-
-/* Workspace: one full usable surface; only its own content scrolls. */
-.ft-window-workspace{align-items:stretch!important;justify-content:stretch!important;}
-.ft-window-workspace>:first-child{
-  position:relative!important;
-  flex:1 1 auto!important;
-  width:100%!important;
-  min-width:0!important;
-  min-height:0!important;
-  margin:0!important;
-  box-sizing:border-box!important;
-  border:var(--ft-border)!important;
-  border-radius:var(--ft-window-radius)!important;
-  background:var(--card-bg)!important;
-  box-shadow:0 16px 42px rgba(0,0,0,.30)!important;
-  overflow:auto!important;
-  overscroll-behavior:contain!important;
-  -webkit-overflow-scrolling:touch!important;
-}
-/* Full workspaces must not inherit compact modal centering or arbitrary max-height. */
-#bodyGraphModal.ft-window-workspace>.body-graph-modal-content,
-#chartModal.ft-window-workspace>.chart-modal-content,
-#workoutDetailModal.ft-window-workspace>.workout-detail-content{
-  flex:1 1 auto!important;
-  min-height:0!important;
-  max-height:none!important;
-}
-#bodyGraphModal.ft-window-workspace>.body-graph-modal-content,
-#chartModal.ft-window-workspace>.chart-modal-content{padding:16px!important;}
-
-/* Technique is a true app workspace and owns safe-area internally, once. */
-#techniqueModal.ft-window-root{padding:0!important;background:var(--bg)!important;}
-#techniqueModal.ft-window-workspace>.technique-modal-content{
-  flex:1 1 auto!important;
-  min-height:0!important;
-  margin:0!important;
-  padding:calc(var(--ft-safe-top) + 8px) 16px calc(var(--ft-safe-bottom) + 8px)!important;
-  border:0!important;
-  border-radius:0!important;
-  background:var(--bg)!important;
-  box-shadow:none!important;
-  overflow:auto!important;
+/* Subtitle never competes with the main header width. */
+.body-history-modal-head .body-history-modal-sub{
+  grid-column:2!important;
+  grid-row:2!important;
+  margin-top:1px!important;
+  line-height:1.2!important;
 }
 
-/* Adaptive surfaces are content-sized; dialogs never become workspaces. */
-.ft-window-adaptive,.ft-window-dialog{
-  align-items:center!important;
-  justify-content:center!important;
-  padding:calc(var(--ft-safe-top) + 12px) calc(var(--ft-safe-right) + 12px) calc(var(--ft-safe-bottom) + 12px) calc(var(--ft-safe-left) + 12px)!important;
-}
-.ft-window-adaptive>:first-child,.ft-window-dialog>:first-child{
-  position:relative!important;
-  width:min(100%,760px)!important;
-  min-width:0!important;
-  max-height:100%!important;
-  margin:0!important;
-  box-sizing:border-box!important;
-  border:var(--ft-border)!important;
-  background:var(--card-bg)!important;
-  overflow:auto!important;
-  overscroll-behavior:contain!important;
-  -webkit-overflow-scrolling:touch!important;
-}
-.ft-window-adaptive>:first-child{border-radius:20px!important;box-shadow:0 16px 42px rgba(0,0,0,.30)!important;}
-.ft-window-dialog>:first-child{max-width:560px!important;border-radius:18px!important;box-shadow:0 16px 42px rgba(0,0,0,.30)!important;}
-
-/* Measurement history is informational/adaptive and shares the same compact-surface logic. */
+/* Small-content surfaces stay compact and scroll only when they actually need to. */
+#measurementHistoryModal.ft-window-adaptive{align-items:flex-start!important;}
 #measurementHistoryModal.ft-window-adaptive>.body-history-modal-content{
   height:auto!important;
   min-height:0!important;
-  max-height:100%!important;
+  max-height:calc(var(--ft-viewport-h) - var(--ft-safe-top) - var(--ft-safe-bottom) - 24px)!important;
+  margin-top:12px!important;
+  margin-bottom:12px!important;
+  padding:16px!important;
+  border-radius:22px!important;
+}
+#measurementHistoryModal .body-history-item{border-radius:18px!important;}
+#measurementHistoryModal .body-history-values{display:flex!important;flex-wrap:wrap!important;gap:8px!important;}
+#measurementHistoryModal .body-history-value{margin:0!important;padding:8px 11px!important;border-radius:13px!important;}
+
+/* Workout history is a real visual hierarchy: workout -> exercise card -> set rows. */
+#workoutDetailModal.ft-window-workspace>.workout-detail-content{
+  padding:16px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  gap:14px!important;
+}
+#workoutDetailModal .workout-detail-title-wrap{
+  flex:0 0 auto!important;
+  margin:0!important;
+  padding:2px 48px 14px 0!important;
+  border-bottom:1px solid var(--border)!important;
+}
+#workoutDetailModal .workout-detail-title-main{
+  font-size:clamp(22px,6vw,30px)!important;
+  font-weight:900!important;
+  line-height:1.12!important;
+}
+#workoutDetailModal .workout-detail-title-date{
+  margin-top:5px!important;
+  font-size:15px!important;
+  font-weight:750!important;
+  color:var(--subtext)!important;
+}
+#workoutDetailModal #workoutDetailContent{padding-bottom:calc(var(--ft-safe-bottom) + 8px)!important;}
+#workoutDetailModal .workout-history-detail-list{display:grid!important;gap:12px!important;}
+#workoutDetailModal .workout-history-exercise{
   margin:0!important;
   padding:16px!important;
+  border:1px solid var(--border)!important;
   border-radius:20px!important;
-}
-#measurementHistoryModal .body-history-modal-head{margin-bottom:10px!important;}
-#measurementHistoryModal .body-history-item{margin:0!important;border-radius:18px!important;}
-
-/* Workout detail remains a workspace but keeps a clean internal hierarchy. */
-#workoutDetailModal.ft-window-workspace>.workout-detail-content{padding:16px!important;display:flex!important;flex-direction:column!important;gap:14px!important;}
-#workoutDetailModal .workout-detail-title-wrap{position:relative!important;flex:0 0 auto!important;margin:0!important;padding:2px 48px 14px 0!important;border-bottom:1px solid var(--border)!important;}
-#workoutDetailModal #workoutDetailTitle{padding-right:0!important;margin:0!important;}
-#workoutDetailModal .workout-detail-close{position:absolute!important;top:50%!important;right:0!important;left:auto!important;bottom:auto!important;transform:translateY(-50%)!important;z-index:80!important;width:40px!important;height:40px!important;margin:0!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;border-radius:12px!important;}
-#workoutDetailModal #workoutDetailContent{min-width:0!important;padding-bottom:8px!important;}
-#workoutDetailModal .workout-history-detail-list{display:grid!important;gap:12px!important;}
-#workoutDetailModal .workout-history-exercise{margin:0!important;padding:16px!important;border:1px solid var(--border)!important;border-radius:20px!important;background:var(--card-bg)!important;box-shadow:none!important;}
-#workoutDetailModal .workout-history-exercise-name{margin:0 0 12px!important;font-size:clamp(19px,5vw,24px)!important;font-weight:850!important;line-height:1.2!important;}
-#workoutDetailModal .workout-history-sets{display:grid!important;gap:8px!important;}
-#workoutDetailModal .workout-history-set{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;min-height:54px!important;padding:11px 13px!important;border-radius:16px!important;background:var(--input-bg)!important;border:1px solid rgba(255,255,255,.04)!important;box-sizing:border-box!important;}
-
-/* Close controls are attached to the surface, never to the device viewport. */
-.ft-window-root>:first-child>.close-btn,.ft-window-root>:first-child>.modal-close-btn,.ft-window-root>:first-child>.exercise-dup-close,.ft-window-root>:first-child>#exerciseDupClose,.ft-window-root>:first-child>#foodDupClose{
-  position:absolute!important;top:12px!important;right:12px!important;left:auto!important;bottom:auto!important;transform:none!important;z-index:80!important;width:40px!important;height:40px!important;min-width:40px!important;min-height:40px!important;margin:0!important;padding:0!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;border-radius:12px!important;box-sizing:border-box!important;
-}
-
-#app img,#app video,#app canvas,#app svg,.ft-window-root img,.ft-window-root video,.ft-window-root canvas,.ft-window-root svg{max-width:100%!important;}
-#app input,#app select,#app textarea,.ft-window-root input,.ft-window-root select,.ft-window-root textarea{max-width:100%!important;box-sizing:border-box!important;}
-@media(max-width:430px){
-  :root{--ft-page-x:12px;--ft-header-side:82px;--ft-header-h:54px;}
-  .screen-header>button:first-child,.fscore-screen-header>button:first-child,
-  .unified-surface-header .surface-back-btn,.chart-modal-header .chart-back-btn,.measurement-modal-header .surface-back-btn,.body-graph-header .surface-back-btn,.body-history-modal-head .surface-back-btn,.measurement-manager-modal-content>.surface-back-btn{font-size:13px!important;padding-inline:7px!important;}
-}
-
-
-/* ================================================================
-   FTracker v1.5.1 — canonical secondary-surface contract
-   Main screens are intentionally untouched.
-   Every non-confirmation modal uses ONE Bottom Sheet geometry.
-   ================================================================ */
-.ft-window-root.ft-window-sheet{
-  position:fixed!important;
-  inset:0!important;
-  z-index:9000!important;
-  display:flex!important;
-  align-items:flex-end!important;
-  justify-content:stretch!important;
-  padding:0!important;
-  background:rgba(0,0,0,.46)!important;
-  overflow:hidden!important;
-  overscroll-behavior:contain!important;
-}
-.ft-window-root.ft-window-sheet.hidden{display:none!important;}
-.ft-window-root.ft-window-sheet>:first-child{
-  position:relative!important;
-  width:100%!important;
-  max-width:none!important;
-  min-width:0!important;
-  height:auto!important;
-  min-height:0!important;
-  max-height:calc(100dvh - env(safe-area-inset-top) - 8px)!important;
-  margin:0!important;
-  padding:18px 16px calc(16px + env(safe-area-inset-bottom))!important;
-  border:0!important;
-  border-radius:24px 24px 0 0!important;
   background:var(--card-bg)!important;
-  box-shadow:0 -12px 36px rgba(0,0,0,.30)!important;
-  overflow-y:auto!important;
-  overflow-x:hidden!important;
-  overscroll-behavior:contain!important;
-  -webkit-overflow-scrolling:touch!important;
+  box-shadow:none!important;
+}
+#workoutDetailModal .workout-history-exercise-name{
+  margin:0 0 12px!important;
+  font-size:clamp(19px,5vw,24px)!important;
+  font-weight:850!important;
+  line-height:1.2!important;
+}
+#workoutDetailModal .workout-history-sets{display:grid!important;gap:8px!important;}
+#workoutDetailModal .workout-history-set{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:12px!important;
+  min-height:58px!important;
+  padding:12px 14px!important;
+  border-radius:16px!important;
+  background:var(--input-bg)!important;
+  border:1px solid rgba(255,255,255,.04)!important;
   box-sizing:border-box!important;
 }
-/* Neutralize legacy compact widths/heights inside the unified sheet. */
-.ft-window-root.ft-window-sheet .date-modal-content,
-.ft-window-root.ft-window-sheet .catalog-modal-content,
-.ft-window-root.ft-window-sheet .exercise-modal-content,
-.ft-window-root.ft-window-sheet .food-modal-content,
-.ft-window-root.ft-window-sheet .manual-workout-content,
-.ft-window-root.ft-window-sheet .achievements-content,
-.ft-window-root.ft-window-sheet .workout-detail-content,
-.ft-window-root.ft-window-sheet .technique-modal-content,
-.ft-window-root.ft-window-sheet .body-history-modal-content,
-.ft-window-root.ft-window-sheet .body-graph-modal-content,
-.ft-window-root.ft-window-sheet .chart-modal-content{
-  width:100%!important;
-  max-width:none!important;
-  min-height:0!important;
-  max-height:none!important;
+#workoutDetailModal .workout-history-set span{font-size:15px!important;color:var(--subtext)!important;}
+#workoutDetailModal .workout-history-set b{font-size:18px!important;font-weight:850!important;white-space:nowrap!important;}
+#workoutDetailModal .workout-history-empty{padding:14px!important;border-radius:14px!important;background:var(--input-bg)!important;color:var(--subtext)!important;}
+
+/* Graph workspaces must own the entire usable PWA height and their chart may scroll inside it. */
+#bodyGraphModal.ft-window-workspace>.body-graph-modal-content,
+#chartModal.ft-window-workspace>.chart-modal-content{
+  height:100%!important;
+  min-height:100%!important;
+  max-height:100%!important;
+  padding:16px!important;
+  padding-bottom:calc(var(--ft-safe-bottom) + 16px)!important;
 }
-.ft-window-root.ft-window-sheet .close-btn,
-.ft-window-root.ft-window-sheet .modal-close-btn,
-.ft-window-root.ft-window-sheet .workout-detail-close{
-  position:sticky!important;
-  top:0!important;
-  float:right!important;
-  margin:0 0 8px 12px!important;
-  z-index:20!important;
-}
-/* Picker lists and long exercise/product details must own remaining scroll space. */
-.ft-window-root.ft-window-sheet .catalog-modal-list,
-.ft-window-root.ft-window-sheet .progress-picker-list,
-.ft-window-root.ft-window-sheet #exercisePickerList,
-.ft-window-root.ft-window-sheet #progressPickerList,
-.ft-window-root.ft-window-sheet .technique-content,
-.ft-window-root.ft-window-sheet .exercise-description,
-.ft-window-root.ft-window-sheet #workoutDetailContent{
-  min-height:0!important;
-  overflow-y:auto!important;
-  -webkit-overflow-scrolling:touch!important;
-  overscroll-behavior:contain!important;
+#bodyGraphModal .body-graph-chart,#chartModal .chart-wrap{min-height:0!important;}
+
+@media(max-width:430px){
+  :root{--ft-header-side:82px;--ft-header-h:56px;}
+  .screen-header>button:first-child,.fscore-screen-header>button:first-child,
+  .unified-surface-header .surface-back-btn,.chart-modal-header .chart-back-btn,.measurement-modal-header .surface-back-btn,.body-graph-header .surface-back-btn,.body-history-modal-head .surface-back-btn{max-width:78px!important;font-size:13.5px!important;padding-inline:8px!important;}
+  #workoutDetailModal .workout-history-exercise{padding:14px!important;border-radius:18px!important;}
+  #workoutDetailModal .workout-history-set{min-height:54px!important;padding:11px 12px!important;}
+  #workoutDetailModal .workout-history-set span{font-size:14px!important;}
+  #workoutDetailModal .workout-history-set b{font-size:17px!important;}
 }
 </style>
 
