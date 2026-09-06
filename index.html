@@ -6288,7 +6288,7 @@ body{
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v1.4.79 от 06.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v1.4.83 от 06.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -17681,15 +17681,34 @@ html,body{width:100%!important;min-height:100%!important;margin:0!important;padd
 </style>
 
 
-<style id="ftracker-v1482-minimal-header-gap">
-/* v1.4.82 — ONLY reduce the gap directly below ordinary screen headers. */
+<style id="ftracker-v1-4-83-header-gap-authoritative">
+/* v1.4.83 — BASE v1.4.79 ONLY: remove the phantom vertical space after screen headers.
+   No window architecture, safe-area, fullscreen, dialogs, data or business logic changes. */
 #app > [id$="Screen"] > .screen-header,
 #app > [id$="Screen"] > .fscore-screen-header{
-  margin-bottom:4px!important;
+  flex:0 0 56px!important;
+  height:56px!important;
+  min-height:56px!important;
+  max-height:56px!important;
+  margin:0 0 4px!important;
+  padding:0!important;
+  overflow:visible!important;
 }
 #app > [id$="Screen"] > .screen-header + *,
 #app > [id$="Screen"] > .fscore-screen-header + *{
   margin-top:0!important;
+}
+#app > [id$="Screen"]{
+  row-gap:4px!important;
+}
+@media(max-width:430px){
+  #app > [id$="Screen"] > .screen-header,
+  #app > [id$="Screen"] > .fscore-screen-header{
+    flex-basis:56px!important;
+    height:56px!important;
+    min-height:56px!important;
+    max-height:56px!important;
+  }
 }
 </style>
 </body>
