@@ -69,35 +69,32 @@ input, select { width: 100%; padding: 10px; border-radius: 10px; border: 0; back
 #deleteConfirmModal .confirm-modal-content { position: relative; }
 .theme-modal, .exercise-modal, .date-modal, .confirm-modal, .workout-detail-modal, .manual-workout-modal, .achievements-modal, .food-modal, .catalog-modal,
 .modal-stack-root {
-  position: fixed;
-  inset: 0;
-  padding:
-    calc(env(safe-area-inset-top, 0px) + 12px)
-    12px
-    calc(env(safe-area-inset-bottom, 0px) + 12px);
-  box-sizing: border-box;
-  background: var(--modal-overlay);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overscroll-behavior: contain;
-  touch-action: pan-y;
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 }
 .theme-modal.hidden, .exercise-modal.hidden, .date-modal.hidden, .confirm-modal.hidden, .workout-detail-modal.hidden, .manual-workout-modal.hidden, .achievements-modal.hidden, .food-modal.hidden, .catalog-modal.hidden,
-.modal-stack-root.hidden { display: none !important; }
+.modal-stack-root.hidden {  }
 .theme-modal-content, .exercise-modal-content, .date-modal-content, .confirm-modal-content, .workout-detail-content, .manual-workout-content, .achievements-content, .food-modal-content, .catalog-modal-content,
 .modal-stack-content {
-  background: var(--card-bg);
+  
   border-radius: 22px;
-  padding: 24px;
-  width: min(100%, 760px);
-  max-width: 760px;
-  max-height: 100%;
+  
+  
+  
+  
   overflow-y: auto;
   overflow-x: hidden;
-  position: relative;
-  box-sizing: border-box;
-  overscroll-behavior: contain;
+  
+  
+  
   -webkit-overflow-scrolling: touch;
 }
 /* Compact confirmation dialogs keep their natural height while still respecting the same viewport. */
@@ -1061,34 +1058,31 @@ html, body { overscroll-behavior: none; }
   overscroll-behavior:none;
   touch-action:pan-y;
 }
-.technique-modal.hidden{display:none;}
+.technique-modal.hidden{}
 .technique-modal-content{
-  position:absolute;
-  inset:0;
-  width:auto;
-  height:auto;
-  min-width:0;
-  min-height:0;
-  max-width:none;
-  max-height:none;
-  margin:0;
-  padding:
-    calc(env(safe-area-inset-top,0px) + 12px)
-    16px
-    calc(env(safe-area-inset-bottom,0px) + 12px);
-  box-sizing:border-box;
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   overflow-y:auto;
   overflow-x:hidden;
-  overscroll-behavior:contain;
+  
   -webkit-overflow-scrolling:touch;
-  background:var(--bg);
+  
   color:var(--text);
   border:0;
   border-radius:0;
   box-shadow:none;
-  touch-action:pan-y;
+  
 }
-.technique-modal-sub{font-size:13px;font-weight:700;color:var(--button-green);margin:-12px 0 14px;}
+.technique-modal-sub{font-size:13px;font-weight:700;color:var(--button-green);}
 /* Кликабельное название упражнения в тренировке */
 .workout-exercise-title{cursor:pointer;}
 .workout-exercise-title .workout-title-hint{display:inline-flex;align-items:center;gap:4px;margin-left:8px;font-size:12px;font-weight:700;color:var(--button-green);vertical-align:middle;white-space:nowrap;}
@@ -1170,7 +1164,7 @@ body.light-mode #workoutScreen #exerciseStrip .exercise-dot.active{background:rg
 .directory-item-name{flex:1;min-width:0;font-size:15px;font-weight:750;line-height:1.25;overflow-wrap:anywhere;word-break:break-word;cursor:pointer;}
 .directory-edit{width:38px!important;height:38px!important;flex:none;padding:0!important;}
 .directory-search{margin-bottom:12px!important;}
-.catalog-modal-list{margin-top:10px;overflow:auto;-webkit-overflow-scrolling:touch;max-height:55vh;}
+.catalog-modal-list{margin-top:10px;-webkit-overflow-scrolling:touch;}
 .catalog-choice{display:flex;align-items:center;gap:10px;width:100%;text-align:left;margin:0 0 6px!important;padding:11px 12px!important;background:var(--card-bg)!important;border:1px solid var(--border)!important;color:var(--text)!important;border-radius:13px!important;min-height:48px!important;}
 .catalog-choice-name{flex:1;min-width:0;overflow-wrap:anywhere;word-break:break-word;font-size:15px;font-weight:700;}
 .catalog-choice-group{font-size:11px;color:var(--subtext);white-space:nowrap;}
@@ -1579,7 +1573,7 @@ input,select{border:1px solid var(--border)!important;background:var(--input-bg)
 #workoutScreen .workout-bottom-action:active{transform:scale(.965)!important;}
 /* All modal/list surfaces share one geometry. */
 .exercise-modal,.catalog-modal,.theme-modal,.confirm-modal,.date-modal,.food-modal,.manual-workout-modal,.achievements-modal{padding:16px!important;}
-.exercise-modal-content,.catalog-modal-content,.theme-modal-content,.confirm-modal-content,.date-modal-content,.food-modal-content,.manual-workout-content,.achievements-content{width:min(100%,540px)!important;max-width:540px!important;padding:18px!important;border-radius:22px!important;background:var(--card-bg)!important;border:1px solid var(--border)!important;overflow:auto!important;}
+.exercise-modal-content,.catalog-modal-content,.theme-modal-content,.confirm-modal-content,.date-modal-content,.food-modal-content,.manual-workout-content,.achievements-content{border-radius:22px!important;border:1px solid var(--border)!important;}
 .replace-exercise-sheet{display:flex!important;flex-direction:column!important;min-height:0!important;}
 .replace-exercise-list{min-height:120px!important;max-height:46vh!important;overflow-y:auto!important;overscroll-behavior:contain!important;display:grid!important;gap:7px!important;}
 .replace-exercise-option{width:100%!important;min-height:54px!important;margin:0!important;padding:10px 12px!important;border-radius:13px!important;background:var(--input-bg)!important;border:1px solid var(--border)!important;color:var(--text)!important;display:grid!important;grid-template-columns:minmax(0,1fr) auto 24px!important;gap:8px!important;align-items:center!important;text-align:left!important;pointer-events:auto!important;}
@@ -2288,7 +2282,7 @@ body.light-mode{
 .catalog-modal-content button,.workout-new-exercise-sheet button{width:100%!important;min-height:52px!important;border-radius:15px!important;margin-top:8px!important;font-size:16px!important;font-weight:800!important;}
 .workout-new-title{font-size:24px!important;font-weight:900!important;line-height:1.1!important;margin-bottom:7px!important;}
 .workout-new-sub{font-size:13px!important;line-height:1.4!important;color:var(--subtext)!important;margin-bottom:14px!important;}
-.catalog-modal-list,.replace-exercise-list{overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch!important;touch-action:pan-y!important;}
+.catalog-modal-list,.replace-exercise-list{-webkit-overflow-scrolling:touch!important;}
 .catalog-choice,.replace-exercise-option{touch-action:manipulation!important;user-select:none!important;-webkit-user-select:none!important;}
 #exercisePickerModal .date-modal-content{overflow:hidden!important;}
 #exercisePickerList{min-height:80px!important;max-height:55vh!important;overflow-y:auto!important;padding:2px!important;}
@@ -4641,13 +4635,13 @@ body.light-mode{
   font-size:12px!important;line-height:1.35!important;font-weight:650!important;text-align:center!important;
 }
 .confirm-modal,.date-modal,.catalog-modal,.food-modal,.manual-workout-modal,.achievements-modal,.theme-modal,.exercise-modal{
-  box-sizing:border-box!important;
+  
 }
 .confirm-modal-content,.date-modal-content,.catalog-modal-content,.food-modal-content,.manual-workout-content,.achievements-content,.theme-modal-content,.exercise-modal-content{
-  width:min(94%,380px)!important;max-width:380px!important;
-  max-height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 28px)!important;
-  box-sizing:border-box!important;padding:18px!important;border-radius:18px!important;
-  background:var(--card-bg)!important;color:var(--text)!important;
+  
+  
+  border-radius:18px!important;
+  color:var(--text)!important;
   border:1px solid var(--border)!important;box-shadow:0 18px 55px rgba(0,0,0,.42)!important;
 }
 .confirm-modal-content button,.date-modal-content button,.catalog-modal-content button,.food-modal-content button,.manual-workout-content button,.achievements-content button,.theme-modal-content button{
@@ -6826,9 +6820,8 @@ body{
 
 <script id="ftracker-app">
 /* ================================================================
-   FTracker v1.4.76 — canonical viewport and adaptive surfaces
-   One owner for stacking and interaction order. It does not rewrite window
-   DOM, headers, borders, padding, or the original visual content.
+   FTracker — unified modal stack: workspace + dialog
+   One owner for stacking and interaction order. Two window types only.
    ================================================================ */
 const modalStack = [];
 let modalBodyScrollY = 0;
@@ -6854,17 +6847,10 @@ function getModalRoots() {
     .filter(isModalElement);
 }
 function getModalContent(modal) { return modal ? modal.firstElementChild : null; }
-function classifyModal(modal) {
-  if (!modal) return 'adaptive';
-  // No guessing from a class name. Every known surface has an explicit contract.
-  if (Object.prototype.hasOwnProperty.call(FT_WINDOW_REGISTRY, modal.id)) return FT_WINDOW_REGISTRY[modal.id];
-  // Unknown windows stay conservative/adaptive rather than being force-converted to fullscreen.
-  return 'adaptive';
-}
 function prepareModalRoot(modal) {
   if (!modal) return;
   modal.classList.add('ft-window-root');
-  modal.classList.remove('ft-window-workspace','ft-window-adaptive','ft-window-dialog');
+  modal.classList.remove('ft-window-workspace','ft-window-dialog');
   modal.classList.add('ft-window-'+classifyModal(modal));
   modal.setAttribute('aria-modal','true');
 }
@@ -6895,7 +6881,7 @@ function updateModalStackState() {
   open.forEach(m=>{ prepareModalRoot(m); if(!modalStack.includes(m)) modalStack.push(m); });
   modalStack.forEach((m,i)=>{
     const active=i===modalStack.length-1;
-    m.style.zIndex=String(1000+(i+1)*10);
+    m.style.setProperty('z-index',String(1000+(i+1)*10),'important');
     m.classList.toggle('is-stack-active',active);
     m.classList.toggle('is-stack-inactive',!active);
     m.style.pointerEvents=active?'auto':'none';
@@ -17428,142 +17414,35 @@ body.light-mode .toast{
 
 
 
-<style id="ftracker-v1-4-90-window-system">
-/* v1.4.90 — SINGLE WINDOW GEOMETRY CONTRACT
-   Exactly two window types:
-   1) workspace: every non-dialog app surface, full PWA viewport.
-   2) dialog: compact confirmation/system decision.
-   No legacy modal geometry participates here. */
-:root{
-  --ft-safe-top:env(safe-area-inset-top,0px);
-  --ft-safe-right:env(safe-area-inset-right,0px);
-  --ft-safe-bottom:env(safe-area-inset-bottom,0px);
-  --ft-safe-left:env(safe-area-inset-left,0px);
-  --ft-header-h:50px;
-  --ft-header-side:84px;
-}
+<style id="ftracker-v1-4-92-window-contract">
+/* v1.4.92 — ONE WINDOW CONTRACT. Only workspace + dialog exist. */
+:root{--ft-safe-top:env(safe-area-inset-top,0px);--ft-safe-right:env(safe-area-inset-right,0px);--ft-safe-bottom:env(safe-area-inset-bottom,0px);--ft-safe-left:env(safe-area-inset-left,0px);--ft-header-h:50px;--ft-header-side:84px;}
 html,body{margin:0!important;padding:0!important;width:100%!important;min-height:100%!important;background:var(--bg)!important;overflow-x:hidden!important;}
-
-/* MAIN APP SCREENS: one compact header, no artificial gap below it. */
-.screen-header,.fscore-screen-header{
-  box-sizing:border-box!important;
-  width:100%!important;
-  height:var(--ft-header-h)!important;
-  min-height:var(--ft-header-h)!important;
-  max-height:var(--ft-header-h)!important;
-  margin:0!important;
-  padding:0!important;
-  display:grid!important;
-  grid-template-columns:var(--ft-header-side) minmax(0,1fr) var(--ft-header-side)!important;
-  grid-template-rows:var(--ft-header-h)!important;
-  gap:0!important;
-  position:relative!important;
-}
-.screen-header>button:first-child,.fscore-screen-header>button:first-child{
-  margin:0!important;min-height:40px!important;max-height:40px!important;
-}
-
-/* ALL NON-DIALOG WINDOWS = ONE FULL-SCREEN WORKSPACE. */
-.ft-window-root.ft-window-workspace{
-  position:fixed!important;
-  inset:0!important;
-  width:100vw!important;
-  height:100dvh!important;
-  min-width:100vw!important;
-  min-height:100dvh!important;
-  max-width:100vw!important;
-  max-height:100dvh!important;
-  margin:0!important;
-  padding:0!important;
-  box-sizing:border-box!important;
-  display:block!important;
-  background:var(--bg)!important;
-  overflow:hidden!important;
-  overscroll-behavior:none!important;
-  isolation:isolate!important;
-}
+/* Normal screen header: one row, fixed height, no phantom vertical gap. */
+.screen-header,.fscore-screen-header{box-sizing:border-box!important;width:100%!important;height:var(--ft-header-h)!important;min-height:var(--ft-header-h)!important;max-height:var(--ft-header-h)!important;margin:0 0 8px!important;padding:0!important;display:grid!important;grid-template-columns:var(--ft-header-side) minmax(0,1fr) var(--ft-header-side)!important;grid-template-rows:var(--ft-header-h)!important;gap:0!important;position:relative!important;z-index:20!important;align-items:center!important;}
+.screen-header>.title,.screen-header>.section-title,.fscore-screen-header>.title,.fscore-screen-header>.section-title{grid-column:2!important;grid-row:1!important;min-width:0!important;width:100%!important;height:auto!important;margin:0!important;padding:0!important;justify-self:stretch!important;text-align:center!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;line-height:1.15!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;}
+.screen-header>button:first-child,.fscore-screen-header>button:first-child{grid-column:1!important;grid-row:1!important;width:auto!important;min-width:72px!important;max-width:100%!important;height:40px!important;min-height:40px!important;max-height:40px!important;margin:0!important;padding:7px 10px!important;box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:center!important;align-self:center!important;position:relative!important;z-index:25!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;}
+.screen-header>.screen-header-spacer,.fscore-screen-header>.screen-header-spacer{grid-column:3!important;grid-row:1!important;width:100%!important;min-width:0!important;height:40px!important;display:block!important;visibility:hidden!important;pointer-events:none!important;}
+/* The workspace root is always the entire PWA surface. */
+.ft-window-root.ft-window-workspace{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;min-width:100vw!important;min-height:100dvh!important;max-width:100vw!important;max-height:100dvh!important;margin:0!important;padding:0!important;box-sizing:border-box!important;display:block!important;background:var(--bg)!important;overflow:hidden!important;overscroll-behavior:none!important;isolation:isolate!important;}
 .ft-window-root.ft-window-workspace.hidden{display:none!important;}
-.ft-window-root.ft-window-workspace>.technique-modal-content,
-.ft-window-root.ft-window-workspace>.workout-detail-content,
-.ft-window-root.ft-window-workspace>.body-graph-modal-content,
-.ft-window-root.ft-window-workspace>.chart-modal-content,
-.ft-window-root.ft-window-workspace>.measurement-manager-modal-content,
-.ft-window-root.ft-window-workspace>.manual-workout-content,
-.ft-window-root.ft-window-workspace>.achievements-content,
-.ft-window-root.ft-window-workspace>.food-modal-content,
-.ft-window-root.ft-window-workspace>.catalog-modal-content,
-.ft-window-root.ft-window-workspace>:first-child{
-  position:relative!important;
-  width:100%!important;
-  max-width:none!important;
-  height:100%!important;
-  min-height:100%!important;
-  max-height:none!important;
-  margin:0!important;
-  box-sizing:border-box!important;
-  border:0!important;
-  border-radius:0!important;
-  box-shadow:none!important;
-  background:var(--bg)!important;
-  overflow-y:auto!important;
-  overflow-x:hidden!important;
-  overscroll-behavior:contain!important;
-  -webkit-overflow-scrolling:touch!important;
-}
-/* Safe area belongs inside the workspace content, never around the surface. */
-.ft-window-root.ft-window-workspace>.technique-modal-content,
-.ft-window-root.ft-window-workspace>.workout-detail-content,
-.ft-window-root.ft-window-workspace>.body-graph-modal-content,
-.ft-window-root.ft-window-workspace>.chart-modal-content,
-.ft-window-root.ft-window-workspace>.measurement-manager-modal-content,
-.ft-window-root.ft-window-workspace>.manual-workout-content,
-.ft-window-root.ft-window-workspace>.achievements-content,
-.ft-window-root.ft-window-workspace>.food-modal-content,
-.ft-window-root.ft-window-workspace>.catalog-modal-content{
-  padding-top:var(--ft-safe-top)!important;
-  padding-bottom:0!important;
-}
-
-/* Workspace headers do not create a second viewport or sticky black band. */
-.ft-window-workspace .unified-surface-header,
-.ft-window-workspace .chart-modal-header,
-.ft-window-workspace .measurement-modal-header,
-.ft-window-workspace .body-graph-header,
-.ft-window-workspace .body-history-modal-head{
-  position:relative!important;
-  top:auto!important;
-  margin:0!important;
-  padding-top:0!important;
-}
-
-/* DIALOG = the only compact window type. */
-.ft-window-root.ft-window-dialog{
-  position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;
-  margin:0!important;box-sizing:border-box!important;
-  padding:calc(var(--ft-safe-top) + 12px) 12px calc(var(--ft-safe-bottom) + 12px)!important;
-  display:flex!important;align-items:center!important;justify-content:center!important;
-  background:var(--modal-overlay)!important;overflow:hidden!important;z-index:9000!important;
-}
+.ft-window-root.ft-window-workspace>:first-child{position:relative!important;width:100%!important;max-width:none!important;height:100%!important;min-height:100%!important;max-height:none!important;margin:0!important;box-sizing:border-box!important;border:0!important;border-radius:0!important;box-shadow:none!important;background:var(--bg)!important;overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch!important;}
+/* Safe area is internal content space; the outer surface remains full-bleed. */
+.ft-window-root.ft-window-workspace>:first-child{padding-top:calc(var(--ft-safe-top) + 12px)!important;padding-bottom:0!important;}
+/* No legacy viewport geometry on special workspace surfaces. */
+.ft-window-root.ft-window-workspace .chart-modal-header,.ft-window-root.ft-window-workspace .measurement-modal-header,.ft-window-root.ft-window-workspace .body-graph-header,.ft-window-root.ft-window-workspace .body-history-modal-head,.ft-window-root.ft-window-workspace .unified-surface-header{position:relative!important;top:auto!important;margin:0!important;}
+/* Only the newest window is interactive; z-index itself is written by the stack owner with !important. */
+.ft-window-root.ft-window-workspace.is-stack-inactive{pointer-events:none!important;}
+.ft-window-root.ft-window-workspace.is-stack-active{pointer-events:auto!important;}
+/* Dialogs are the only compact centered windows. */
+.ft-window-root.ft-window-dialog{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;margin:0!important;box-sizing:border-box!important;padding:calc(var(--ft-safe-top) + 12px) 12px calc(var(--ft-safe-bottom) + 12px)!important;display:flex!important;align-items:center!important;justify-content:center!important;background:var(--modal-overlay)!important;overflow:hidden!important;}
 .ft-window-root.ft-window-dialog.hidden{display:none!important;}
-.ft-window-root.ft-window-dialog>:first-child{
-  position:relative!important;width:min(100%,560px)!important;max-width:560px!important;
-  max-height:100%!important;margin:0!important;box-sizing:border-box!important;
-  overflow:auto!important;border:1px solid var(--border)!important;border-radius:18px!important;
-  background:var(--card-bg)!important;box-shadow:0 16px 42px rgba(0,0,0,.30)!important;
-  -webkit-overflow-scrolling:touch!important;
-}
-
-/* Close buttons belong to their own surface. */
-.ft-window-root.ft-window-workspace>:first-child>.close-btn,
-.ft-window-root.ft-window-workspace>:first-child>.modal-close-btn,
-.ft-window-root.ft-window-dialog>:first-child>.close-btn,
-.ft-window-root.ft-window-dialog>:first-child>.modal-close-btn{
-  z-index:80!important;
-}
-
-@media(max-width:430px){
-  :root{--ft-header-side:82px;--ft-header-h:50px;}
-}
+.ft-window-root.ft-window-dialog>:first-child{position:relative!important;width:min(100%,560px)!important;max-width:560px!important;max-height:100%!important;margin:0!important;box-sizing:border-box!important;overflow:auto!important;border:1px solid var(--border)!important;border-radius:18px!important;background:var(--card-bg)!important;box-shadow:0 16px 42px rgba(0,0,0,.30)!important;-webkit-overflow-scrolling:touch!important;}
+/* Close buttons: always inside their own surface, clickable, and never over the title. */
+.ft-window-root .close-btn,.ft-window-root .modal-close-btn{position:absolute!important;top:10px!important;right:10px!important;width:36px!important;height:36px!important;min-width:36px!important;min-height:36px!important;max-width:36px!important;max-height:36px!important;margin:0!important;padding:0!important;box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:center!important;z-index:200!important;pointer-events:auto!important;touch-action:manipulation!important;line-height:1!important;}
+/* Title blocks reserve space for the close button. */
+.ft-window-root .workout-new-title,.ft-window-root .exercise-modal-title,.ft-window-root .catalog-modal-title,.ft-window-root .modal-title,.ft-window-root .workout-detail-title{padding-right:52px!important;box-sizing:border-box!important;}
+@media(max-width:430px){:root{--ft-header-side:82px;--ft-header-h:50px;}.screen-header>button:first-child,.fscore-screen-header>button:first-child{min-width:68px;padding-inline:8px!important;}.ft-window-root .close-btn,.ft-window-root .modal-close-btn{width:34px!important;height:34px!important;min-width:34px!important;min-height:34px!important;}}
 </style>
 
 </body>
