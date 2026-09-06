@@ -6,6 +6,7 @@
   "background_color": "#000000",
   "theme_color": "#000000",
   "orientation": "portrait",
+  "version": "1.4.90",
   "icons": [
     {
       "src": "icon-192.png",
@@ -17,6 +18,5 @@
       "sizes": "512x512",
       "type": "image/png"
     }
-  ],
-  "version": "1.4.88"
+  ]
 }
