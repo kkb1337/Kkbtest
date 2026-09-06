@@ -26,7 +26,7 @@
       "purpose": "any maskable"
     }
   ],
-  "_build": "ftracker-v2-full-height",
+  "_build": "ftracker-v2-full-height-windows",
   "version": "2.0.0",
-  "description": "FTracker v2 — full-height PWA window geometry"
+  "description": "FTracker v2 — full-height PWA windows with top safe-area only"
 }
