@@ -6288,7 +6288,7 @@ body{
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v1.4.77 от 06.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v1.4.78 от 06.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -6826,7 +6826,7 @@ body{
 
 <script id="ftracker-app">
 /* ================================================================
-   FTracker v1.4.77 — authoritative surface system
+   FTracker v1.4.78 — viewport and stack correction
    One owner for stacking and interaction order. It does not rewrite window
    DOM, headers, borders, padding, or the original visual content.
    ================================================================ */
@@ -17437,9 +17437,9 @@ body.light-mode .toast{
 
 
 
-<style id="ftracker-v1-4-77-authoritative-surface-system">
+<style id="ftracker-v1-4-78-viewport-stack-correction">
 /* ==================================================================
-   FTracker v1.4.77 — authoritative PWA surface system
+   FTracker v1.4.78 — viewport and stack correction
    Geometry is owned here only. Functional JS, formulas, storage and data
    processing are intentionally untouched.
    ================================================================== */
@@ -17456,7 +17456,6 @@ body.light-mode .toast{
   --ft-radius-card:18px;
   --ft-viewport-h:100dvh;
 }
-@supports(height:100lvh){:root{--ft-viewport-h:100lvh;}}
 *{box-sizing:border-box;}
 html,body{margin:0!important;padding:0!important;width:100%!important;min-height:100%!important;background:var(--bg)!important;overflow-x:hidden!important;-webkit-text-size-adjust:100%;}
 /* The application root owns the physical safe area exactly once. */
@@ -17501,7 +17500,10 @@ html,body{margin:0!important;padding:0!important;width:100%!important;min-height
 #measurementManagerModal .measurement-manager-modal-content>:not(.surface-back-btn):not(.surface-title),#measurementFieldModal .measurement-manager-modal-content>:not(.surface-back-btn):not(.surface-title),#newMeasurementModal .measurement-manager-modal-content>:not(.surface-back-btn):not(.surface-title),#editMeasurementModal .measurement-manager-modal-content>:not(.surface-back-btn):not(.surface-title){grid-column:1/-1!important;}
 /* Overlay roots: explicit registry beats legacy per-window positioning and padding. */
 .ft-window-root{position:fixed!important;inset:0!important;width:100%!important;height:var(--ft-viewport-h)!important;min-height:var(--ft-viewport-h)!important;max-height:var(--ft-viewport-h)!important;margin:0!important;padding:var(--ft-safe-top) var(--ft-safe-right) var(--ft-safe-bottom) var(--ft-safe-left)!important;display:flex!important;justify-content:center!important;box-sizing:border-box!important;overflow:hidden!important;overscroll-behavior:contain!important;isolation:isolate!important;background:var(--modal-overlay)!important;}
-.ft-window-root.hidden{display:none!important;}.ft-window-root.is-stack-inactive{pointer-events:none!important;}.ft-window-root.is-stack-active{pointer-events:auto!important;}
+.ft-window-root.hidden{display:none!important;}
+/* Inactive stack layers must not add a second dim backdrop over the active surface. */
+.ft-window-root.is-stack-inactive{pointer-events:none!important;background:transparent!important;}
+.ft-window-root.is-stack-active{pointer-events:auto!important;}
 /* Explicitly neutralize old ID-level modal geometry. */
 #workoutDetailModal.ft-window-root,#achievementsModal.ft-window-root,#manualWorkoutModal.ft-window-root,#addFoodModal.ft-window-root,#foodLimitModal.ft-window-root,#workoutSummaryModal.ft-window-root,#bodyGraphModal.ft-window-root,#chartModal.ft-window-root,#measurementManagerModal.ft-window-root,#measurementFieldModal.ft-window-root,#newMeasurementModal.ft-window-root,#editMeasurementModal.ft-window-root{
   inset:0!important;width:100%!important;height:var(--ft-viewport-h)!important;min-height:var(--ft-viewport-h)!important;max-height:var(--ft-viewport-h)!important;
@@ -17534,7 +17536,7 @@ html,body{margin:0!important;padding:0!important;width:100%!important;min-height
 /* Close controls are attached to the surface, never to the physical device corner. */
 .ft-window-root>:first-child>.close-btn,.ft-window-root>:first-child>.modal-close-btn,.ft-window-root>:first-child>.exercise-dup-close,.ft-window-root>:first-child>#exerciseDupClose,.ft-window-root>:first-child>#foodDupClose{position:absolute!important;top:10px!important;right:10px!important;left:auto!important;bottom:auto!important;transform:none!important;z-index:90!important;width:40px!important;height:40px!important;min-width:40px!important;min-height:40px!important;margin:0!important;padding:0!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;border-radius:12px!important;}
 #workoutDetailModal .workout-detail-title-wrap{position:relative!important;margin:0!important;padding:0 52px 12px 0!important;border-bottom:1px solid var(--border)!important;}
-#workoutDetailModal .workout-detail-title-wrap>.workout-detail-close{position:absolute!important;top:0!important;right:0!important;left:auto!important;bottom:auto!important;transform:none!important;z-index:90!important;}
+#workoutDetailModal .workout-detail-title-wrap>.workout-detail-close{position:absolute!important;top:50%!important;right:0!important;left:auto!important;bottom:auto!important;transform:translateY(-50%)!important;z-index:90!important;}
 #workoutDetailModal #workoutDetailTitle{padding-right:0!important;margin:0!important;}
 #workoutDetailModal.ft-window-workspace>.workout-detail-content{padding:14px!important;display:flex!important;flex-direction:column!important;gap:12px!important;}
 #workoutDetailModal .workout-history-detail-list{display:grid!important;gap:12px!important;}
