@@ -17414,142 +17414,31 @@ body.light-mode .toast{
 
 
 
-<style id="ftracker-v1-4-93-window-contract">
-/* v1.4.93 — final geometry contract: one owner for safe-area, viewport, stack and headers. */
-:root{
-  --ft-safe-top:env(safe-area-inset-top,0px);
-  --ft-safe-right:env(safe-area-inset-right,0px);
-  --ft-safe-bottom:env(safe-area-inset-bottom,0px);
-  --ft-safe-left:env(safe-area-inset-left,0px);
-  --ft-header-h:50px;
-}
-html,body{
-  width:100%!important;
-  min-width:0!important;
-  min-height:100%!important;
-  margin:0!important;
-  padding:0!important;
-  background:var(--bg)!important;
-  overflow-x:hidden!important;
-}
-body{min-height:100dvh!important;}
-/* MAIN PWA SURFACE: full viewport; safe-area is internal content padding, never a frame. */
-.safe-area{
-  width:100%!important;
-  min-height:100dvh!important;
-  margin:0!important;
-  padding:0!important;
-  box-sizing:border-box!important;
-  background:var(--bg)!important;
-}
-.safe-area>#app,.safe-area>.container,#app.container{
-  width:100%!important;
-  max-width:600px!important;
-  min-height:100dvh!important;
-  height:auto!important;
-  margin:0 auto!important;
-  padding:calc(var(--ft-safe-top) + 12px) 16px 16px!important;
-  box-sizing:border-box!important;
-  background:var(--bg)!important;
-}
-#app>[id$="Screen"]{width:100%!important;min-width:0!important;}
-/* Ordinary screens: safe top already belongs to #app, so header itself must not add it again. */
-.screen-header,.fscore-screen-header{
-  position:relative!important;
-  top:auto!important;
-  width:100%!important;
-  height:var(--ft-header-h)!important;
-  min-height:var(--ft-header-h)!important;
-  max-height:none!important;
-  margin:0 0 8px!important;
-  padding:0!important;
-  box-sizing:border-box!important;
-  display:grid!important;
-  grid-template-columns:84px minmax(0,1fr) 84px!important;
-  grid-template-rows:var(--ft-header-h)!important;
-  gap:0!important;
-  align-items:center!important;
-  background:transparent!important;
-  z-index:20!important;
-  overflow:visible!important;
-}
-.screen-header>.title,.screen-header>.section-title,.fscore-screen-header>.title,.fscore-screen-header>.section-title{
-  grid-column:2!important;grid-row:1!important;
-  min-width:0!important;width:100%!important;margin:0!important;padding:0 6px!important;
-  box-sizing:border-box!important;justify-self:stretch!important;text-align:center!important;
-  white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
-  line-height:1.15!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;
-}
-.screen-header>button:first-child,.fscore-screen-header>button:first-child{
-  grid-column:1!important;grid-row:1!important;justify-self:start!important;align-self:center!important;
-  width:auto!important;min-width:72px!important;height:40px!important;min-height:40px!important;max-height:40px!important;
-  margin:0!important;padding:7px 10px!important;box-sizing:border-box!important;
-  display:flex!important;align-items:center!important;justify-content:center!important;
-  white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
-  position:relative!important;z-index:25!important;line-height:1!important;
-}
-.screen-header>.screen-header-spacer,.fscore-screen-header>.screen-header-spacer{
-  grid-column:3!important;grid-row:1!important;width:100%!important;height:40px!important;
-  min-width:0!important;visibility:hidden!important;pointer-events:none!important;
-}
-/* ONE WORKSPACE GEOMETRY: root fills the PWA, first child is the scrolling surface. */
-.ft-window-root.ft-window-workspace{
-  position:fixed!important;inset:0!important;
-  width:100vw!important;height:100dvh!important;
-  min-width:100vw!important;min-height:100dvh!important;
-  max-width:none!important;max-height:none!important;
-  margin:0!important;padding:0!important;
-  box-sizing:border-box!important;display:block!important;
-  background:var(--bg)!important;overflow:hidden!important;
-  overscroll-behavior:none!important;isolation:isolate!important;
-}
-.ft-window-root.ft-window-workspace.hidden{display:none!important;}
-.ft-window-root.ft-window-workspace>:first-child{
-  position:relative!important;inset:auto!important;
-  width:100%!important;height:100%!important;min-height:100%!important;max-height:none!important;
-  max-width:none!important;margin:0!important;
-  padding:calc(var(--ft-safe-top) + 12px) 16px 16px!important;
-  box-sizing:border-box!important;border:0!important;border-radius:0!important;box-shadow:none!important;
-  background:var(--bg)!important;overflow-y:auto!important;overflow-x:hidden!important;
-  overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch!important;
-}
-/* Workspace headers use the same geometry as normal screens, but safe-top is already on the surface. */
-.ft-window-root.ft-window-workspace .screen-header,.ft-window-root.ft-window-workspace .fscore-screen-header{
-  position:relative!important;top:auto!important;margin:0 0 8px!important;padding:0!important;
-}
-/* Content must never hide behind a close button. */
-.ft-window-root .close-btn,.ft-window-root .modal-close-btn{
-  position:absolute!important;top:10px!important;right:10px!important;
-  width:36px!important;height:36px!important;min-width:36px!important;min-height:36px!important;
-  max-width:36px!important;max-height:36px!important;margin:0!important;padding:0!important;
-  box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:center!important;
-  z-index:200!important;pointer-events:auto!important;touch-action:manipulation!important;line-height:1!important;
-}
-.ft-window-root .workout-new-title,.ft-window-root .exercise-modal-title,.ft-window-root .catalog-modal-title,
-.ft-window-root .modal-title,.ft-window-root .workout-detail-title{padding-right:52px!important;box-sizing:border-box!important;}
-/* Only confirmation/system dialogs are compact. */
-.ft-window-root.ft-window-dialog{
-  position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;
-  margin:0!important;padding:calc(var(--ft-safe-top) + 12px) 12px calc(var(--ft-safe-bottom) + 12px)!important;
-  box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:center!important;
-  background:var(--modal-overlay)!important;overflow:hidden!important;isolation:isolate!important;
-}
-.ft-window-root.ft-window-dialog.hidden{display:none!important;}
-.ft-window-root.ft-window-dialog>:first-child{
-  position:relative!important;width:min(100%,560px)!important;max-width:560px!important;max-height:100%!important;
-  margin:0!important;box-sizing:border-box!important;overflow:auto!important;
-  border:1px solid var(--border)!important;border-radius:18px!important;background:var(--card-bg)!important;
-  box-shadow:0 16px 42px rgba(0,0,0,.30)!important;-webkit-overflow-scrolling:touch!important;
-}
-.ft-window-root.ft-window-workspace.is-stack-inactive{pointer-events:none!important;}
-.ft-window-root.ft-window-workspace.is-stack-active{pointer-events:auto!important;}
-@media(max-width:430px){
-  .safe-area>#app,.safe-area>.container,#app.container{padding-left:12px!important;padding-right:12px!important;}
-  .screen-header,.fscore-screen-header{grid-template-columns:82px minmax(0,1fr) 82px!important;}
-  .screen-header>button:first-child,.fscore-screen-header>button:first-child{min-width:68px!important;padding-inline:8px!important;}
-  .ft-window-root.ft-window-workspace>:first-child{padding-left:12px!important;padding-right:12px!important;}
-  .ft-window-root .close-btn,.ft-window-root .modal-close-btn{width:34px!important;height:34px!important;min-width:34px!important;min-height:34px!important;max-width:34px!important;max-height:34px!important;}
-}
+<style id="ftracker-v1-4-94-window-contract">
+:root{--ft-safe-top:env(safe-area-inset-top,0px);--ft-safe-bottom:env(safe-area-inset-bottom,0px);--ft-header-h:50px;--ft-header-pad:12px}
+html,body{width:100%;min-width:0;min-height:100%;margin:0;padding:0;background:var(--bg)!important;overflow-x:hidden}body{min-height:100dvh!important}
+.safe-area{width:100%!important;height:100dvh!important;min-height:100dvh!important;margin:0!important;padding:0!important;box-sizing:border-box!important;background:var(--bg)!important;overflow:hidden!important}
+.safe-area>#app,.safe-area>.container,#app.container{width:100%!important;max-width:600px!important;height:100dvh!important;min-height:100dvh!important;margin:0 auto!important;box-sizing:border-box!important;padding:calc(var(--ft-safe-top) + var(--ft-header-pad)) 16px 0!important;background:var(--bg)!important;overflow-y:auto!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior:contain!important}
+#app>[id$="Screen"]{width:100%!important;min-width:0!important}
+.screen-header,.fscore-screen-header{position:relative!important;top:auto!important;left:auto!important;right:auto!important;width:100%!important;height:var(--ft-header-h)!important;min-height:var(--ft-header-h)!important;margin:0 0 8px!important;padding:0!important;box-sizing:border-box!important;display:grid!important;grid-template-columns:84px minmax(0,1fr) 84px!important;grid-template-rows:var(--ft-header-h)!important;gap:0!important;align-items:center!important;background:transparent!important;overflow:visible!important;z-index:20!important}
+.screen-header>.title,.screen-header>.section-title,.fscore-screen-header>.title,.fscore-screen-header>.section-title{grid-column:2!important;grid-row:1!important;min-width:0!important;width:100%!important;margin:0!important;padding:0 8px!important;box-sizing:border-box!important;text-align:center!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;line-height:1.15!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:7px!important}
+.screen-header>button:first-child,.fscore-screen-header>button:first-child{grid-column:1!important;grid-row:1!important;justify-self:start!important;align-self:center!important;width:auto!important;min-width:72px!important;height:40px!important;min-height:40px!important;max-height:40px!important;margin:0!important;padding:7px 10px!important;box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:center!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;position:relative!important;z-index:25!important;line-height:1!important}
+.screen-header>.screen-header-spacer,.fscore-screen-header>.screen-header-spacer{grid-column:3!important;grid-row:1!important;width:100%!important;height:40px!important;min-width:0!important;visibility:hidden!important;pointer-events:none!important}
+.ft-window-root.ft-window-workspace,.technique-modal{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;min-width:100vw!important;min-height:100dvh!important;max-width:none!important;max-height:none!important;margin:0!important;padding:0!important;box-sizing:border-box!important;display:block!important;background:var(--bg)!important;overflow:hidden!important;overscroll-behavior:none!important;isolation:isolate!important}
+.ft-window-root.ft-window-workspace.hidden,.technique-modal.hidden{display:none!important}
+.ft-window-root.ft-window-workspace>:first-child,.technique-modal>:first-child{position:relative!important;inset:auto!important;width:100%!important;height:100dvh!important;min-height:100dvh!important;max-height:none!important;max-width:none!important;margin:0!important;padding:calc(var(--ft-safe-top) + var(--ft-header-pad)) 16px 0!important;box-sizing:border-box!important;border:0!important;border-radius:0!important;box-shadow:none!important;background:var(--bg)!important;overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch!important}
+.ft-window-root.ft-window-workspace .screen-header,.ft-window-root.ft-window-workspace .fscore-screen-header{position:relative!important;top:auto!important;margin:0 0 8px!important;padding:0!important}
+/* Every workspace close control has exactly one anchor: top-right of the surface, below Dynamic Island. */
+.ft-window-root.ft-window-workspace .close-btn,.ft-window-root.ft-window-workspace .modal-close-btn,.technique-modal .close-btn,.technique-modal .modal-close-btn{position:absolute!important;top:calc(var(--ft-safe-top) + 8px)!important;right:12px!important;left:auto!important;bottom:auto!important;inset-inline-start:auto!important;inset-inline-end:12px!important;width:36px!important;height:36px!important;min-width:36px!important;min-height:36px!important;max-width:36px!important;max-height:36px!important;margin:0!important;padding:0!important;box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:center!important;z-index:200!important;pointer-events:auto!important;touch-action:manipulation!important;line-height:1!important;transform:none!important}
+.ft-window-root.ft-window-workspace .workout-new-title,.ft-window-root.ft-window-workspace .exercise-modal-title,.ft-window-root.ft-window-workspace .catalog-modal-title,.ft-window-root.ft-window-workspace .modal-title,.ft-window-root.ft-window-workspace .workout-detail-title,.technique-modal .technique-title{padding-right:52px!important;box-sizing:border-box!important}
+.ft-window-root.ft-window-workspace .unified-surface-header,.ft-window-root.ft-window-workspace .exercise-card-header,.ft-window-root.ft-window-workspace .workout-detail-title-wrap{position:relative!important;min-height:var(--ft-header-h)!important;box-sizing:border-box!important;margin:0 0 8px!important;padding:0!important;display:grid!important;grid-template-columns:84px minmax(0,1fr) 44px!important;align-items:center!important;gap:0!important}
+.ft-window-root.ft-window-workspace .unified-surface-header .surface-back-btn,.ft-window-root.ft-window-workspace .exercise-card-header .surface-back-btn{grid-column:1!important;grid-row:1!important;align-self:center!important;justify-self:start!important}
+.ft-window-root.ft-window-workspace .unified-surface-header .surface-title,.ft-window-root.ft-window-workspace .exercise-card-header .exercise-card-heading,.ft-window-root.ft-window-workspace .workout-detail-title-wrap>div:first-child{grid-column:2!important;grid-row:1!important;min-width:0!important;width:100%!important;margin:0!important;padding:0 8px!important;box-sizing:border-box!important;text-align:center!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+.ft-window-root.ft-window-dialog{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;margin:0!important;padding:calc(var(--ft-safe-top) + 12px) 12px calc(var(--ft-safe-bottom) + 12px)!important;box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:center!important;background:var(--modal-overlay)!important;overflow:hidden!important;isolation:isolate!important}
+.ft-window-root.ft-window-dialog.hidden{display:none!important}.ft-window-root.ft-window-dialog>:first-child{position:relative!important;width:min(100%,560px)!important;max-width:560px!important;max-height:100%!important;margin:0!important;box-sizing:border-box!important;overflow:auto!important;border:1px solid var(--border)!important;border-radius:18px!important;background:var(--card-bg)!important;box-shadow:0 16px 42px rgba(0,0,0,.30)!important;-webkit-overflow-scrolling:touch!important}
+.ft-window-root.ft-window-dialog .close-btn,.ft-window-root.ft-window-dialog .modal-close-btn{top:10px!important;right:10px!important;inset-inline-end:10px!important}
+.ft-window-root.is-stack-inactive{pointer-events:none!important}.ft-window-root.is-stack-active{pointer-events:auto!important}
+@media(max-width:430px){.safe-area>#app,.safe-area>.container,#app.container{padding-left:12px!important;padding-right:12px!important}.screen-header,.fscore-screen-header{grid-template-columns:76px minmax(0,1fr) 76px!important}.screen-header>button:first-child,.fscore-screen-header>button:first-child{min-width:68px!important;padding-inline:8px!important}.ft-window-root.ft-window-workspace>:first-child,.technique-modal>:first-child{padding-left:12px!important;padding-right:12px!important}}
 </style>
 
 </body>
