@@ -26,7 +26,7 @@
       "purpose": "any maskable"
     }
   ],
-  "_build": "ftracker-v1.4.79-regression-rollback",
-  "version": "1.4.79",
-  "description": "FTracker v1.4.79 — rollback to the last pre-regression surface architecture"
+  "_build": "ftracker-v1.4.80-canonical-surface-rebuild",
+  "version": "1.4.80",
+  "description": "FTracker v1.4.80 — canonical surface rebuild and regression cleanup"
 }
