@@ -6668,7 +6668,7 @@ body{
 
 
 <div id="exercisePickerModal" class="date-modal hidden" onclick="if(event.target===this)closeExercisePicker()">
-  <div class="date-modal-content" style="display:flex;flex-direction:column;">
+  <div class="date-modal-content" style="max-height:86vh;display:flex;flex-direction:column;">
     <span class="close-btn" onclick="closeExercisePicker()">&times;</span>
     <div id="exercisePickerTitle" style="font-size:20px;font-weight:800;margin-bottom:5px;padding-right:30px;">Добавить упражнение</div>
     <input id="exercisePickerSearch" placeholder="🔎 Поиск упражнения" autocomplete="off" oninput="renderExercisePicker()">
@@ -6676,18 +6676,15 @@ body{
   </div>
 </div>
 <div id="progressExercisePickerModal" class="date-modal hidden" onclick="if(event.target===this)closeProgressExercisePicker()">
-  <div class="date-modal-content" style="display:flex;flex-direction:column;">
-    <div class="screen-header" style="margin:0 0 12px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;">
-      <button class="surface-back-btn" type="button" onclick="closeProgressExercisePicker()">← Назад</button>
-      <div class="surface-title" style="margin:0;text-align:center;">Упражнения с прогрессом</div>
-      <span class="screen-header-spacer" aria-hidden="true"></span>
-    </div>
+  <div class="date-modal-content" style="max-height:82vh;display:flex;flex-direction:column;">
+    <span class="close-btn" onclick="closeProgressExercisePicker()">&times;</span>
+    <div style="font-size:20px;font-weight:700;margin-bottom:5px;">Упражнения с прогрессом</div>
     <input id="progressExercisePickerSearch" placeholder="🔎 Поиск упражнения" autocomplete="off" oninput="renderProgressExercisePicker()">
     <div id="progressPickerList" class="progress-picker-list" style="margin-top:10px;"></div>
   </div>
 </div>
 <div id="exerciseOrderModal" class="date-modal hidden" onclick="if(event.target===this)closeExerciseOrderModal()">
-  <div class="date-modal-content" style="display:flex;flex-direction:column;">
+  <div class="date-modal-content" style="max-height:82vh;display:flex;flex-direction:column;">
     <span class="close-btn" onclick="closeExerciseOrderModal()">&times;</span>
     <div id="exerciseOrderTitle" style="font-size:20px;font-weight:700;margin-bottom:5px;">Порядок упражнений</div>
     <div style="font-size:13px;color:var(--subtext);margin-bottom:12px;">Для каждого упражнения выбери новую позицию. Изменения применятся только после «Сохранить порядок».</div>
@@ -6829,7 +6826,7 @@ body{
 
 <script id="ftracker-app">
 /* ================================================================
-   FTracker v1.4.84 — Canonical Type 1 Surface Architecture
+   FTracker v1.4.80 — canonical viewport and adaptive surfaces
    One owner for stacking and interaction order. It does not rewrite window
    DOM, headers, borders, padding, or the original visual content.
    ================================================================ */
@@ -6839,7 +6836,19 @@ let modalStackInitialized = false;
 let modalStackObserverStarted = false;
 
 const FT_WINDOW_REGISTRY = Object.freeze({
-  /* Only true confirmation dialogs are compact. Every other application surface is Type 1. */
+  // Full workspaces: serious content gets the entire usable PWA surface.
+  workoutDetailModal:'workspace', achievementsModal:'workspace', manualWorkoutModal:'workspace',
+  addFoodModal:'workspace', foodLimitModal:'workspace', workoutSummaryModal:'workspace',
+  bodyGraphModal:'workspace', chartModal:'workspace', measurementManagerModal:'workspace',
+  measurementFieldModal:'workspace', measurementHistoryModal:'adaptive',
+  newMeasurementModal:'workspace', editMeasurementModal:'workspace', techniqueModal:'workspace',
+  // Compact/adaptive forms.
+  renameExerciseModal:'adaptive', directoryNewExerciseModal:'adaptive', workoutNewExerciseModal:'adaptive',
+  replaceExerciseModal:'adaptive', exerciseModal:'adaptive', exerciseOrderModal:'adaptive',
+  exercisePickerModal:'adaptive', progressExercisePickerModal:'adaptive', dateModal:'adaptive',
+  copyDatePickerModal:'adaptive', themeModal:'adaptive', catalogEditModal:'adaptive',
+  exerciseDuplicateModal:'adaptive', foodDuplicateModal:'adaptive',
+  // True compact system decisions.
   confirmExitModal:'dialog', finishWorkoutConfirmModal:'dialog', deleteConfirmModal:'dialog',
   importConfirmModal:'dialog', autoBackupRestoreConfirmModal:'dialog', measurementSaveConfirmModal:'dialog',
   foodCopyConfirmModal:'dialog', systemConfirmModal:'dialog'
@@ -6856,14 +6865,16 @@ function getModalRoots() {
 }
 function getModalContent(modal) { return modal ? modal.firstElementChild : null; }
 function classifyModal(modal) {
-  if (!modal) return 'type1';
+  if (!modal) return 'adaptive';
+  // No guessing from a class name. Every known surface has an explicit contract.
   if (Object.prototype.hasOwnProperty.call(FT_WINDOW_REGISTRY, modal.id)) return FT_WINDOW_REGISTRY[modal.id];
-  return 'type1';
+  // Unknown windows stay conservative/adaptive rather than being force-converted to fullscreen.
+  return 'adaptive';
 }
 function prepareModalRoot(modal) {
   if (!modal) return;
   modal.classList.add('ft-window-root');
-  modal.classList.remove('ft-window-workspace','ft-window-adaptive','ft-window-dialog','ft-window-type1');
+  modal.classList.remove('ft-window-workspace','ft-window-adaptive','ft-window-dialog');
   modal.classList.add('ft-window-'+classifyModal(modal));
   modal.setAttribute('aria-modal','true');
 }
@@ -7526,7 +7537,7 @@ function resetAppViewport(screenId){
   document.documentElement.scrollTop=0;
   document.body.scrollTop=0;
   if(root) root.scrollTop=0;
-  document.querySelectorAll('#app > div').forEach(el=>{
+  document.querySelectorAll('#app .app-screen').forEach(el=>{
     el.scrollTop=0;
     el.scrollLeft=0;
   });
@@ -7540,7 +7551,7 @@ function resetAppViewport(screenId){
 function showScreen(id) {
   // Close transient overlays before changing app screens.
   if (typeof closeBackupExportPrompt === 'function') closeBackupExportPrompt();
-  document.querySelectorAll('#app > div').forEach(el => { el.classList.add('hidden'); el.style.pointerEvents='none'; });
+  document.querySelectorAll('#app .app-screen').forEach(el => { el.classList.add('hidden'); el.style.pointerEvents='none'; });
   const screen=document.getElementById(id);
   if(!screen) return;
   screen.classList.remove('hidden');
@@ -17546,55 +17557,122 @@ html,body{width:100%!important;min-height:100%!important;margin:0!important;padd
 .ft-window-workspace .measurement-modal-header + *,
 .ft-window-workspace .body-graph-header + *{margin-top:0!important;}
 
-/* Canonical Type 1 surface architecture.
-   One full-screen PWA surface for every application window.
-   Only explicit confirmation dialogs are compact. */
+/* Window root owns only the overlay and the usable PWA bounds. */
 .ft-window-root{
-  position:fixed!important; inset:0!important; margin:0!important;
-  width:100%!important; height:100dvh!important;
-  box-sizing:border-box!important; z-index:6000!important;
+  position:fixed!important;
+  inset:0!important;
+  width:100%!important;
+  height:100dvh!important;
+  min-height:100dvh!important;
+  max-height:100dvh!important;
+  margin:0!important;
+  padding:var(--ft-safe-top) var(--ft-safe-right) var(--ft-safe-bottom) var(--ft-safe-left)!important;
+  box-sizing:border-box!important;
+  display:flex!important;
+  overflow:hidden!important;
+  overscroll-behavior:contain!important;
+  isolation:isolate!important;
+  background:var(--modal-overlay)!important;
 }
 .ft-window-root.hidden{display:none!important;}
 .ft-window-root.is-stack-inactive{pointer-events:none!important;}
 .ft-window-root.is-stack-active{pointer-events:auto!important;}
 
-.ft-window-type1{
-  display:block!important; padding:0!important; background:var(--bg)!important;
-  overflow:hidden!important; overscroll-behavior:none!important;
-}
-.ft-window-type1>:first-child{
-  position:absolute!important; inset:0!important;
-  width:100%!important; height:100%!important;
-  min-width:0!important; min-height:0!important;
-  max-width:none!important; max-height:none!important;
+/* Workspace: one full usable surface; only its own content scrolls. */
+.ft-window-workspace{align-items:stretch!important;justify-content:stretch!important;}
+.ft-window-workspace>:first-child{
+  position:relative!important;
+  flex:1 1 auto!important;
+  width:100%!important;
+  min-width:0!important;
+  min-height:0!important;
   margin:0!important;
-  padding:calc(env(safe-area-inset-top,0px) + 8px) 16px calc(env(safe-area-inset-bottom,0px) + 16px)!important;
   box-sizing:border-box!important;
-  border:0!important; border-radius:0!important; box-shadow:none!important;
-  background:var(--bg)!important; color:var(--text)!important;
-  overflow-y:auto!important; overflow-x:hidden!important;
+  border:var(--ft-border)!important;
+  border-radius:var(--ft-window-radius)!important;
+  background:var(--card-bg)!important;
+  box-shadow:0 16px 42px rgba(0,0,0,.30)!important;
+  overflow:auto!important;
   overscroll-behavior:contain!important;
   -webkit-overflow-scrolling:touch!important;
-  touch-action:pan-y!important;
 }
-/* Nested lists can scroll without taking scroll ownership away from the Type 1 surface. */
-.ft-window-type1 .catalog-modal-list,
-.ft-window-type1 .progress-picker-list,
-.ft-window-type1 .replace-exercise-list,
-.ft-window-type1 .order-position-list{max-height:none!important;}
+/* Full workspaces must not inherit compact modal centering or arbitrary max-height. */
+#bodyGraphModal.ft-window-workspace>.body-graph-modal-content,
+#chartModal.ft-window-workspace>.chart-modal-content,
+#workoutDetailModal.ft-window-workspace>.workout-detail-content{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  max-height:none!important;
+}
+#bodyGraphModal.ft-window-workspace>.body-graph-modal-content,
+#chartModal.ft-window-workspace>.chart-modal-content{padding:16px!important;}
 
-/* The only compact surface: an actual confirmation dialog. */
-.ft-window-dialog{
-  display:flex!important; align-items:center!important; justify-content:center!important;
-  padding:calc(env(safe-area-inset-top,0px) + 14px) 14px calc(env(safe-area-inset-bottom,0px) + 14px)!important;
-  background:var(--modal-overlay)!important;
+/* Technique is a true app workspace and owns safe-area internally, once. */
+#techniqueModal.ft-window-root{padding:0!important;background:var(--bg)!important;}
+#techniqueModal.ft-window-workspace>.technique-modal-content{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:calc(var(--ft-safe-top) + 8px) 16px calc(var(--ft-safe-bottom) + 8px)!important;
+  border:0!important;
+  border-radius:0!important;
+  background:var(--bg)!important;
+  box-shadow:none!important;
+  overflow:auto!important;
 }
-.ft-window-dialog>:first-child{
-  position:relative!important; width:min(100%,560px)!important; max-height:100%!important;
-  margin:0!important; box-sizing:border-box!important; overflow-y:auto!important;
+
+/* Adaptive surfaces are content-sized; dialogs never become workspaces. */
+.ft-window-adaptive,.ft-window-dialog{
+  align-items:center!important;
+  justify-content:center!important;
+  padding:calc(var(--ft-safe-top) + 12px) calc(var(--ft-safe-right) + 12px) calc(var(--ft-safe-bottom) + 12px) calc(var(--ft-safe-left) + 12px)!important;
 }
-/* A Type 1 header is one row: Back at left, title centered. */
-.ft-window-type1 .surface-back-btn{position:static!important; align-self:center!important; white-space:nowrap!important;}
+.ft-window-adaptive>:first-child,.ft-window-dialog>:first-child{
+  position:relative!important;
+  width:min(100%,760px)!important;
+  min-width:0!important;
+  max-height:100%!important;
+  margin:0!important;
+  box-sizing:border-box!important;
+  border:var(--ft-border)!important;
+  background:var(--card-bg)!important;
+  overflow:auto!important;
+  overscroll-behavior:contain!important;
+  -webkit-overflow-scrolling:touch!important;
+}
+.ft-window-adaptive>:first-child{border-radius:20px!important;box-shadow:0 16px 42px rgba(0,0,0,.30)!important;}
+.ft-window-dialog>:first-child{max-width:560px!important;border-radius:18px!important;box-shadow:0 16px 42px rgba(0,0,0,.30)!important;}
+
+/* Measurement history is informational/adaptive and shares the same compact-surface logic. */
+#measurementHistoryModal.ft-window-adaptive>.body-history-modal-content{
+  height:auto!important;
+  min-height:0!important;
+  max-height:100%!important;
+  margin:0!important;
+  padding:16px!important;
+  border-radius:20px!important;
+}
+#measurementHistoryModal .body-history-modal-head{margin-bottom:10px!important;}
+#measurementHistoryModal .body-history-item{margin:0!important;border-radius:18px!important;}
+
+/* Workout detail remains a workspace but keeps a clean internal hierarchy. */
+#workoutDetailModal.ft-window-workspace>.workout-detail-content{padding:16px!important;display:flex!important;flex-direction:column!important;gap:14px!important;}
+#workoutDetailModal .workout-detail-title-wrap{position:relative!important;flex:0 0 auto!important;margin:0!important;padding:2px 48px 14px 0!important;border-bottom:1px solid var(--border)!important;}
+#workoutDetailModal #workoutDetailTitle{padding-right:0!important;margin:0!important;}
+#workoutDetailModal .workout-detail-close{position:absolute!important;top:50%!important;right:0!important;left:auto!important;bottom:auto!important;transform:translateY(-50%)!important;z-index:80!important;width:40px!important;height:40px!important;margin:0!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;border-radius:12px!important;}
+#workoutDetailModal #workoutDetailContent{min-width:0!important;padding-bottom:8px!important;}
+#workoutDetailModal .workout-history-detail-list{display:grid!important;gap:12px!important;}
+#workoutDetailModal .workout-history-exercise{margin:0!important;padding:16px!important;border:1px solid var(--border)!important;border-radius:20px!important;background:var(--card-bg)!important;box-shadow:none!important;}
+#workoutDetailModal .workout-history-exercise-name{margin:0 0 12px!important;font-size:clamp(19px,5vw,24px)!important;font-weight:850!important;line-height:1.2!important;}
+#workoutDetailModal .workout-history-sets{display:grid!important;gap:8px!important;}
+#workoutDetailModal .workout-history-set{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;min-height:54px!important;padding:11px 13px!important;border-radius:16px!important;background:var(--input-bg)!important;border:1px solid rgba(255,255,255,.04)!important;box-sizing:border-box!important;}
+
+/* Close controls are attached to the surface, never to the device viewport. */
+.ft-window-root>:first-child>.close-btn,.ft-window-root>:first-child>.modal-close-btn,.ft-window-root>:first-child>.exercise-dup-close,.ft-window-root>:first-child>#exerciseDupClose,.ft-window-root>:first-child>#foodDupClose{
+  position:absolute!important;top:12px!important;right:12px!important;left:auto!important;bottom:auto!important;transform:none!important;z-index:80!important;width:40px!important;height:40px!important;min-width:40px!important;min-height:40px!important;margin:0!important;padding:0!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;border-radius:12px!important;box-sizing:border-box!important;
+}
+
+#app img,#app video,#app canvas,#app svg,.ft-window-root img,.ft-window-root video,.ft-window-root canvas,.ft-window-root svg{max-width:100%!important;}
 #app input,#app select,#app textarea,.ft-window-root input,.ft-window-root select,.ft-window-root textarea{max-width:100%!important;box-sizing:border-box!important;}
 @media(max-width:430px){
   :root{--ft-page-x:12px;--ft-header-side:82px;--ft-header-h:54px;}
@@ -17602,6 +17680,92 @@ html,body{width:100%!important;min-height:100%!important;margin:0!important;padd
   .unified-surface-header .surface-back-btn,.chart-modal-header .chart-back-btn,.measurement-modal-header .surface-back-btn,.body-graph-header .surface-back-btn,.body-history-modal-head .surface-back-btn,.measurement-manager-modal-content>.surface-back-btn{font-size:13px!important;padding-inline:7px!important;}
 }
 </style>
+
+
+<!-- FTracker v1.5.0: Unified App Shell migration layer. -->
+<style id="ftracker-v1-5-unified-app-shell">
+/* Authoritative application shell: one permanent layout, one scrollable content area. */
+html,body{width:100%;height:100%;overflow:hidden!important;}
+.safe-area{width:100%;height:100dvh;overflow:hidden!important;}
+.safe-area>#app,#app.container{width:100%;max-width:none!important;height:100dvh;margin:0!important;padding:0!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;}
+#app.app-shell-root{background:var(--bg);}
+.ftracker-appbar{flex:0 0 auto;min-height:calc(56px + env(safe-area-inset-top));padding:env(safe-area-inset-top) 16px 0;display:grid;grid-template-columns:minmax(88px,1fr) minmax(0,2fr) minmax(88px,1fr);align-items:center;background:var(--bg);border-bottom:1px solid var(--border);z-index:50;}
+.ftracker-appbar-title{min-width:0;text-align:center;font-size:18px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text);}
+.ftracker-appbar-back{width:auto!important;margin:0!important;padding:8px 10px!important;border-radius:10px!important;background:transparent!important;color:var(--accent)!important;font-size:15px!important;justify-self:start;}
+.ftracker-appbar-action{justify-self:end;min-width:1px;}
+.ftracker-content{flex:1 1 auto;min-height:0;width:100%;overflow-y:auto!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:16px 14px 18px;touch-action:pan-y;}
+.ftracker-content>.app-screen{display:block;width:100%;min-width:0;position:relative!important;min-height:auto!important;height:auto!important;overflow:visible!important;padding:0!important;margin:0!important;}
+.ftracker-content>.app-screen.hidden{display:none!important;}
+/* Old per-screen headers are replaced by the single AppBar. */
+.ftracker-content .screen-header{display:none!important;}
+/* Home title is redundant: AppBar owns the section title. Keep only home content below it. */
+.ftracker-content #homeScreen>.home-title-clickable{display:none!important;}
+/* Workout keeps its specialized controls but lives inside the same content surface. */
+.ftracker-content #workoutScreen{min-height:100%!important;}
+/* One authoritative scroll owner. Nested full-screen screens must not steal vertical scrolling. */
+.ftracker-content [id$="Screen"]{max-height:none!important;}
+.ftracker-bottom-nav{flex:0 0 auto;min-height:calc(68px + env(safe-area-inset-bottom));padding:7px 8px calc(7px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;background:var(--card-bg);border-top:1px solid var(--border);z-index:50;}
+.ftracker-bottom-nav button{width:100%!important;min-width:0!important;margin:0!important;padding:6px 2px!important;background:transparent!important;color:var(--subtext)!important;border-radius:12px!important;font-size:10px!important;font-weight:700!important;display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:3px;line-height:1.05;}
+.ftracker-bottom-nav button.active{color:var(--accent)!important;background:rgba(52,199,89,.10)!important;}
+.ftracker-bottom-nav .ft-nav-icon{font-size:19px;line-height:1;}
+/* More sheet: secondary destinations only. */
+.ftracker-sheet-overlay{position:fixed;inset:0;z-index:2500;background:rgba(0,0,0,.48);display:flex;align-items:flex-end;justify-content:center;}
+.ftracker-sheet-overlay.hidden{display:none!important;}
+.ftracker-sheet{width:100%;max-width:680px;max-height:min(78dvh,680px);background:var(--card-bg);border-radius:22px 22px 0 0;padding:12px 14px calc(16px + env(safe-area-inset-bottom));overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.ftracker-sheet-handle{width:42px;height:4px;border-radius:99px;background:var(--border);margin:0 auto 12px;}
+.ftracker-sheet-title{font-size:18px;font-weight:800;text-align:center;margin:4px 0 12px;}
+.ftracker-sheet button{margin-top:8px;}
+@media(max-width:420px){.ftracker-content{padding-left:12px;padding-right:12px}.ftracker-appbar{grid-template-columns:minmax(78px,1fr) minmax(0,2.2fr) minmax(78px,1fr);}.ftracker-bottom-nav button{font-size:9px!important;}.ftracker-bottom-nav .ft-nav-icon{font-size:18px;}}
+</style>
+<script id="ftracker-v1-5-unified-app-shell-js">
+(function(){
+  const SCREEN_IDS=['homeScreen','progressScreen','fscoreAnalyticsScreen','bodyScreen','confirmScreen','workoutScreen','settingsScreen','exerciseDirectoryScreen','historyScreen','foodScreen'];
+  const TAB_MAP={workout:'homeScreen',nutrition:'foodScreen',progress:'progressScreen',directory:'exerciseDirectoryScreen',settings:'settingsScreen'};
+  const TITLE_MAP={homeScreen:'Тренировка',workoutScreen:'Тренировка',foodScreen:'Питание',progressScreen:'Прогресс',exerciseDirectoryScreen:'Справочник',settingsScreen:'Программы',historyScreen:'История',bodyScreen:'Замеры',fscoreAnalyticsScreen:'Индекс динамики',confirmScreen:'Подтверждение'};
+  function q(id){return document.getElementById(id)}
+  function titleFor(id){return TITLE_MAP[id]||'FTracker'}
+  function setupShell(){
+    const app=q('app'); if(!app || app.dataset.unifiedShell==='1') return;
+    app.dataset.unifiedShell='1'; app.classList.add('app-shell-root');
+    const screens=SCREEN_IDS.map(q).filter(Boolean);
+    screens.forEach(s=>s.classList.add('app-screen'));
+    const bar=document.createElement('header'); bar.id='ftrackerAppBar'; bar.className='ftracker-appbar';
+    bar.innerHTML='<button id="ftrackerAppBack" class="ftracker-appbar-back hidden" type="button">← Назад</button><div id="ftrackerAppTitle" class="ftracker-appbar-title">Тренировка</div><div class="ftracker-appbar-action"></div>';
+    const content=document.createElement('main'); content.id='ftrackerAppContent'; content.className='ftracker-content';
+    const nav=document.createElement('nav'); nav.className='ftracker-bottom-nav'; nav.setAttribute('aria-label','Основная навигация');
+    nav.innerHTML=[
+      ['workout','🏋️','Тренировка'],['nutrition','🍽️','Питание'],['progress','📈','Прогресс'],['directory','📚','Справочник'],['settings','⚙️','Программы'],['more','⋯','Ещё']
+    ].map(([k,i,t])=>'<button type="button" data-ft-tab="'+k+'"><span class="ft-nav-icon">'+i+'</span><span>'+t+'</span></button>').join('');
+    screens.forEach(s=>content.appendChild(s));
+    app.append(bar,content,nav);
+    const more=document.createElement('div'); more.id='ftrackerMoreSheet'; more.className='ftracker-sheet-overlay hidden';
+    more.innerHTML='<div class="ftracker-sheet" role="dialog" aria-modal="true" onclick="event.stopPropagation()"><div class="ftracker-sheet-handle"></div><div class="ftracker-sheet-title">Дополнительно</div><button type="button" data-ft-more="measurements">Замеры</button><button type="button" data-ft-more="history">История</button><button type="button" data-ft-more="fscore">Индекс динамики</button><button type="button" class="gray" data-ft-more="close">Закрыть</button></div>';
+    document.body.appendChild(more);
+    more.addEventListener('click',()=>closeMore());
+    nav.addEventListener('click',e=>{const b=e.target.closest('[data-ft-tab]');if(!b)return;const tab=b.dataset.ftTab;if(tab==='more'){openMore();return;}if(tab==='workout'){if(typeof goHome==='function')goHome();else activate('homeScreen');}else if(tab==='nutrition'&&typeof showFoodDiary==='function')showFoodDiary();else if(tab==='progress'&&typeof showProgress==='function')showProgress();else if(tab==='directory'&&typeof showExerciseDirectory==='function')showExerciseDirectory();else if(tab==='settings'&&typeof showSettings==='function')showSettings();});
+    more.addEventListener('click',e=>{const b=e.target.closest('[data-ft-more]');if(!b)return;const a=b.dataset.ftMore;if(a==='measurements'&&typeof showBodyMeasurements==='function'){closeMore();showBodyMeasurements();}if(a==='history'&&typeof showHistory==='function'){closeMore();showHistory();}if(a==='fscore'&&typeof showFScoreAnalytics==='function'){closeMore();showFScoreAnalytics();}if(a==='close')closeMore();});
+    q('ftrackerAppBack').addEventListener('click',()=>{if(typeof goHome==='function')goHome();});
+    const legacyShow=window.showScreen;
+    window.showScreen=function(id){const r=legacyShow?legacyShow(id):activate(id);sync(id);return r;};
+    window.__ftrackerUnifiedShellSync=sync;
+    sync('homeScreen');
+  }
+  function sync(id){
+    const title=q('ftrackerAppTitle'),back=q('ftrackerAppBack');
+    if(title)title.textContent=titleFor(id);
+    const rootTabs=['homeScreen','foodScreen','progressScreen','exerciseDirectoryScreen','settingsScreen'];
+    if(back)back.classList.toggle('hidden',rootTabs.includes(id));
+    document.querySelectorAll('[data-ft-tab]').forEach(b=>b.classList.remove('active'));
+    const key=Object.entries(TAB_MAP).find(([,v])=>v===id)?.[0];
+    if(key){const b=document.querySelector('[data-ft-tab="'+key+'"]');if(b)b.classList.add('active');}
+    const c=q('ftrackerAppContent'); if(c)c.scrollTop=0;
+  }
+  function activate(id){document.querySelectorAll('#ftrackerAppContent .app-screen').forEach(s=>s.classList.add('hidden'));const s=q(id);if(s)s.classList.remove('hidden');sync(id);}
+  function openMore(){q('ftrackerMoreSheet')?.classList.remove('hidden')}
+  function closeMore(){q('ftrackerMoreSheet')?.classList.add('hidden')}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',setupShell,{once:true});else setupShell();
+})();
+</script>
 
 </body>
 </html>
