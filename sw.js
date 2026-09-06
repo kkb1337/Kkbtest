@@ -1,6 +1,5 @@
-const CACHE_VERSION='ftracker-v1.4.87-workspace-contract';
-const CACHE_NAME=CACHE_VERSION;
-const APP_SHELL=['./','./index.html','./manifest.json','./icon-192.png','./icon-512.png'];
-self.addEventListener('install',event=>event.waitUntil((async()=>{const c=await caches.open(CACHE_NAME);await c.addAll(APP_SHELL);await self.skipWaiting();})()));
-self.addEventListener('activate',event=>event.waitUntil((async()=>{await Promise.all((await caches.keys()).filter(k=>k!==CACHE_NAME).map(k=>caches.delete(k)));await self.clients.claim();})()));
-self.addEventListener('fetch',event=>{const r=event.request;if(r.method!=='GET')return;if(r.mode==='navigate'){event.respondWith((async()=>{const c=await caches.open(CACHE_NAME);try{const n=await fetch(r,{cache:'no-store'});if(n&&n.ok)c.put('./index.html',n.clone());return n;}catch(e){return(await c.match('./index.html'))||(await c.match('./'))||Response.error();}})());return;}event.respondWith((async()=>{const c=await caches.open(CACHE_NAME);const hit=await c.match(r);if(hit)return hit;try{const n=await fetch(r);if(n&&n.ok)c.put(r,n.clone());return n;}catch(e){return Response.error();}})());});
+const CACHE_NAME = "ftracker-v1.4.88-hard-audit";
+const ASSETS = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png"];
+self.addEventListener("install", event => { event.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting())); });
+self.addEventListener("activate", event => { event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
+self.addEventListener("fetch", event => { event.respondWith(caches.match(event.request).then(cached => cached || fetch(event.request).then(response => { const copy=response.clone(); caches.open(CACHE_NAME).then(c=>c.put(event.request,copy)); return response; }).catch(() => cached))); });

@@ -6130,6 +6130,188 @@ body{
 @media(max-width:360px){.fscore-period-presets{grid-template-columns:repeat(3,minmax(0,1fr))!important;}.fscore-target-corridor-editor{grid-template-columns:1fr!important;}.fscore-target-corridor{grid-column:auto!important;}}
 </style>
 
+
+<style id="ftracker-v1-4-88-window-audit-final">
+/* =====================================================================
+   v1.4.88 — HARD WINDOW AUDIT / SINGLE GEOMETRY CONTRACT
+   - Main screens: safe-area is owned by .safe-area only.
+   - Content windows: full physical PWA viewport, no outer safe-area frame.
+   - Dialogs: the only intentionally compact surfaces.
+   - No negative margins, no compensating offsets, no nested viewport math.
+   ===================================================================== */
+:root{
+  --ft-safe-top: env(safe-area-inset-top, 0px);
+  --ft-safe-right: env(safe-area-inset-right, 0px);
+  --ft-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --ft-safe-left: env(safe-area-inset-left, 0px);
+  --ft-header-h: 48px;
+}
+html,body{margin:0!important;min-height:100%!important;width:100%!important;overflow-x:hidden!important;background:var(--bg)!important;}
+
+/* ---------- Normal application screens ---------- */
+.safe-area{
+  width:100%!important;
+  min-height:100dvh!important;
+  margin:0!important;
+  padding:var(--ft-safe-top) var(--ft-safe-right) var(--ft-safe-bottom) var(--ft-safe-left)!important;
+  box-sizing:border-box!important;
+  background:var(--bg)!important;
+}
+.safe-area>#app,.safe-area>.container,#app.container{
+  width:100%!important;
+  max-width:680px!important;
+  min-height:0!important;
+  height:auto!important;
+  margin:0 auto!important;
+  padding:0 12px!important;
+  box-sizing:border-box!important;
+  overflow:visible!important;
+}
+#app>[id$="Screen"]{
+  margin:0!important;
+  padding:0!important;
+  min-height:0!important;
+  height:auto!important;
+  overflow:visible!important;
+}
+.screen-header,.fscore-screen-header{
+  display:grid!important;
+  grid-template-columns:46px minmax(0,1fr) 46px!important;
+  grid-template-rows:46px!important;
+  width:100%!important;
+  height:46px!important;
+  min-height:46px!important;
+  max-height:46px!important;
+  margin:0 0 4px!important;
+  padding:0!important;
+  gap:0!important;
+  position:relative!important;
+  top:auto!important;
+  box-sizing:border-box!important;
+  background:var(--bg)!important;
+  box-shadow:none!important;
+}
+.screen-header>button:first-child,.fscore-screen-header>button:first-child{
+  grid-column:1!important;grid-row:1!important;justify-self:start!important;align-self:center!important;
+  width:42px!important;min-width:42px!important;height:38px!important;min-height:38px!important;max-height:38px!important;
+  margin:0!important;padding:6px 7px!important;box-sizing:border-box!important;
+}
+.screen-header>.title,.screen-header>.title.section-title,.screen-header>.section-title,
+.fscore-screen-header>.title,.fscore-screen-header>.section-title{
+  grid-column:2!important;grid-row:1!important;width:100%!important;height:46px!important;
+  min-width:0!important;margin:0!important;padding:0!important;align-self:center!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  font-size:22px!important;line-height:1!important;text-align:center!important;
+  overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+}
+.screen-header>.screen-header-spacer,.fscore-screen-header>.screen-header-spacer,
+.screen-header::after{grid-column:3!important;grid-row:1!important;width:42px!important;height:38px!important;display:block!important;visibility:hidden!important;margin:0!important;padding:0!important;}
+/* Every first content node after a normal header starts immediately. */
+#app>[id$="Screen"]>.screen-header + *,
+#app>[id$="Screen"]>.fscore-screen-header + *{margin-top:0!important;}
+
+/* ---------- One contract for ALL non-dialog content windows ---------- */
+.ft-window-root.ft-window-workspace,
+.technique-modal{
+  position:fixed!important;
+  inset:0!important;
+  top:0!important;right:0!important;bottom:0!important;left:0!important;
+  width:100vw!important;
+  height:100dvh!important;
+  min-width:100vw!important;
+  min-height:100dvh!important;
+  max-width:none!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:0!important;
+  box-sizing:border-box!important;
+  display:block!important;
+  overflow:hidden!important;
+  background:var(--bg)!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  isolation:isolate!important;
+  z-index:6000!important;
+}
+.ft-window-root.ft-window-workspace>.technique-modal-content,
+.ft-window-root.ft-window-workspace>.workout-detail-content,
+.ft-window-root.ft-window-workspace>.catalog-modal-content,
+.ft-window-root.ft-window-workspace>.achievements-content,
+.ft-window-root.ft-window-workspace>.manual-workout-content,
+.ft-window-root.ft-window-workspace>.food-modal-content,
+.ft-window-root.ft-window-workspace>.exercise-modal-content,
+.ft-window-root.ft-window-workspace>.date-modal-content,
+.ft-window-root.ft-window-workspace>.theme-modal-content,
+.ft-window-root.ft-window-workspace>.modal-stack-content,
+.technique-modal>.technique-modal-content{
+  position:absolute!important;
+  inset:0!important;
+  top:0!important;right:0!important;bottom:0!important;left:0!important;
+  width:100%!important;height:100%!important;
+  min-width:0!important;min-height:100%!important;
+  max-width:none!important;max-height:none!important;
+  margin:0!important;
+  box-sizing:border-box!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  -webkit-overflow-scrolling:touch!important;
+  overscroll-behavior:contain!important;
+  background:var(--bg)!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  /* Safe area is an INTERNAL content offset, never an external frame. */
+  padding-top:var(--ft-safe-top)!important;
+  padding-right:16px!important;
+  padding-bottom:0!important;
+  padding-left:16px!important;
+}
+/* Exercise card has its own content header; do not create a second viewport frame. */
+#techniqueModal .exercise-card-header{margin:0!important;padding:8px 4px 10px!important;}
+#techniqueModal .exercise-card-tabs{margin-top:0!important;}
+#techniqueModal .exercise-card-unified{min-height:100%!important;}
+
+/* History/details surfaces: no legacy card framing. */
+#workoutDetailModal .workout-detail-content{gap:10px!important;}
+#workoutDetailModal .workout-detail-title-wrap{margin:0!important;}
+#bodyGraphModal .body-graph-modal-content,#chartModal .chart-modal-content,
+#measurementManagerModal .measurement-manager-modal-content,
+#measurementFieldModal .measurement-manager-modal-content,
+#newMeasurementModal .measurement-manager-modal-content,
+#editMeasurementModal .measurement-manager-modal-content,
+#bodyHistoryModal .body-history-modal-content{
+  padding-top:var(--ft-safe-top)!important;padding-bottom:0!important;
+}
+
+/* ---------- Dialogs are the only compact windows ---------- */
+.ft-window-root.ft-window-dialog{
+  position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;
+  margin:0!important;box-sizing:border-box!important;
+  padding:calc(var(--ft-safe-top) + 12px) calc(var(--ft-safe-right) + 12px) calc(var(--ft-safe-bottom) + 12px) calc(var(--ft-safe-left) + 12px)!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  overflow:hidden!important;background:var(--modal-overlay)!important;z-index:9000!important;
+}
+.ft-window-root.ft-window-dialog>.confirm-modal-content,
+.ft-window-root.ft-window-dialog>.modal-stack-content,
+.ft-window-root.ft-window-dialog>:first-child{
+  position:relative!important;width:min(100%,560px)!important;max-width:560px!important;
+  height:auto!important;min-height:0!important;max-height:100%!important;
+  margin:0!important;padding:18px!important;box-sizing:border-box!important;
+  overflow:auto!important;border-radius:18px!important;border:1px solid var(--border)!important;
+  background:var(--card-bg)!important;box-shadow:0 16px 42px rgba(0,0,0,.30)!important;
+}
+
+/* Historical adaptive rules cannot affect a workspace once JS has classified it. */
+.ft-window-workspace.ft-window-adaptive,.ft-window-workspace .ft-window-adaptive{align-items:stretch!important;}
+
+@media(max-width:430px){
+  .screen-header,.fscore-screen-header{grid-template-columns:46px minmax(0,1fr) 46px!important;height:46px!important;min-height:46px!important;max-height:46px!important;}
+  .screen-header>.title,.screen-header>.title.section-title,.screen-header>.section-title,
+  .fscore-screen-header>.title,.fscore-screen-header>.section-title{font-size:20px!important;}
+}
+</style>
+
 </head>
 <body>
 <div class="safe-area"><div class="container" id="app">
@@ -6288,7 +6470,7 @@ body{
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v1.4.79 от 06.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v1.4.88 от 06.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -6836,18 +7018,17 @@ let modalStackInitialized = false;
 let modalStackObserverStarted = false;
 
 const FT_WINDOW_REGISTRY = Object.freeze({
-  // Full workspaces: serious content gets the entire usable PWA surface.
+  // Content surfaces: every non-dialog window gets one full PWA workspace contract.
   workoutDetailModal:'workspace', achievementsModal:'workspace', manualWorkoutModal:'workspace',
   addFoodModal:'workspace', foodLimitModal:'workspace', workoutSummaryModal:'workspace',
   bodyGraphModal:'workspace', chartModal:'workspace', measurementManagerModal:'workspace',
-  measurementFieldModal:'workspace', measurementHistoryModal:'adaptive',
+  measurementFieldModal:'workspace', measurementHistoryModal:'workspace',
   newMeasurementModal:'workspace', editMeasurementModal:'workspace', techniqueModal:'workspace',
-  // Compact/adaptive forms.
-  renameExerciseModal:'adaptive', directoryNewExerciseModal:'adaptive', workoutNewExerciseModal:'adaptive',
-  replaceExerciseModal:'adaptive', exerciseModal:'adaptive', exerciseOrderModal:'adaptive',
-  exercisePickerModal:'adaptive', progressExercisePickerModal:'adaptive', dateModal:'adaptive',
-  copyDatePickerModal:'adaptive', themeModal:'adaptive', catalogEditModal:'adaptive',
-  exerciseDuplicateModal:'adaptive', foodDuplicateModal:'adaptive',
+  renameExerciseModal:'workspace', directoryNewExerciseModal:'workspace', workoutNewExerciseModal:'workspace',
+  replaceExerciseModal:'workspace', exerciseModal:'workspace', exerciseOrderModal:'workspace',
+  exercisePickerModal:'workspace', progressExercisePickerModal:'workspace', dateModal:'workspace',
+  copyDatePickerModal:'workspace', themeModal:'workspace', catalogEditModal:'workspace',
+  exerciseDuplicateModal:'workspace', foodDuplicateModal:'workspace',
   // True compact system decisions.
   confirmExitModal:'dialog', finishWorkoutConfirmModal:'dialog', deleteConfirmModal:'dialog',
   importConfirmModal:'dialog', autoBackupRestoreConfirmModal:'dialog', measurementSaveConfirmModal:'dialog',
@@ -17677,16 +17858,6 @@ html,body{width:100%!important;min-height:100%!important;margin:0!important;padd
   #workoutDetailModal .workout-history-set span{font-size:14px!important;}
   #workoutDetailModal .workout-history-set b{font-size:17px!important;}
 }
-</style>
-
-
-<style id="ft-v1-4-87-window-contract">
-/* v1.4.87 — one authoritative contract for every workspace surface. */
-#workoutDetailModal.ft-window-root.ft-window-workspace,#achievementsModal.ft-window-root.ft-window-workspace,#manualWorkoutModal.ft-window-root.ft-window-workspace,#addFoodModal.ft-window-root.ft-window-workspace,#foodLimitModal.ft-window-root.ft-window-workspace,#workoutSummaryModal.ft-window-root.ft-window-workspace,#bodyGraphModal.ft-window-root.ft-window-workspace,#chartModal.ft-window-root.ft-window-workspace,#measurementManagerModal.ft-window-root.ft-window-workspace,#measurementFieldModal.ft-window-root.ft-window-workspace,#newMeasurementModal.ft-window-root.ft-window-workspace,#editMeasurementModal.ft-window-root.ft-window-workspace,#techniqueModal.ft-window-root.ft-window-workspace{position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;height:100dvh!important;min-height:100vh!important;min-height:100dvh!important;max-height:none!important;margin:0!important;padding:0!important;display:block!important;overflow:hidden!important;background:var(--bg)!important;box-sizing:border-box!important;}
-#workoutDetailModal.ft-window-root.ft-window-workspace>:first-child,#achievementsModal.ft-window-root.ft-window-workspace>:first-child,#manualWorkoutModal.ft-window-root.ft-window-workspace>:first-child,#addFoodModal.ft-window-root.ft-window-workspace>:first-child,#foodLimitModal.ft-window-root.ft-window-workspace>:first-child,#workoutSummaryModal.ft-window-root.ft-window-workspace>:first-child,#bodyGraphModal.ft-window-root.ft-window-workspace>:first-child,#chartModal.ft-window-root.ft-window-workspace>:first-child,#measurementManagerModal.ft-window-root.ft-window-workspace>:first-child,#measurementFieldModal.ft-window-root.ft-window-workspace>:first-child,#newMeasurementModal.ft-window-root.ft-window-workspace>:first-child,#editMeasurementModal.ft-window-root.ft-window-workspace>:first-child,#techniqueModal.ft-window-root.ft-window-workspace>:first-child{position:absolute!important;inset:0!important;width:100%!important;height:100vh!important;height:100dvh!important;min-height:100vh!important;min-height:100dvh!important;max-width:none!important;max-height:none!important;margin:0!important;padding-top:var(--ft-safe-top)!important;padding-right:var(--ft-safe-right)!important;padding-bottom:0!important;padding-left:var(--ft-safe-left)!important;box-sizing:border-box!important;border:0!important;border-radius:0!important;box-shadow:none!important;background:var(--bg)!important;overflow-y:auto!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior:contain!important;}
-/* Background fills the complete PWA viewport; only the readable content respects the top safe inset. */
-#techniqueModal.ft-window-root.ft-window-workspace>.technique-modal-content,
-#workoutDetailModal.ft-window-root.ft-window-workspace>.workout-detail-content{scroll-padding-top:0!important;}
 </style>
 
 </body>
