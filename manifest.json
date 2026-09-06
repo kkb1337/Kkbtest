@@ -26,7 +26,7 @@
       "purpose": "any maskable"
     }
   ],
-  "_build": "ftracker-v1.5.0-unified-app-shell-phase1",
-  "version": "1.5.0",
-  "description": "FTracker v1.5.0 — unified App Shell, persistent AppBar and Bottom Navigation"
+  "_build": "ftracker-v1.4.79-regression-rollback",
+  "version": "1.4.79",
+  "description": "FTracker v1.4.79 — rollback to the last pre-regression surface architecture"
 }
