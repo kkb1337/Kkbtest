@@ -4904,7 +4904,7 @@ body{
 /* One AppBar geometry for all ordinary screens. */
 .screen-header{
   position:sticky !important;
-  top:var(--safe-top) !important;
+  top:0 !important;
   z-index:100 !important;
   width:100%;
   min-height:52px;
@@ -5057,11 +5057,11 @@ input[type="checkbox"],
 
 /* Ordinary fixed controls remain safe-area aware. */
 .toast{
-  top:calc(var(--safe-top) + 60px) !important;
+  top:60px !important;
 }
 
 .theme-toggle-btn{
-  top:calc(var(--safe-top) + 16px) !important;
+  top:16px !important;
   right:calc(var(--safe-right) + 16px) !important;
 }
 
@@ -5072,7 +5072,7 @@ input[type="checkbox"],
 
 #workoutScreen .workout-topbar{
   position:sticky;
-  top:var(--safe-top);
+  top:0;
   z-index:110;
   width:100%;
   margin:0 !important;
@@ -17432,12 +17432,74 @@ body.light-mode .toast{
 </style>
 
 <style id="ftracker-full-height-window-contract">
-/* FTracker fullscreen window contract — single geometry owner.
-   User-facing windows occupy the complete PWA viewport from the end of the
-   top device safe-area to the physical bottom edge. Dialogs are excluded. */
+/* FTracker v2 — authoritative PWA geometry.
+   Ordinary app pages/windows: from the end of the TOP device safe area to the
+   physical bottom of the PWA. No bottom safe-area padding. Dialogs are the
+   only compact exception. */
 :root{
-  --ft-window-safe-top:env(safe-area-inset-top,0px);
+  --ft-safe-top:env(safe-area-inset-top,0px);
+  --ft-safe-right:env(safe-area-inset-right,0px);
+  --ft-safe-bottom:0px;
+  --ft-safe-left:env(safe-area-inset-left,0px);
+  --ft-safe-top-effective:var(--ft-safe-top);
 }
+
+/* iOS PWAs can report a zero env(safe-area-inset-top) while viewport-fit=cover
+   is active. On portrait phones reserve the Dynamic Island/status-bar band so
+   the first pixel of app content can never sit underneath it. If iOS reports
+   a larger real inset, max() keeps the real value. */
+@supports (-webkit-touch-callout:none){
+  @media (orientation:portrait) and (max-width:600px){
+    :root{--ft-safe-top-effective:max(var(--ft-safe-top),59px);}
+  }
+}
+
+html,body{
+  width:100%!important;
+  min-height:100%!important;
+  margin:0!important;
+  padding:0!important;
+  overflow-x:hidden!important;
+  background:var(--bg)!important;
+}
+
+/* The app itself begins immediately after the top safe area and goes to the
+   physical bottom. There is deliberately NO bottom safe-area reserve. */
+.safe-area{
+  width:100%!important;
+  height:100dvh!important;
+  min-height:100dvh!important;
+  margin:0!important;
+  padding:var(--ft-safe-top-effective) var(--ft-safe-right) 0 var(--ft-safe-left)!important;
+  box-sizing:border-box!important;
+  background:var(--bg)!important;
+  overflow:hidden!important;
+}
+.safe-area>#app,
+.safe-area>.container,
+#app.container{
+  width:100%!important;
+  max-width:680px!important;
+  height:calc(100dvh - var(--ft-safe-top-effective))!important;
+  min-height:0!important;
+  margin:0 auto!important;
+  padding:0 var(--ft-page-x,14px)!important;
+  box-sizing:border-box!important;
+  position:relative!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  -webkit-overflow-scrolling:touch!important;
+}
+
+/* Home and ordinary screens use the same safe-area origin. */
+#app>[id$="Screen"]{
+  width:100%!important;
+  min-width:0!important;
+  box-sizing:border-box!important;
+}
+
+/* Fullscreen user-facing windows. The root owns the top safe area exactly
+   once; the workspace fills the remaining viewport down to the bottom edge. */
 .ft-window-root{
   position:fixed!important;
   inset:0!important;
@@ -17446,7 +17508,7 @@ body.light-mode .toast{
   min-height:100dvh!important;
   max-height:100dvh!important;
   margin:0!important;
-  padding:var(--ft-window-safe-top) 0 0 0!important;
+  padding:var(--ft-safe-top-effective) 0 0 0!important;
   box-sizing:border-box!important;
   background:var(--modal-overlay)!important;
   display:flex!important;
@@ -17460,14 +17522,13 @@ body.light-mode .toast{
 .ft-window-root.is-stack-inactive{pointer-events:none!important;}
 .ft-window-root.is-stack-active{pointer-events:auto!important;}
 
-/* Every non-dialog window is a true edge-to-edge PWA surface. */
 .ft-window-workspace{
-  align-items:stretch!important;
-  justify-content:stretch!important;
   width:100%!important;
-  height:100%!important;
+  height:calc(100dvh - var(--ft-safe-top-effective))!important;
   min-height:0!important;
   padding:0!important;
+  align-items:stretch!important;
+  justify-content:stretch!important;
 }
 .ft-window-workspace>:first-child{
   position:relative!important;
@@ -17488,11 +17549,11 @@ body.light-mode .toast{
   -webkit-overflow-scrolling:touch!important;
 }
 
-/* The exercise/technique surface follows the same contract and must not add
-   the safe-area a second time inside its own content. */
+/* Technique screen: same geometry, no second safe-area compensation. */
 #techniqueModal.ft-window-workspace{
-  padding-top:var(--ft-window-safe-top)!important;
-  padding-bottom:0!important;
+  width:100%!important;
+  height:calc(100dvh - var(--ft-safe-top-effective))!important;
+  padding:0!important;
 }
 #techniqueModal.ft-window-workspace>.technique-modal-content{
   width:100%!important;
@@ -17509,31 +17570,31 @@ body.light-mode .toast{
   overflow-x:hidden!important;
 }
 
-/* Dialogs are the only exception: keep their compact/card presentation. */
+/* Dialogs are intentionally NOT fullscreen. They retain compact/card geometry
+   and are the only place where a bottom safe-area cushion is allowed. */
 .ft-window-dialog{
   align-items:center!important;
   justify-content:center!important;
-  padding:calc(var(--ft-window-safe-top) + 12px) 12px 12px 12px!important;
+  padding:calc(var(--ft-safe-top-effective) + 12px) 12px 12px 12px!important;
 }
 .ft-window-dialog>:first-child{
   position:relative!important;
   width:min(100%,560px)!important;
   max-width:560px!important;
-  max-height:calc(100dvh - var(--ft-window-safe-top) - 24px)!important;
+  max-height:calc(100dvh - var(--ft-safe-top-effective) - 24px)!important;
   margin:0!important;
   box-sizing:border-box!important;
   overflow:auto!important;
   border-radius:18px!important;
 }
 
-/* Legacy adaptive class is no longer assigned to app windows. If one slips
-   through from old state/markup, treat it as fullscreen rather than allowing
-   the old centered-card geometry to return. */
+/* Legacy adaptive windows must not reintroduce centered cards. */
 .ft-window-adaptive{
   align-items:stretch!important;
   justify-content:stretch!important;
   width:100%!important;
-  height:100%!important;
+  height:calc(100dvh - var(--ft-safe-top-effective))!important;
+  min-height:0!important;
   padding:0!important;
 }
 .ft-window-adaptive>:first-child{
@@ -17548,8 +17609,7 @@ body.light-mode .toast{
   overflow:auto!important;
 }
 
-/* No extra viewport safe-area compensation at the bottom of fullscreen
-   windows. Content may reach the physical PWA bottom as requested. */
+/* Never add an accidental bottom viewport reserve to fullscreen surfaces. */
 .ft-window-workspace > *:last-child{margin-bottom:0!important;}
 </style>
 
