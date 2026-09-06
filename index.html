@@ -6160,6 +6160,41 @@ body{
  align-items:center !important;
 }
 </style>
+
+<style id="window-cleanup-pass-149">
+/* final window geometry cleanup */
+.ft-window-root, .ft-window, .modal, .modal-content, .sheet, .picker, [role="dialog"] {
+  max-height: none !important;
+}
+.ft-window-root, .ft-window {
+  height: 100dvh !important;
+  min-height: 100dvh !important;
+}
+.ft-window-root, .ft-window {
+  overflow: hidden !important;
+}
+.ft-window-root > .content, .ft-window > .content, .ft-window-content, .modal-content, .sheet-content {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+}
+
+/* picker/list windows use workspace geometry */
+.exercise-picker, .exercise-picker-content, .progress-picker, .picker-content {
+  height: 100dvh !important;
+  max-height: none !important;
+}
+
+/* never let bottom safe area create a black band */
+.ft-window-root, .ft-window, .modal-content {
+  padding-bottom: 0 !important;
+}
+
+/* training menu: do not create extra fixed header layers */
+.training-menu .screen-header, .training-menu .tabs {
+  position: static !important;
+}
+</style>
 </head>
 <body>
 <div class="safe-area"><div class="container" id="app">
