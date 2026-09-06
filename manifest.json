@@ -26,7 +26,7 @@
       "purpose": "any maskable"
     }
   ],
-  "_build": "ftracker-v1.4.74-product-ui-system",
-  "version": "1.4.74",
-  "description": "FTracker v1.4.74 — unified product UI, PWA geometry and window system"
+  "_build": "ftracker-v1.4.75-explicit-window-registry",
+  "version": "1.4.75",
+  "description": "FTracker v1.4.75 — explicit window registry and canonical header contracts"
 }
