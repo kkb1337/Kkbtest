@@ -6130,6 +6130,32 @@ body{
 @media(max-width:360px){.fscore-period-presets{grid-template-columns:repeat(3,minmax(0,1fr))!important;}.fscore-target-corridor-editor{grid-template-columns:1fr!important;}.fscore-target-corridor{grid-column:auto!important;}}
 </style>
 
+
+<style id="v1481-canonical-surface-fixes">
+/* v1.4.81: canonical surface contract for PWA workspaces */
+.ft-window-workspace{padding:0!important;align-items:stretch!important;justify-content:stretch!important;background:var(--modal-overlay)!important;}
+.ft-window-workspace>.theme-modal-content,.ft-window-workspace>.exercise-modal-content,.ft-window-workspace>.date-modal-content,.ft-window-workspace>.workout-detail-content,.ft-window-workspace>.manual-workout-content,.ft-window-workspace>.food-modal-content,.ft-window-workspace>.catalog-modal-content,.ft-window-workspace>.achievements-content{width:100%!important;max-width:none!important;height:100%!important;max-height:none!important;margin:0!important;border-radius:0!important;border:0!important;padding:calc(env(safe-area-inset-top,0px) + 14px) 16px calc(env(safe-area-inset-bottom,0px) + 16px)!important;overflow-y:auto!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior:contain!important;box-sizing:border-box!important;}
+.ft-window-workspace .unified-surface-header,.ft-window-workspace .chart-modal-header{display:grid!important;grid-template-columns:auto minmax(0,1fr) auto!important;align-items:center!important;min-height:44px!important;margin:0 0 14px!important;gap:10px!important;}
+.ft-window-workspace .surface-back-btn{margin:0!important;align-self:center!important;width:auto!important;min-height:44px!important;white-space:nowrap!important;}
+.ft-window-workspace .surface-title,.ft-window-workspace .chart-modal-title{text-align:left!important;margin:0!important;align-self:center!important;line-height:1.2!important;}
+/* Measurement headers use the same single-row navigation grammar. */
+#measurementManagerModal .catalog-modal-content,#measurementFieldModal .catalog-modal-content{display:flex!important;flex-direction:column!important;}
+#measurementManagerModal .surface-back-btn+#measurementManagerList,#measurementFieldModal .surface-back-btn+label{margin-top:8px!important;}
+#measurementManagerModal .surface-back-btn,#measurementFieldModal .surface-back-btn{position:relative!important;align-self:flex-start!important;}
+#measurementManagerModal .surface-title,#measurementFieldModal .surface-title{position:absolute!important;top:calc(env(safe-area-inset-top,0px) + 24px)!important;left:112px!important;right:16px!important;margin:0!important;min-height:44px!important;display:flex!important;align-items:center!important;}
+#measurementManagerModal .measurement-manager-list{margin-top:14px!important;}
+#measurementFieldModal label{margin-top:14px!important;}
+/* Picker content must own scrolling and the back control must never overlap search. */
+#exercisePickerModal .date-modal-content,#progressExercisePickerModal .date-modal-content{height:100%!important;max-height:none!important;}
+#exercisePickerModal .catalog-modal-list,#progressExercisePickerModal .progress-picker-list{flex:1 1 auto!important;min-height:0!important;max-height:none!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;touch-action:pan-y!important;}
+#exercisePickerModal .surface-back-btn,#progressExercisePickerModal .surface-back-btn{width:max-content!important;margin:0 0 10px!important;}
+/* Long exercise descriptions inside canonical workspace are scrollable. */
+#exerciseModal .exercise-modal-content{height:100%!important;max-height:none!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;}
+/* Nutrition statistics: readable label/value separation. */
+#textStatsContent .stat-row,#textStatsContent .nutrition-stat-row{display:flex!important;justify-content:space-between!important;align-items:baseline!important;gap:12px!important;padding:8px 0!important;}
+#textStatsContent .stat-label,#textStatsContent .nutrition-stat-label{color:var(--subtext)!important;}
+#textStatsContent .stat-value,#textStatsContent .nutrition-stat-value{font-weight:800!important;text-align:right!important;}
+</style>
 </head>
 <body>
 <div class="safe-area"><div class="container" id="app">
@@ -6288,7 +6314,7 @@ body{
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v<span id="appVersionValue">1.4.81</span> от 06.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v1.4.80 от 06.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -6649,7 +6675,7 @@ body{
     <div class="catalog-modal-content measurement-manager-modal-content">
         <button class="surface-back-btn" type="button" onclick="closeMeasurementManager()">← Назад</button>
         <div class="surface-title">⚙️ Параметры</div>
-        <div class="measurement-modal-note">Здесь можно менять список параметров. История уже сохранённых замеров останется на месте.</div>
+        
         <div id="measurementManagerList" class="measurement-manager-list"></div>
         <button onclick="openMeasurementFieldEditor()">➕ Добавить параметр</button>
         <button class="gray" onclick="closeMeasurementManager()">Готово</button>
@@ -6669,7 +6695,7 @@ body{
 
 <div id="exercisePickerModal" class="date-modal hidden" onclick="if(event.target===this)closeExercisePicker()">
   <div class="date-modal-content" style="max-height:86vh;display:flex;flex-direction:column;">
-    <span class="close-btn" onclick="closeExercisePicker()">&times;</span>
+    <button class="surface-back-btn" type="button" onclick="closeExercisePicker()">← Назад</button>
     <div id="exercisePickerTitle" style="font-size:20px;font-weight:800;margin-bottom:5px;padding-right:30px;">Добавить упражнение</div>
     <input id="exercisePickerSearch" placeholder="🔎 Поиск упражнения" autocomplete="off" oninput="renderExercisePicker()">
     <div id="exercisePickerList" class="catalog-modal-list"></div>
@@ -6677,7 +6703,7 @@ body{
 </div>
 <div id="progressExercisePickerModal" class="date-modal hidden" onclick="if(event.target===this)closeProgressExercisePicker()">
   <div class="date-modal-content" style="max-height:82vh;display:flex;flex-direction:column;">
-    <span class="close-btn" onclick="closeProgressExercisePicker()">&times;</span>
+    <button class="surface-back-btn" type="button" onclick="closeProgressExercisePicker()">← Назад</button>
     <div style="font-size:20px;font-weight:700;margin-bottom:5px;">Упражнения с прогрессом</div>
     <input id="progressExercisePickerSearch" placeholder="🔎 Поиск упражнения" autocomplete="off" oninput="renderProgressExercisePicker()">
     <div id="progressPickerList" class="progress-picker-list" style="margin-top:10px;"></div>
@@ -6826,7 +6852,7 @@ body{
 
 <script id="ftracker-app">
 /* ================================================================
-   FTracker v1.4.81 — canonical viewport and adaptive surfaces
+   FTracker v1.4.80 — canonical viewport and adaptive surfaces
    One owner for stacking and interaction order. It does not rewrite window
    DOM, headers, borders, padding, or the original visual content.
    ================================================================ */
@@ -6840,13 +6866,13 @@ const FT_WINDOW_REGISTRY = Object.freeze({
   workoutDetailModal:'workspace', achievementsModal:'workspace', manualWorkoutModal:'workspace',
   addFoodModal:'workspace', foodLimitModal:'workspace', workoutSummaryModal:'workspace',
   bodyGraphModal:'workspace', chartModal:'workspace', measurementManagerModal:'workspace',
-  measurementFieldModal:'workspace', measurementHistoryModal:'adaptive',
+  measurementFieldModal:'workspace', measurementHistoryModal:'workspace',
   newMeasurementModal:'workspace', editMeasurementModal:'workspace', techniqueModal:'workspace',
   // Compact/adaptive forms.
   renameExerciseModal:'adaptive', directoryNewExerciseModal:'adaptive', workoutNewExerciseModal:'adaptive',
-  replaceExerciseModal:'adaptive', exerciseModal:'adaptive', exerciseOrderModal:'adaptive',
-  exercisePickerModal:'adaptive', progressExercisePickerModal:'adaptive', dateModal:'adaptive',
-  copyDatePickerModal:'adaptive', themeModal:'adaptive', catalogEditModal:'adaptive',
+  replaceExerciseModal:'adaptive', exerciseModal:'workspace', exerciseOrderModal:'workspace',
+  exercisePickerModal:'workspace', progressExercisePickerModal:'workspace', dateModal:'adaptive',
+  copyDatePickerModal:'adaptive', themeModal:'adaptive', catalogEditModal:'workspace',
   exerciseDuplicateModal:'adaptive', foodDuplicateModal:'adaptive',
   // True compact system decisions.
   confirmExitModal:'dialog', finishWorkoutConfirmModal:'dialog', deleteConfirmModal:'dialog',
@@ -6958,9 +6984,6 @@ function initModalStack(){
 function lockModalScroll(){ updateModalStackState(); }
 if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',initModalStack,{once:true}); else initModalStack();
 
-
-const APP_VERSION = '1.4.81';
-const APP_BUILD = `ftracker-v${APP_VERSION}-navigation-surface-corrections`;
 
 const STORAGE_KEY = 'ftracker_v23';
 const DRAFT_KEY = 'ftracker_draft';
@@ -7551,27 +7574,14 @@ function resetAppViewport(screenId){
     if(header) header.scrollTop=0;
   }
 }
-function closeAllTransientModals(){
-  // Screen navigation must never leave an old overlay mounted above the new screen.
-  // The modal stack remains the single source of truth for active overlays.
-  getModalRoots().forEach(modal=>{
-    modal.classList.add('hidden');
-    modal.setAttribute('aria-hidden','true');
-    modal.style.pointerEvents='';
-  });
-  modalStack.splice(0, modalStack.length);
-  updateModalStackState();
-  if (typeof closeBackupExportPrompt === 'function') closeBackupExportPrompt();
-}
 function showScreen(id) {
-  // A screen transition is a hard surface boundary: close every transient overlay first.
-  closeAllTransientModals();
-  document.querySelectorAll('#app > div').forEach(el => { el.classList.add('hidden'); el.style.pointerEvents='none'; el.setAttribute('aria-hidden','true'); });
+  // Close transient overlays before changing app screens.
+  if (typeof closeBackupExportPrompt === 'function') closeBackupExportPrompt();
+  document.querySelectorAll('#app > div').forEach(el => { el.classList.add('hidden'); el.style.pointerEvents='none'; });
   const screen=document.getElementById(id);
   if(!screen) return;
   screen.classList.remove('hidden');
   screen.style.pointerEvents='auto';
-  screen.setAttribute('aria-hidden','false');
   resetAppViewport(id);
   requestAnimationFrame(()=>{
     resetAppViewport(id);
@@ -9351,7 +9361,7 @@ function ensureMeasurementHistoryModal() {
             <div class="body-history-modal-head unified-surface-header">
                 <button type="button" class="surface-back-btn" onclick="closeBodyHistory()">← Назад</button>
                 <div class="body-history-modal-title">История замеров</div>
-                <div class="body-history-modal-sub">Все сохранённые измерения</div>
+                
             </div>
             <div id="measurementHistory"></div>
         </div>`;
@@ -12587,7 +12597,7 @@ function renderProgressDashboard(){
       : `<button type="button" class="progress-open-picker" onclick="openProgressExercisePicker()">Выбрать упражнение <span>›</span></button>`;
 
     container.innerHTML=`<div class="progress-ex">
-        <div class="progress-ex-head"><div class="progress-ex-title">Прогресс упражнений</div></div>
+        
         <div class="progress-ex-period"><button class="${progressPeriod===30?'active':''}" onclick="setProgressPeriod(30)" type="button">30 дней</button><button class="${progressPeriod===90?'active':''}" onclick="setProgressPeriod(90)" type="button">90 дней</button><button class="${progressPeriod==='all'?'active':''}" onclick="setProgressPeriod('all')" type="button">Всё время</button></div>
         <div class="progress-ex-picker">
             <div class="progress-ex-picker-label">Упражнение</div>
@@ -17449,7 +17459,7 @@ body.light-mode .toast{
 
 <style id="ftracker-v1-4-80-window-system">
 /* ================================================================
-   FTracker v1.4.81 — canonical surface system
+   FTracker v1.4.80 — canonical surface system
    Geometry is owned exactly once per level:
    device -> safe-area -> surface -> header/content.
    No business logic, formulas, storage or handlers are changed.
@@ -17697,32 +17707,5 @@ html,body{width:100%!important;min-height:100%!important;margin:0!important;padd
 }
 </style>
 
-<script id="ftracker-v1-4-81-architecture">
-/* v1.4.81 — canonical application surface map.
-   This registry documents and validates the navigation tree without touching user data. */
-window.FTRACKER_ARCHITECTURE = Object.freeze({
-  version: APP_VERSION,
-  root: 'homeScreen',
-  sections: Object.freeze({
-    training: Object.freeze({screen:'workoutScreen', entry:'programList', childScreens:['confirmScreen'], modals:['confirmExitModal','finishWorkoutConfirmModal','workoutSummaryModal','achievementsModal','exerciseModal','replaceExerciseModal','workoutNewExerciseModal']}),
-    progress: Object.freeze({screen:'progressScreen', childScreens:['fscoreAnalyticsScreen'], modals:['progressExercisePickerModal','chartModal']}),
-    measurements: Object.freeze({screen:'bodyScreen', modals:['bodyGraphModal','measurementHistoryModal','measurementSaveConfirmModal','measurementManagerModal','measurementFieldModal']}),
-    programs: Object.freeze({screen:'settingsScreen', modals:['exercisePickerModal','exerciseOrderModal','renameExerciseModal','directoryNewExerciseModal']}),
-    directory: Object.freeze({screen:'exerciseDirectoryScreen', modals:['exerciseModal','renameExerciseModal','directoryNewExerciseModal']}),
-    history: Object.freeze({screen:'historyScreen', modals:['dateModal','deleteConfirmModal','workoutDetailModal','manualWorkoutModal']}),
-    nutrition: Object.freeze({screen:'foodScreen', modals:['addFoodModal','foodLimitModal','copyDatePickerModal','foodCopyConfirmModal','catalogEditModal','chartModal']}),
-    global: Object.freeze({screen:'homeScreen', modals:['themeModal','autoBackupRestoreConfirmModal','importConfirmModal']})
-  })
-});
-
-(function syncAppVersion(){
-  const node=document.getElementById('appVersionValue');
-  if(node) node.textContent=APP_VERSION;
-  document.documentElement.dataset.ftrackerVersion=APP_VERSION;
-  document.querySelectorAll('#app > div[id$="Screen"]').forEach((screen,i)=>{
-    if(!screen.hasAttribute('aria-hidden')) screen.setAttribute('aria-hidden', screen.classList.contains('hidden')?'true':'false');
-  });
-})();
-</script>
 </body>
 </html>
