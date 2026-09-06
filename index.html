@@ -17681,17 +17681,15 @@ html,body{width:100%!important;min-height:100%!important;margin:0!important;padd
 </style>
 
 
-<style id="ftracker-v1481-header-content-gap-minimal">
-/* v1.4.81 — minimal header-to-content gap. This is the only UI change. */
-.screen-header,
-.fscore-screen-header,
-.unified-surface-header,
-.chart-modal-header,
-.measurement-modal-header,
-.body-graph-header,
-.body-history-modal-head{
-  margin-bottom:0!important;
-  padding-bottom:0!important;
+<style id="ftracker-v1482-minimal-header-gap">
+/* v1.4.82 — ONLY reduce the gap directly below ordinary screen headers. */
+#app > [id$="Screen"] > .screen-header,
+#app > [id$="Screen"] > .fscore-screen-header{
+  margin-bottom:4px!important;
+}
+#app > [id$="Screen"] > .screen-header + *,
+#app > [id$="Screen"] > .fscore-screen-header + *{
+  margin-top:0!important;
 }
 </style>
 </body>
