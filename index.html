@@ -6124,6 +6124,42 @@ body{
 @media(max-width:360px){.fscore-period-presets{grid-template-columns:repeat(3,minmax(0,1fr))!important;}.fscore-target-corridor-editor{grid-template-columns:1fr!important;}.fscore-target-corridor{grid-column:auto!important;}}
 </style>
 
+
+<style id="v1496-window-cleanup">
+/* v1.4.96 unified window geometry cleanup */
+.ft-window-root,.ft-window-workspace,.modal,.modal-content,.exercise-modal,.catalog-modal,.food-modal,.date-modal,.manual-workout-modal,.achievements-modal{
+ box-sizing:border-box;
+}
+.ft-window-root,.ft-window-workspace{
+ height:100dvh !important;
+ min-height:100dvh !important;
+ max-height:none !important;
+ inset:0 !important;
+}
+.exercise-modal,.catalog-modal,.food-modal,.date-modal,.manual-workout-modal,.achievements-modal{
+ max-height:none !important;
+ height:100dvh !important;
+ padding-bottom:0 !important;
+}
+.ft-window-root,.ft-window-workspace,.modal{
+ overflow:hidden !important;
+}
+.ft-window-root > .ft-window-content,.ft-window-workspace > .ft-window-content,.modal-content{
+ flex:1 1 auto !important;
+ min-height:0 !important;
+ overflow-y:auto !important;
+ padding-bottom:env(safe-area-inset-bottom,0px) !important;
+}
+.close-btn,.modal-close-btn{
+ top:auto !important;
+ right:auto !important;
+ position:relative !important;
+}
+.screen-header{
+ grid-template-columns:auto minmax(0,1fr) auto !important;
+ align-items:center !important;
+}
+</style>
 </head>
 <body>
 <div class="safe-area"><div class="container" id="app">
