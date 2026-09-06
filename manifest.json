@@ -26,7 +26,7 @@
       "purpose": "any maskable"
     }
   ],
-  "_build": "ftracker-v2-rebuilt-clean",
+  "_build": "ftracker-v2-full-height",
   "version": "2.0.0",
-  "description": "FTracker v2 — rebuilt cleanly from the stable v1.4.79 UI and data model"
+  "description": "FTracker v2 — full-height PWA window geometry"
 }
