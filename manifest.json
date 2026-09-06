@@ -26,7 +26,7 @@
       "purpose": "any maskable"
     }
   ],
-  "_build": "ftracker-v1.4.82-canonical-workspace-unification",
-  "version": "1.4.82",
-  "description": "FTracker v1.4.82 — canonical workspace unification and scroll fixes"
+  "_build": "ftracker-v1.4.83-canonical-type1-architecture",
+  "version": "1.4.83",
+  "description": "FTracker v1.4.83 — canonical Type 1 surface architecture and legacy window cleanup"
 }
