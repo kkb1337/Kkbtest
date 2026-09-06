@@ -26,7 +26,7 @@
       "purpose": "any maskable"
     }
   ],
-  "_build": "ftracker-v1.4.84-workspace-scroll",
-  "version": "1.4.84",
-  "description": "FTracker v1.4.84 — workspace full-height scrolling and progress header cleanup"
+  "_build": "ftracker-v1.4.85-regression-rollback",
+  "version": "1.4.85",
+  "description": "FTracker v1.4.85 — rollback to the last pre-regression surface architecture"
 }
