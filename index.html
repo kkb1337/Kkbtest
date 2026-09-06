@@ -6156,6 +6156,27 @@ body{
 #textStatsContent .stat-label,#textStatsContent .nutrition-stat-label{color:var(--subtext)!important;}
 #textStatsContent .stat-value,#textStatsContent .nutrition-stat-value{font-weight:800!important;text-align:right!important;}
 </style>
+
+<style id="v1482-canonical-surface-corrections">
+/* v1.4.82: one PWA surface grammar — no secondary half-height workspace windows. */
+.ft-window-workspace{padding:0!important;align-items:stretch!important;justify-content:stretch!important;}
+.ft-window-workspace>:first-child{width:100%!important;max-width:none!important;height:100dvh!important;min-height:100dvh!important;max-height:none!important;margin:0!important;border-radius:0!important;border:0!important;box-sizing:border-box!important;padding:calc(env(safe-area-inset-top,0px) + 8px) 16px calc(env(safe-area-inset-bottom,0px) + 16px)!important;overflow-y:auto!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior:contain!important;touch-action:pan-y!important;}
+/* Every canonical header is one row: back on the left, title centered in the available row. */
+.ft-window-workspace .unified-surface-header{display:grid!important;grid-template-columns:44px minmax(0,1fr) 44px!important;align-items:center!important;min-height:44px!important;margin:0 0 12px!important;gap:0!important;}
+.ft-window-workspace .surface-back-btn{grid-column:1!important;width:44px!important;min-width:44px!important;height:44px!important;min-height:44px!important;margin:0!important;padding:0!important;display:flex!important;align-items:center!important;justify-content:center!important;}
+.ft-window-workspace .surface-title{grid-column:2!important;text-align:center!important;margin:0!important;position:static!important;left:auto!important;right:auto!important;top:auto!important;min-height:44px!important;display:flex!important;align-items:center!important;justify-content:center!important;line-height:1.2!important;}
+/* Picker lists own the remaining scrollable space without creating a floating card. */
+#exercisePickerModal .date-modal-content,#progressExercisePickerModal .date-modal-content{display:flex!important;flex-direction:column!important;}
+#exercisePickerModal .catalog-modal-list,#progressExercisePickerModal .progress-picker-list{flex:1 1 auto!important;min-height:0!important;max-height:none!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;}
+#exercisePickerModal .surface-back-btn,#progressExercisePickerModal .surface-back-btn{margin:0!important;}
+/* Exercise technique/card content: tabs stay usable and the content scrolls inside the full PWA surface. */
+#techniqueModal.ft-window-workspace>:first-child,#exerciseModal.ft-window-workspace .exercise-modal-content{overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;touch-action:pan-y!important;}
+#techniqueModal .technique-modal-content,#techniqueModal .exercise-card-content{height:auto!important;max-height:none!important;overflow:visible!important;}
+/* Remove the old absolute measurement-title hack completely. */
+#measurementManagerModal .surface-title,#measurementFieldModal .surface-title{position:static!important;left:auto!important;right:auto!important;top:auto!important;}
+#measurementManagerModal .measurement-manager-list{margin-top:0!important;}
+#measurementFieldModal label{margin-top:0!important;}
+</style>
 </head>
 <body>
 <div class="safe-area"><div class="container" id="app">
@@ -6673,8 +6694,10 @@ body{
 </div>
 <div id="measurementManagerModal" class="catalog-modal hidden" onclick="if(event.target === this) closeMeasurementManager()">
     <div class="catalog-modal-content measurement-manager-modal-content">
-        <button class="surface-back-btn" type="button" onclick="closeMeasurementManager()">← Назад</button>
-        <div class="surface-title">⚙️ Параметры</div>
+        <div class="unified-surface-header">
+          <button class="surface-back-btn" type="button" aria-label="Назад" onclick="closeMeasurementManager()">←</button>
+          <div class="surface-title">⚙️ Параметры</div>
+        </div>
         
         <div id="measurementManagerList" class="measurement-manager-list"></div>
         <button onclick="openMeasurementFieldEditor()">➕ Добавить параметр</button>
@@ -6683,8 +6706,10 @@ body{
 </div>
 <div id="measurementFieldModal" class="catalog-modal hidden" onclick="if(event.target === this) closeMeasurementFieldEditor()">
     <div class="catalog-modal-content measurement-manager-modal-content">
-        <button class="surface-back-btn" type="button" onclick="closeMeasurementFieldEditor()">← Назад</button>
-        <div id="measurementFieldModalTitle" class="surface-title">Новый параметр</div>
+        <div class="unified-surface-header">
+          <button class="surface-back-btn" type="button" aria-label="Назад" onclick="closeMeasurementFieldEditor()">←</button>
+          <div id="measurementFieldModalTitle" class="surface-title">Новый параметр</div>
+        </div>
         <label class="field-label">Название параметра</label>
         <input type="text" id="measurementFieldNameInput" maxlength="40" placeholder="Например, Икры">
         <button onclick="saveMeasurementFieldEditor()">💾 Сохранить</button>
@@ -6694,17 +6719,21 @@ body{
 
 
 <div id="exercisePickerModal" class="date-modal hidden" onclick="if(event.target===this)closeExercisePicker()">
-  <div class="date-modal-content" style="max-height:86vh;display:flex;flex-direction:column;">
-    <button class="surface-back-btn" type="button" onclick="closeExercisePicker()">← Назад</button>
-    <div id="exercisePickerTitle" style="font-size:20px;font-weight:800;margin-bottom:5px;padding-right:30px;">Добавить упражнение</div>
+  <div class="date-modal-content">
+    <div class="unified-surface-header">
+      <button class="surface-back-btn" type="button" aria-label="Назад" onclick="closeExercisePicker()">←</button>
+      <div id="exercisePickerTitle" class="surface-title">Добавить упражнение</div>
+    </div>
     <input id="exercisePickerSearch" placeholder="🔎 Поиск упражнения" autocomplete="off" oninput="renderExercisePicker()">
     <div id="exercisePickerList" class="catalog-modal-list"></div>
   </div>
 </div>
 <div id="progressExercisePickerModal" class="date-modal hidden" onclick="if(event.target===this)closeProgressExercisePicker()">
-  <div class="date-modal-content" style="max-height:82vh;display:flex;flex-direction:column;">
-    <button class="surface-back-btn" type="button" onclick="closeProgressExercisePicker()">← Назад</button>
-    <div style="font-size:20px;font-weight:700;margin-bottom:5px;">Упражнения с прогрессом</div>
+  <div class="date-modal-content">
+    <div class="unified-surface-header">
+      <button class="surface-back-btn" type="button" aria-label="Назад" onclick="closeProgressExercisePicker()">←</button>
+      <div class="surface-title">Упражнения с прогрессом</div>
+    </div>
     <input id="progressExercisePickerSearch" placeholder="🔎 Поиск упражнения" autocomplete="off" oninput="renderProgressExercisePicker()">
     <div id="progressPickerList" class="progress-picker-list" style="margin-top:10px;"></div>
   </div>
