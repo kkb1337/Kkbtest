@@ -26,7 +26,7 @@
       "purpose": "any maskable"
     }
   ],
-  "_build": "ftracker-v1.4.78-authoritative-surface-system",
-  "version": "1.4.78",
-  "description": "FTracker v1.4.78 — authoritative PWA surface system, unified headers and viewport ownership"
+  "_build": "ftracker-v1.4.79-regression-rollback",
+  "version": "1.4.79",
+  "description": "FTracker v1.4.79 — rollback to the last pre-regression surface architecture"
 }
