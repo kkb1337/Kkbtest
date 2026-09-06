@@ -6130,6 +6130,71 @@ body{
 @media(max-width:360px){.fscore-period-presets{grid-template-columns:repeat(3,minmax(0,1fr))!important;}.fscore-target-corridor-editor{grid-template-columns:1fr!important;}.fscore-target-corridor{grid-column:auto!important;}}
 </style>
 
+
+<style id="ftracker-v1-4-86-targeted-fixes">
+/* v1.4.86 — only the requested fixes: screen header gap, workspace viewport, progress duplicate. */
+/* Ordinary screens: the first content block follows the app header immediately. */
+#app>[id$="Screen"]>.screen-header,
+#app>[id$="Screen"]>.fscore-screen-header{
+  margin-bottom:4px!important;
+  padding:0!important;
+  height:56px!important;
+  min-height:56px!important;
+  max-height:56px!important;
+  box-sizing:border-box!important;
+}
+#app>[id$="Screen"]>.screen-header + *,
+#app>[id$="Screen"]>.fscore-screen-header + *{
+  margin-top:0!important;
+}
+/* Workspace windows: start after the top safe area, extend to the physical bottom,
+   and never reserve a bottom safe-area band inside the surface. */
+.ft-window-root.ft-window-workspace{
+  inset:0!important;
+  padding:var(--ft-safe-top) 0 0 0!important;
+  width:100%!important;
+  height:100dvh!important;
+  min-height:100dvh!important;
+  max-height:100dvh!important;
+  background:var(--bg)!important;
+  align-items:stretch!important;
+  justify-content:stretch!important;
+  box-sizing:border-box!important;
+}
+.ft-window-root.ft-window-workspace> :first-child{
+  width:100%!important;
+  height:calc(100dvh - var(--ft-safe-top))!important;
+  min-height:calc(100dvh - var(--ft-safe-top))!important;
+  max-height:calc(100dvh - var(--ft-safe-top))!important;
+  margin:0!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  box-sizing:border-box!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  padding-bottom:0!important;
+  background:var(--bg)!important;
+}
+#techniqueModal.ft-window-root.ft-window-workspace{
+  padding:var(--ft-safe-top) 0 0 0!important;
+  background:var(--bg)!important;
+}
+#techniqueModal.ft-window-root.ft-window-workspace>.technique-modal-content{
+  height:calc(100dvh - var(--ft-safe-top))!important;
+  min-height:calc(100dvh - var(--ft-safe-top))!important;
+  max-height:calc(100dvh - var(--ft-safe-top))!important;
+  padding:12px 16px 0!important;
+  overflow-y:auto!important;
+  background:var(--bg)!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+}
+/* The progress page keeps only the page-level "Прогресс" title. */
+#progressScreen .progress-ex-head{display:none!important;}
+#progressScreen .progress-ex{gap:10px!important;}
+</style>
 </head>
 <body>
 <div class="safe-area"><div class="container" id="app">
@@ -12571,7 +12636,6 @@ function renderProgressDashboard(){
       : `<button type="button" class="progress-open-picker" onclick="openProgressExercisePicker()">Выбрать упражнение <span>›</span></button>`;
 
     container.innerHTML=`<div class="progress-ex">
-        <div class="progress-ex-head"><div class="progress-ex-title">Прогресс упражнений</div></div>
         <div class="progress-ex-period"><button class="${progressPeriod===30?'active':''}" onclick="setProgressPeriod(30)" type="button">30 дней</button><button class="${progressPeriod===90?'active':''}" onclick="setProgressPeriod(90)" type="button">90 дней</button><button class="${progressPeriod==='all'?'active':''}" onclick="setProgressPeriod('all')" type="button">Всё время</button></div>
         <div class="progress-ex-picker">
             <div class="progress-ex-picker-label">Упражнение</div>
@@ -17680,27 +17744,5 @@ html,body{width:100%!important;min-height:100%!important;margin:0!important;padd
 }
 </style>
 
-
-<style id="ftracker-v1-4-85-minimal-header-gap">
-/* v1.4.85 — ONLY header-to-content spacing fix. Based directly on v1.4.79.
-   Do not alter window architecture, safe-area, dialogs, data or business logic. */
-#app > [id$="Screen"]{
-  row-gap:0 !important;
-}
-#app > [id$="Screen"] > .screen-header,
-#app > [id$="Screen"] > .fscore-screen-header{
-  height:46px !important;
-  min-height:46px !important;
-  max-height:46px !important;
-  margin-top:0 !important;
-  margin-bottom:0 !important;
-  padding:3px 0 !important;
-  box-sizing:border-box !important;
-}
-#app > [id$="Screen"] > .screen-header + *,
-#app > [id$="Screen"] > .fscore-screen-header + *{
-  margin-top:0 !important;
-}
-</style>
 </body>
 </html>
