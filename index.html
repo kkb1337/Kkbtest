@@ -6288,7 +6288,7 @@ body{
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v1.4.80 от 06.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v<span id="appVersionValue">1.4.81</span> от 06.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -6826,7 +6826,7 @@ body{
 
 <script id="ftracker-app">
 /* ================================================================
-   FTracker v1.4.80 — canonical viewport and adaptive surfaces
+   FTracker v1.4.81 — canonical viewport and adaptive surfaces
    One owner for stacking and interaction order. It does not rewrite window
    DOM, headers, borders, padding, or the original visual content.
    ================================================================ */
@@ -6958,6 +6958,9 @@ function initModalStack(){
 function lockModalScroll(){ updateModalStackState(); }
 if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',initModalStack,{once:true}); else initModalStack();
 
+
+const APP_VERSION = '1.4.81';
+const APP_BUILD = `ftracker-v${APP_VERSION}-navigation-surface-corrections`;
 
 const STORAGE_KEY = 'ftracker_v23';
 const DRAFT_KEY = 'ftracker_draft';
@@ -7548,14 +7551,27 @@ function resetAppViewport(screenId){
     if(header) header.scrollTop=0;
   }
 }
-function showScreen(id) {
-  // Close transient overlays before changing app screens.
+function closeAllTransientModals(){
+  // Screen navigation must never leave an old overlay mounted above the new screen.
+  // The modal stack remains the single source of truth for active overlays.
+  getModalRoots().forEach(modal=>{
+    modal.classList.add('hidden');
+    modal.setAttribute('aria-hidden','true');
+    modal.style.pointerEvents='';
+  });
+  modalStack.splice(0, modalStack.length);
+  updateModalStackState();
   if (typeof closeBackupExportPrompt === 'function') closeBackupExportPrompt();
-  document.querySelectorAll('#app > div').forEach(el => { el.classList.add('hidden'); el.style.pointerEvents='none'; });
+}
+function showScreen(id) {
+  // A screen transition is a hard surface boundary: close every transient overlay first.
+  closeAllTransientModals();
+  document.querySelectorAll('#app > div').forEach(el => { el.classList.add('hidden'); el.style.pointerEvents='none'; el.setAttribute('aria-hidden','true'); });
   const screen=document.getElementById(id);
   if(!screen) return;
   screen.classList.remove('hidden');
   screen.style.pointerEvents='auto';
+  screen.setAttribute('aria-hidden','false');
   resetAppViewport(id);
   requestAnimationFrame(()=>{
     resetAppViewport(id);
@@ -17433,7 +17449,7 @@ body.light-mode .toast{
 
 <style id="ftracker-v1-4-80-window-system">
 /* ================================================================
-   FTracker v1.4.80 — canonical surface system
+   FTracker v1.4.81 — canonical surface system
    Geometry is owned exactly once per level:
    device -> safe-area -> surface -> header/content.
    No business logic, formulas, storage or handlers are changed.
@@ -17681,5 +17697,32 @@ html,body{width:100%!important;min-height:100%!important;margin:0!important;padd
 }
 </style>
 
+<script id="ftracker-v1-4-81-architecture">
+/* v1.4.81 — canonical application surface map.
+   This registry documents and validates the navigation tree without touching user data. */
+window.FTRACKER_ARCHITECTURE = Object.freeze({
+  version: APP_VERSION,
+  root: 'homeScreen',
+  sections: Object.freeze({
+    training: Object.freeze({screen:'workoutScreen', entry:'programList', childScreens:['confirmScreen'], modals:['confirmExitModal','finishWorkoutConfirmModal','workoutSummaryModal','achievementsModal','exerciseModal','replaceExerciseModal','workoutNewExerciseModal']}),
+    progress: Object.freeze({screen:'progressScreen', childScreens:['fscoreAnalyticsScreen'], modals:['progressExercisePickerModal','chartModal']}),
+    measurements: Object.freeze({screen:'bodyScreen', modals:['bodyGraphModal','measurementHistoryModal','measurementSaveConfirmModal','measurementManagerModal','measurementFieldModal']}),
+    programs: Object.freeze({screen:'settingsScreen', modals:['exercisePickerModal','exerciseOrderModal','renameExerciseModal','directoryNewExerciseModal']}),
+    directory: Object.freeze({screen:'exerciseDirectoryScreen', modals:['exerciseModal','renameExerciseModal','directoryNewExerciseModal']}),
+    history: Object.freeze({screen:'historyScreen', modals:['dateModal','deleteConfirmModal','workoutDetailModal','manualWorkoutModal']}),
+    nutrition: Object.freeze({screen:'foodScreen', modals:['addFoodModal','foodLimitModal','copyDatePickerModal','foodCopyConfirmModal','catalogEditModal','chartModal']}),
+    global: Object.freeze({screen:'homeScreen', modals:['themeModal','autoBackupRestoreConfirmModal','importConfirmModal']})
+  })
+});
+
+(function syncAppVersion(){
+  const node=document.getElementById('appVersionValue');
+  if(node) node.textContent=APP_VERSION;
+  document.documentElement.dataset.ftrackerVersion=APP_VERSION;
+  document.querySelectorAll('#app > div[id$="Screen"]').forEach((screen,i)=>{
+    if(!screen.hasAttribute('aria-hidden')) screen.setAttribute('aria-hidden', screen.classList.contains('hidden')?'true':'false');
+  });
+})();
+</script>
 </body>
 </html>
