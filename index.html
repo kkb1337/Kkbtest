@@ -6288,7 +6288,7 @@ body{
 <div id="themeModal" class="theme-modal hidden" onclick="if(event.target === this) closeThemeModal()">
     <div class="theme-modal-content">
         <span class="close-btn" onclick="closeThemeModal()">&times;</span>
-        <div class="app-version-info" aria-label="Версия приложения">v1.4.75 от 06.09.26</div>
+        <div class="app-version-info" aria-label="Версия приложения">v1.4.76 от 06.09.26</div>
         <div style="font-size:20px; font-weight:600; margin-bottom:16px;">Выберите тему</div>
         <button onclick="setTheme('dark')">🌙 Тёмная</button>
         <button onclick="setTheme('light')" style="background: var(--accent-gradient);">☀️ Светлая</button>
@@ -6826,7 +6826,7 @@ body{
 
 <script id="ftracker-app">
 /* ================================================================
-   FTracker v1.4.75 — explicit window registry
+   FTracker v1.4.76 — canonical viewport and adaptive surfaces
    One owner for stacking and interaction order. It does not rewrite window
    DOM, headers, borders, padding, or the original visual content.
    ================================================================ */
@@ -6840,7 +6840,7 @@ const FT_WINDOW_REGISTRY = Object.freeze({
   workoutDetailModal:'workspace', achievementsModal:'workspace', manualWorkoutModal:'workspace',
   addFoodModal:'workspace', foodLimitModal:'workspace', workoutSummaryModal:'workspace',
   bodyGraphModal:'workspace', chartModal:'workspace', measurementManagerModal:'workspace',
-  measurementFieldModal:'workspace', measurementHistoryModal:'workspace',
+  measurementFieldModal:'workspace', measurementHistoryModal:'adaptive',
   newMeasurementModal:'workspace', editMeasurementModal:'workspace', techniqueModal:'workspace',
   // Compact/adaptive forms.
   renameExerciseModal:'adaptive', directoryNewExerciseModal:'adaptive', workoutNewExerciseModal:'adaptive',
@@ -17439,7 +17439,7 @@ body.light-mode .toast{
 
 <style id="ftracker-v1-4-75-canonical-ui">
 /* ================================================================
-   FTracker v1.4.75 — canonical UI contracts
+   FTracker v1.4.76 — canonical viewport, headers and surfaces
    One geometry owner per surface. Explicit window registry.
    Business logic and formulas are intentionally untouched.
    ================================================================ */
@@ -17503,6 +17503,182 @@ html,body{width:100%!important;min-height:100%!important;margin:0!important;padd
 #workoutDetailModal #workoutDetailContent{min-width:0!important;overflow-x:hidden!important;}#workoutDetailModal .workout-detail-title-wrap{position:relative!important;}#workoutDetailModal #workoutDetailTitle{padding-right:52px!important;}
 #app img,#app video,#app canvas,#app svg,.ft-window-root img,.ft-window-root video,.ft-window-root canvas,.ft-window-root svg{max-width:100%!important;}#app input,#app select,#app textarea,.ft-window-root input,.ft-window-root select,.ft-window-root textarea{max-width:100%!important;box-sizing:border-box!important;}
 @media(max-width:430px){:root{--ft-page-x:12px;--ft-header-side:100px;--ft-header-h:50px;}.screen-header>button:first-child,.fscore-screen-header>button:first-child{font-size:14px!important;padding-inline:9px!important;}.unified-surface-header .surface-back-btn,.chart-modal-header .chart-back-btn,.measurement-modal-header .surface-back-btn,.body-graph-header .surface-back-btn,.body-history-modal-head .surface-back-btn{font-size:14px!important;padding-inline:9px!important;}}
+</style>
+
+
+<style id="ftracker-v1-4-76-surface-finalization">
+/* ================================================================
+   FTracker v1.4.76 — surface finalization
+   Geometry only. No business logic, formulas, storage or handlers changed.
+   ================================================================ */
+:root{
+  --ft-header-side:88px;
+  --ft-header-h:58px;
+  --ft-viewport-h:100dvh;
+}
+@supports (height:100lvh){:root{--ft-viewport-h:100lvh;}}
+
+/* One physical viewport contract for every overlay in standalone PWA. */
+.safe-area{min-height:var(--ft-viewport-h)!important;}
+.safe-area>#app,.safe-area>.container,#app.container{min-height:calc(var(--ft-viewport-h) - var(--ft-safe-top) - var(--ft-safe-bottom))!important;}
+.ft-window-root{
+  height:var(--ft-viewport-h)!important;
+  min-height:var(--ft-viewport-h)!important;
+  max-height:var(--ft-viewport-h)!important;
+}
+.ft-window-workspace{align-items:stretch!important;}
+.ft-window-workspace>:first-child{
+  height:100%!important;
+  min-height:100%!important;
+  max-height:100%!important;
+}
+
+/* Full-screen exercise surface uses the same usable PWA height as all workspaces. */
+#techniqueModal.ft-window-root{
+  height:var(--ft-viewport-h)!important;
+  min-height:var(--ft-viewport-h)!important;
+  max-height:var(--ft-viewport-h)!important;
+}
+#techniqueModal.ft-window-workspace>.technique-modal-content{
+  height:100%!important;
+  min-height:100%!important;
+  max-height:100%!important;
+  padding-top:calc(var(--ft-safe-top) + 12px)!important;
+  padding-bottom:calc(var(--ft-safe-bottom) + 12px)!important;
+}
+
+/* Header contract: compact side zones + centered title that may use two lines. */
+.screen-header,.fscore-screen-header,
+.unified-surface-header,.chart-modal-header,.measurement-modal-header,.body-graph-header,.body-history-modal-head{
+  grid-template-columns:var(--ft-header-side) minmax(0,1fr) var(--ft-header-side)!important;
+  min-height:var(--ft-header-h)!important;
+  height:auto!important;
+}
+.screen-header>button:first-child,.fscore-screen-header>button:first-child,
+.unified-surface-header .surface-back-btn,.chart-modal-header .chart-back-btn,.measurement-modal-header .surface-back-btn,.body-graph-header .surface-back-btn,.body-history-modal-head .surface-back-btn{
+  width:auto!important;
+  max-width:84px!important;
+  min-height:40px!important;
+  padding:8px 9px!important;
+  font-size:14px!important;
+  border-radius:12px!important;
+}
+.screen-header>.title,.screen-header>.title.section-title,.screen-header>.section-title,
+.fscore-screen-header>.title,.fscore-screen-header>.section-title,
+.unified-surface-header .surface-title,.chart-modal-header .surface-title,.chart-modal-header .chart-modal-title,.measurement-modal-header .surface-title,.body-graph-header .surface-title,.body-history-modal-head .body-history-modal-title{
+  white-space:normal!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+  overflow-wrap:normal!important;
+  word-break:normal!important;
+  hyphens:none!important;
+  text-align:center!important;
+  display:block!important;
+  align-self:center!important;
+  font-size:clamp(18px,5vw,23px)!important;
+  line-height:1.05!important;
+  max-height:2.1em!important;
+}
+/* Subtitle never competes with the main header width. */
+.body-history-modal-head .body-history-modal-sub{
+  grid-column:2!important;
+  grid-row:2!important;
+  margin-top:1px!important;
+  line-height:1.2!important;
+}
+
+/* Small-content surfaces stay compact and scroll only when they actually need to. */
+#measurementHistoryModal.ft-window-adaptive{align-items:flex-start!important;}
+#measurementHistoryModal.ft-window-adaptive>.body-history-modal-content{
+  height:auto!important;
+  min-height:0!important;
+  max-height:calc(var(--ft-viewport-h) - var(--ft-safe-top) - var(--ft-safe-bottom) - 24px)!important;
+  margin-top:12px!important;
+  margin-bottom:12px!important;
+  padding:16px!important;
+  border-radius:22px!important;
+}
+#measurementHistoryModal .body-history-item{border-radius:18px!important;}
+#measurementHistoryModal .body-history-values{display:flex!important;flex-wrap:wrap!important;gap:8px!important;}
+#measurementHistoryModal .body-history-value{margin:0!important;padding:8px 11px!important;border-radius:13px!important;}
+
+/* Workout history is a real visual hierarchy: workout -> exercise card -> set rows. */
+#workoutDetailModal.ft-window-workspace>.workout-detail-content{
+  padding:16px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  gap:14px!important;
+}
+#workoutDetailModal .workout-detail-title-wrap{
+  flex:0 0 auto!important;
+  margin:0!important;
+  padding:2px 48px 14px 0!important;
+  border-bottom:1px solid var(--border)!important;
+}
+#workoutDetailModal .workout-detail-title-main{
+  font-size:clamp(22px,6vw,30px)!important;
+  font-weight:900!important;
+  line-height:1.12!important;
+}
+#workoutDetailModal .workout-detail-title-date{
+  margin-top:5px!important;
+  font-size:15px!important;
+  font-weight:750!important;
+  color:var(--subtext)!important;
+}
+#workoutDetailModal #workoutDetailContent{padding-bottom:calc(var(--ft-safe-bottom) + 8px)!important;}
+#workoutDetailModal .workout-history-detail-list{display:grid!important;gap:12px!important;}
+#workoutDetailModal .workout-history-exercise{
+  margin:0!important;
+  padding:16px!important;
+  border:1px solid var(--border)!important;
+  border-radius:20px!important;
+  background:var(--card-bg)!important;
+  box-shadow:none!important;
+}
+#workoutDetailModal .workout-history-exercise-name{
+  margin:0 0 12px!important;
+  font-size:clamp(19px,5vw,24px)!important;
+  font-weight:850!important;
+  line-height:1.2!important;
+}
+#workoutDetailModal .workout-history-sets{display:grid!important;gap:8px!important;}
+#workoutDetailModal .workout-history-set{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:12px!important;
+  min-height:58px!important;
+  padding:12px 14px!important;
+  border-radius:16px!important;
+  background:var(--input-bg)!important;
+  border:1px solid rgba(255,255,255,.04)!important;
+  box-sizing:border-box!important;
+}
+#workoutDetailModal .workout-history-set span{font-size:15px!important;color:var(--subtext)!important;}
+#workoutDetailModal .workout-history-set b{font-size:18px!important;font-weight:850!important;white-space:nowrap!important;}
+#workoutDetailModal .workout-history-empty{padding:14px!important;border-radius:14px!important;background:var(--input-bg)!important;color:var(--subtext)!important;}
+
+/* Graph workspaces must own the entire usable PWA height and their chart may scroll inside it. */
+#bodyGraphModal.ft-window-workspace>.body-graph-modal-content,
+#chartModal.ft-window-workspace>.chart-modal-content{
+  height:100%!important;
+  min-height:100%!important;
+  max-height:100%!important;
+  padding:16px!important;
+  padding-bottom:calc(var(--ft-safe-bottom) + 16px)!important;
+}
+#bodyGraphModal .body-graph-chart,#chartModal .chart-wrap{min-height:0!important;}
+
+@media(max-width:430px){
+  :root{--ft-header-side:82px;--ft-header-h:56px;}
+  .screen-header>button:first-child,.fscore-screen-header>button:first-child,
+  .unified-surface-header .surface-back-btn,.chart-modal-header .chart-back-btn,.measurement-modal-header .surface-back-btn,.body-graph-header .surface-back-btn,.body-history-modal-head .surface-back-btn{max-width:78px!important;font-size:13.5px!important;padding-inline:8px!important;}
+  #workoutDetailModal .workout-history-exercise{padding:14px!important;border-radius:18px!important;}
+  #workoutDetailModal .workout-history-set{min-height:54px!important;padding:11px 12px!important;}
+  #workoutDetailModal .workout-history-set span{font-size:14px!important;}
+  #workoutDetailModal .workout-history-set b{font-size:17px!important;}
+}
 </style>
 
 </body>
