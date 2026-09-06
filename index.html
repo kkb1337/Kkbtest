@@ -1801,9 +1801,7 @@ body.light-mode{
 .screen-header{grid-template-columns:auto minmax(0,1fr) auto!important;min-height:56px!important;}
 .screen-header-spacer{width:44px!important;height:40px!important;flex:0 0 44px!important;}
 .screen-header .title.section-title{min-width:0!important;width:100%!important;}
-/* All large sheets start near the safe top and scroll inside their own content. */
-.exercise-modal,.catalog-modal,.food-modal,.confirm-modal,.date-modal,.manual-workout-modal,.achievements-modal{align-items:flex-start!important;padding-top:calc(env(safe-area-inset-top,0px) + 10px)!important;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 10px)!important;}
-.exercise-modal-content,.catalog-modal-content,.food-modal-content,.confirm-modal-content,.date-modal-content,.manual-workout-content,.achievements-content{margin-top:0!important;}
+/* Legacy modal geometry intentionally superseded by .ft-window-sheet / .ft-window-dialog. */
 /* Compact, elegant confirmation/event sheets. */
 .confirm-modal-content{width:min(92%,360px)!important;max-width:360px!important;padding:18px!important;border-radius:18px!important;}
 .confirm-modal-content button{min-height:44px!important;margin-top:7px!important;border-radius:13px!important;}
@@ -6837,17 +6835,19 @@ let modalStackObserverStarted = false;
 
 const FT_WINDOW_REGISTRY = Object.freeze({
   // Full workspaces: serious content gets the entire usable PWA surface.
-  workoutDetailModal:'workspace', achievementsModal:'workspace', manualWorkoutModal:'workspace',
-  addFoodModal:'workspace', foodLimitModal:'workspace', workoutSummaryModal:'workspace',
-  bodyGraphModal:'workspace', chartModal:'workspace', measurementManagerModal:'workspace',
-  measurementFieldModal:'workspace', measurementHistoryModal:'workspace',
-  newMeasurementModal:'workspace', editMeasurementModal:'workspace', techniqueModal:'workspace',
-  // All user-facing app windows use the fullscreen workspace contract.
-  renameExerciseModal:'workspace', directoryNewExerciseModal:'workspace', workoutNewExerciseModal:'workspace',
-  replaceExerciseModal:'workspace', exerciseModal:'workspace', exerciseOrderModal:'workspace',
-  exercisePickerModal:'workspace', progressExercisePickerModal:'workspace', dateModal:'workspace',
-  copyDatePickerModal:'workspace', themeModal:'workspace', catalogEditModal:'workspace',
-  exerciseDuplicateModal:'workspace', foodDuplicateModal:'workspace',
+  workoutDetailModal:'sheet', achievementsModal:'sheet', manualWorkoutModal:'sheet',
+  addFoodModal:'sheet', foodLimitModal:'sheet', workoutSummaryModal:'sheet',
+  bodyGraphModal:'sheet', chartModal:'sheet', measurementManagerModal:'sheet',
+  measurementFieldModal:'sheet', measurementHistoryModal:'sheet',
+  newMeasurementModal:'sheet', editMeasurementModal:'sheet',
+  // User-facing second-level surfaces are sheets/cards. The page itself remains fullscreen;
+  // these surfaces must not be mistaken for full-screen pages.
+  renameExerciseModal:'sheet', directoryNewExerciseModal:'sheet', workoutNewExerciseModal:'sheet',
+  replaceExerciseModal:'sheet', exerciseModal:'sheet', exerciseOrderModal:'sheet',
+  exercisePickerModal:'sheet', progressExercisePickerModal:'sheet', dateModal:'sheet',
+  copyDatePickerModal:'sheet', themeModal:'sheet', catalogEditModal:'sheet',
+  exerciseDuplicateModal:'sheet', foodDuplicateModal:'sheet',
+  techniqueModal:'workspace',
   // True compact system decisions.
   confirmExitModal:'dialog', finishWorkoutConfirmModal:'dialog', deleteConfirmModal:'dialog',
   importConfirmModal:'dialog', autoBackupRestoreConfirmModal:'dialog', measurementSaveConfirmModal:'dialog',
@@ -17586,6 +17586,62 @@ html,body{
   box-sizing:border-box!important;
   overflow:auto!important;
   border-radius:18px!important;
+}
+
+
+/* Second-level app surfaces: compact sheet/card, safely below the Dynamic Island.
+   These are NOT system dialogs and NOT fullscreen pages. */
+.ft-window-sheet{
+  align-items:center!important;
+  justify-content:center!important;
+  width:100%!important;
+  height:100dvh!important;
+  min-height:100dvh!important;
+  max-height:100dvh!important;
+  padding:calc(var(--ft-safe-top-effective) + 10px) 12px 12px 12px!important;
+  box-sizing:border-box!important;
+  overflow:hidden!important;
+}
+.ft-window-sheet>.ft-sheet-content,
+.ft-window-sheet>:first-child{
+  position:relative!important;
+  width:min(94vw,500px)!important;
+  max-width:500px!important;
+  max-height:calc(100dvh - var(--ft-safe-top-effective) - 22px)!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:18px!important;
+  box-sizing:border-box!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  -webkit-overflow-scrolling:touch!important;
+  overscroll-behavior:contain!important;
+  border-radius:20px!important;
+  background:var(--card-bg)!important;
+  color:var(--text)!important;
+  border:1px solid var(--border)!important;
+  box-shadow:0 18px 55px rgba(0,0,0,.42)!important;
+}
+.ft-window-sheet .close-btn,
+.ft-window-sheet .modal-close-btn{
+  top:10px!important;
+  right:10px!important;
+  width:34px!important;
+  height:34px!important;
+  min-width:34px!important;
+  min-height:34px!important;
+  border-radius:10px!important;
+  box-sizing:border-box!important;
+  z-index:5!important;
+}
+/* Keep inner sheet-specific scrolling lists inside the card rather than growing it. */
+.ft-window-sheet .catalog-modal-list,
+.ft-window-sheet .progress-picker-list,
+.ft-window-sheet .replace-exercise-list,
+.ft-window-sheet .auto-backup-list,
+.ft-window-sheet .progress-group-menu{
+  -webkit-overflow-scrolling:touch!important;
+  overscroll-behavior:contain!important;
 }
 
 /* Legacy adaptive windows must not reintroduce centered cards. */
