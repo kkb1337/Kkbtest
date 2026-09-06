@@ -13,7 +13,7 @@
     {"src":"./icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},
     {"src":"./icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
   ],
-  "_build": "ftracker-v1.4.80-unified-window-system",
-  "version": "1.4.80",
-  "description": "FTracker v1.4.80 — unified window system"
+  "_build": "ftracker-v1.4.81-window-system-conflict-fix",
+  "version": "1.4.81",
+  "description": "FTracker v1.4.81 — unified window system"
 }
